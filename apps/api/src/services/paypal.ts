@@ -53,7 +53,7 @@ class PayPalService {
       // Token expires in seconds, convert to milliseconds and subtract 5 minutes for safety
       this.tokenExpiry = new Date(Date.now() + (response.data.expires_in - 300) * 1000);
       
-      return this.accessToken;
+      return this.accessToken!;
     } catch (error: any) {
       console.error('PayPal OAuth error:', error.response?.data || error.message);
       throw new Error('Failed to authenticate with PayPal');

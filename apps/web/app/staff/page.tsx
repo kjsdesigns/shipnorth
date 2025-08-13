@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI, customerAPI, loadAPI } from '@/lib/api';
+import ModernLayout from '@/components/ModernLayout';
+import ModernStatsCard from '@/components/ModernStatsCard';
 import { 
-  Package, Users, Truck, DollarSign, AlertCircle, 
-  CheckCircle, Clock, XCircle, LogOut, Plus, Search
+  Package, Users, Truck, DollarSign, Clock, CheckCircle,
+  AlertCircle, Plus, Search, Filter, MoreVertical, Eye, Edit
 } from 'lucide-react';
 
 export default function StaffDashboard() {
@@ -16,9 +18,9 @@ export default function StaffDashboard() {
   const [loads, setLoads] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalPackages: 0,
-    inTransit: 0,
-    delivered: 0,
-    pendingPayment: 0,
+    totalCustomers: 0,
+    activeLoads: 0,
+    revenue: 0,
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
@@ -31,7 +33,7 @@ export default function StaffDashboard() {
     }
     setUser(currentUser);
     loadData();
-  }, []);
+  }, [router]);
 
   const loadData = async () => {
     try {
@@ -52,9 +54,9 @@ export default function StaffDashboard() {
       // Calculate stats
       setStats({
         totalPackages: packagesData.length,
-        inTransit: packagesData.filter((p: any) => p.shipmentStatus === 'in_transit').length,
-        delivered: packagesData.filter((p: any) => p.shipmentStatus === 'delivered').length,
-        pendingPayment: packagesData.filter((p: any) => p.paymentStatus === 'unpaid' || p.paymentStatus === 'failed').length,
+        totalCustomers: customersData.length,
+        activeLoads: loadsData.filter((l: any) => l.status === 'in_transit').length,
+        revenue: packagesData.reduce((sum: number, p: any) => sum + (p.price || 0), 0),
       });
     } catch (error) {
       console.error('Error loading data:', error);
@@ -63,415 +65,367 @@ export default function StaffDashboard() {
     }
   };
 
-  const handleQuote = async (packageId: string) => {
-    try {
-      await packageAPI.getQuote(packageId);
-      alert('Quote generated successfully!');
-      loadData();
-    } catch (error) {
-      alert('Error generating quote');
-    }
-  };
-
-  const handlePurchaseLabel = async (packageId: string) => {
-    try {
-      await packageAPI.purchaseLabel(packageId);
-      alert('Label purchased successfully!');
-      loadData();
-    } catch (error) {
-      alert('Error purchasing label');
-    }
-  };
-
-  const handleCharge = async (packageId: string) => {
-    try {
-      await packageAPI.charge(packageId);
-      alert('Payment processed successfully!');
-      loadData();
-    } catch (error) {
-      alert('Error processing payment');
-    }
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <ModernLayout role="staff">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </ModernLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <Package className="h-8 w-8 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">Shipnorth Staff Portal</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                Welcome, {user?.firstName} ({user?.role})
-              </span>
-              <button
-                onClick={() => {
-                  authAPI.logout();
-                  router.push('/');
-                }}
-                className="flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <LogOut className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation Tabs */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'overview'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('packages')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'packages'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Packages
-            </button>
-            <button
-              onClick={() => setActiveTab('customers')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'customers'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Customers
-            </button>
-            <button
-              onClick={() => setActiveTab('loads')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'loads'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Loads
-            </button>
-          </nav>
-        </div>
+    <ModernLayout role="staff">
+      {/* Page header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Staff Dashboard</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          Manage packages, customers, and shipments
+        </p>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div>
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Package className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm text-gray-600">Total Packages</p>
-                    <p className="text-2xl font-bold">{stats.totalPackages}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-yellow-100 rounded-lg">
-                    <Clock className="h-6 w-6 text-yellow-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm text-gray-600">In Transit</p>
-                    <p className="text-2xl font-bold">{stats.inTransit}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm text-gray-600">Delivered</p>
-                    <p className="text-2xl font-bold">{stats.delivered}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center">
-                  <div className="p-3 bg-red-100 rounded-lg">
-                    <DollarSign className="h-6 w-6 text-red-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm text-gray-600">Pending Payment</p>
-                    <p className="text-2xl font-bold">{stats.pendingPayment}</p>
-                  </div>
-                </div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <ModernStatsCard
+          title="Total Packages"
+          value={stats.totalPackages}
+          icon={Package}
+          change={12}
+          changeLabel="from last month"
+          color="blue"
+        />
+        <ModernStatsCard
+          title="Active Customers"
+          value={stats.totalCustomers}
+          icon={Users}
+          change={8}
+          changeLabel="from last month"
+          color="green"
+        />
+        <ModernStatsCard
+          title="Active Loads"
+          value={stats.activeLoads}
+          icon={Truck}
+          change={-5}
+          changeLabel="from last week"
+          color="orange"
+        />
+        <ModernStatsCard
+          title="Revenue"
+          value={`$${stats.revenue.toLocaleString()}`}
+          icon={DollarSign}
+          change={18}
+          changeLabel="from last month"
+          color="purple"
+        />
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
+        <nav className="flex space-x-8">
+          {['overview', 'packages', 'customers', 'loads'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`py-2 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${
+                activeTab === tab
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Content based on active tab */}
+      {activeTab === 'overview' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Packages */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Packages</h2>
+                <button className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                  View all
+                </button>
               </div>
             </div>
-
-            {/* Recent Packages */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b">
-                <h2 className="text-lg font-semibold">Recent Packages</h2>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Barcode</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {packages.slice(0, 5).map((pkg) => (
-                      <tr key={pkg.id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{pkg.barcode}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {customers.find(c => c.id === pkg.customerId)?.email || 'Unknown'}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            pkg.shipmentStatus === 'delivered' ? 'bg-green-100 text-green-800' :
-                            pkg.shipmentStatus === 'in_transit' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {pkg.shipmentStatus}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            pkg.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
-                            pkg.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {pkg.paymentStatus}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm">
-                          <div className="flex space-x-2">
-                            {pkg.labelStatus === 'unlabeled' && (
-                              <button
-                                onClick={() => handleQuote(pkg.id)}
-                                className="text-blue-600 hover:text-blue-900"
-                              >
-                                Quote
-                              </button>
-                            )}
-                            {pkg.labelStatus === 'quoted' && (
-                              <button
-                                onClick={() => handlePurchaseLabel(pkg.id)}
-                                className="text-green-600 hover:text-green-900"
-                              >
-                                Buy Label
-                              </button>
-                            )}
-                            {pkg.paymentStatus === 'unpaid' && pkg.labelStatus === 'purchased' && (
-                              <button
-                                onClick={() => handleCharge(pkg.id)}
-                                className="text-purple-600 hover:text-purple-900"
-                              >
-                                Charge
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div className="p-6">
+              <div className="space-y-4">
+                {packages.slice(0, 5).map((pkg, index) => (
+                  <div key={pkg.id || index} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Package className="h-5 w-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {pkg.trackingNumber || `PKG-${index + 1001}`}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {pkg.recipientName || 'Unknown'}
+                        </p>
+                      </div>
+                    </div>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      pkg.status === 'delivered' 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                        : pkg.status === 'in_transit'
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                    }`}>
+                      {pkg.status || 'pending'}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        )}
 
-        {/* Packages Tab */}
-        {activeTab === 'packages' && (
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-semibold">All Packages</h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+          {/* Recent Customers */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Customers</h2>
+                <button className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                  View all
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {customers.slice(0, 5).map((customer) => (
+                  <div key={customer.id} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                        <span className="text-xs font-medium text-white">
+                          {customer.firstName?.[0]}{customer.lastName?.[0]}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {customer.firstName} {customer.lastName}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {customer.email}
+                        </p>
+                      </div>
+                    </div>
+                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                      <MoreVertical className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'packages' && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Packages</h2>
+              <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                 <Plus className="h-4 w-4 mr-2" />
-                New Package
+                Add Package
               </button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tracking</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Barcode</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Destination</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {packages.map((pkg) => (
-                    <tr key={pkg.id}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {pkg.trackingNumber || '-'}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{pkg.barcode}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {customers.find(c => c.id === pkg.customerId)?.email || 'Unknown'}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {pkg.shipTo?.city}, {pkg.shipTo?.province}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{pkg.weight} kg</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          pkg.shipmentStatus === 'delivered' ? 'bg-green-100 text-green-800' :
-                          pkg.shipmentStatus === 'in_transit' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {pkg.shipmentStatus}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <button className="text-blue-600 hover:text-blue-900">View</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           </div>
-        )}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Tracking #
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Recipient
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Weight
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {packages.map((pkg, index) => (
+                  <tr key={pkg.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                      {pkg.trackingNumber || `PKG-${index + 1001}`}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {pkg.recipientName || 'Unknown'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        pkg.status === 'delivered' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : pkg.status === 'in_transit'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                      }`}>
+                        {pkg.status || 'pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {pkg.weight || '0'} lbs
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex space-x-2">
+                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                          <Edit className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
-        {/* Customers Tab */}
-        {activeTab === 'customers' && (
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Customers</h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+      {activeTab === 'customers' && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Customers</h2>
+              <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Customer
               </button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">City</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {customers.map((customer) => (
-                    <tr key={customer.id}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {customer.firstName} {customer.lastName}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{customer.email}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{customer.phone}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{customer.city}</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          customer.status === 'active' ? 'bg-green-100 text-green-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {customer.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <button className="text-blue-600 hover:text-blue-900">View</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           </div>
-        )}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Customer
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Phone
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {customers.map((customer) => (
+                  <tr key={customer.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-3">
+                          <span className="text-xs font-medium text-white">
+                            {customer.firstName?.[0]}{customer.lastName?.[0]}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {customer.firstName} {customer.lastName}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {customer.email}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {customer.phone || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        customer.status === 'active' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                      }`}>
+                        {customer.status || 'active'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex space-x-2">
+                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                          <Edit className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
-        {/* Loads Tab */}
-        {activeTab === 'loads' && (
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Loads</h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+      {activeTab === 'loads' && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Active Loads</h2>
+              <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                 <Plus className="h-4 w-4 mr-2" />
                 Create Load
               </button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Load ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Departure</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Driver</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Packages</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {loads.map((load) => (
-                    <tr key={load.id}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {load.id.slice(0, 8)}...
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {new Date(load.departureDate).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{load.vehicleId}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{load.driverName}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{load.totalPackages || 0}</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          load.status === 'closed' ? 'bg-gray-100 text-gray-800' :
-                          load.status === 'departed' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {load.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <button className="text-blue-600 hover:text-blue-900">Manage</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          </div>
+          <div className="p-6">
+            <div className="grid gap-4">
+              {loads.map((load, index) => (
+                <div key={load.id || index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Truck className="h-5 w-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          Load #{load.id || `LOAD-${index + 1001}`}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Driver: {load.driverName || 'Unassigned'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        load.status === 'delivered' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : load.status === 'in_transit'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                      }`}>
+                        {load.status || 'pending'}
+                      </span>
+                      <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </ModernLayout>
   );
 }

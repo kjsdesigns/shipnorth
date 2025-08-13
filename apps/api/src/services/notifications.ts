@@ -264,10 +264,10 @@ export class NotificationService {
     smsTemplate: keyof typeof smsTemplates,
     data: any
   ) {
-    const notifications = [this.sendEmail(email, emailTemplate, data)];
+    const notifications: Promise<any>[] = [this.sendEmail(email, emailTemplate, data)];
     
     if (phone) {
-      notifications.push(this.sendSMS(phone, smsTemplate, data));
+      notifications.push(this.sendSMS(phone, smsTemplate, data) as Promise<any>);
     }
     
     return Promise.allSettled(notifications);

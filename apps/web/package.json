@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
+    "@serverless-stack/node": "^1.18.4",
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.11.0",
     "clsx": "^2.1.1",

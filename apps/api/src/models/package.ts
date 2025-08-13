@@ -21,7 +21,12 @@ export interface Package {
   labelUrl?: string;
   barcode?: string;
   price?: number;
-  paymentStatus: 'unpaid' | 'paid' | 'failed' | 'refunded' | 'writeoff';
+  paymentStatus: 'unpaid' | 'pending' | 'paid' | 'failed' | 'refunded' | 'writeoff';
+  paypalOrderId?: string;
+  paypalTransactionId?: string;
+  paymentUrl?: string;
+  shippingCost?: number;
+  paidAt?: string;
   shipmentStatus: 'ready' | 'in_transit' | 'delivered' | 'exception' | 'returned';
   shipTo: {
     name: string;
@@ -66,6 +71,10 @@ export class PackageModel {
     });
 
     return newPackage;
+  }
+
+  static async get(id: string): Promise<Package | null> {
+    return this.findById(id);
   }
 
   static async findById(id: string): Promise<Package | null> {

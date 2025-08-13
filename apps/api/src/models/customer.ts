@@ -40,6 +40,10 @@ export class CustomerModel {
     return newCustomer;
   }
 
+  static async get(id: string): Promise<Customer | null> {
+    return this.findById(id);
+  }
+
   static async findById(id: string): Promise<Customer | null> {
     const item = await DatabaseService.get(`CUSTOMER#${id}`, 'METADATA');
     return item ? item.Data : null;

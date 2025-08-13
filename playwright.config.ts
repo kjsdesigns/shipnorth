@@ -8,10 +8,16 @@ export default defineConfig({
   workers: 1,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:3001',
+    baseURL: process.env.TEST_ENV === 'dev' 
+      ? 'https://dfuxgr1ixgyo2.cloudfront.net'
+      : 'http://localhost:3001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    extraHTTPHeaders: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
   },
 
   projects: [
@@ -21,10 +27,13 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3001',
-    reuseExistingServer: true,
-    timeout: 120 * 1000,
-  },
+  // Only use webServer for local testing
+  ...(process.env.TEST_ENV !== 'dev' && {
+    webServer: {
+      command: 'npm run dev',
+      url: 'http://localhost:3001',
+      reuseExistingServer: true,
+      timeout: 120 * 1000,
+    },
+  }),
 });

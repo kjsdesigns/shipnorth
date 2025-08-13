@@ -36,13 +36,21 @@ export class ShipnorthLambdaStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
     });
+    
+    // Create Origin Access Identity for CloudFront
+    const oai = new cloudfront.OriginAccessIdentity(this, 'OAI', {
+      comment: `OAI for ${env} distribution`,
+    });
+    
+    // Grant read permissions to CloudFront
+    webBucket.grantRead(oai);
 
     // Create Lambda function for API
     const apiFunction = new lambda.Function(this, 'ApiFunction', {
       functionName: `shipnorth-api-${env}`,
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../apps/api/dist')),
+      handler: 'lambda.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../apps/api/lambda-bundle')),
       timeout: cdk.Duration.seconds(30),
       memorySize: 1024,
       environment: {
@@ -138,7 +146,9 @@ export class ShipnorthLambdaStack extends cdk.Stack {
     // Create CloudFront distribution for web app
     const distribution = new cloudfront.Distribution(this, 'WebDistribution', {
       defaultBehavior: {
-        origin: new origins.S3Origin(webBucket),
+        origin: new origins.S3Origin(webBucket, {
+          originAccessIdentity: oai,
+        }),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       },

@@ -25,7 +25,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
     }
     
     // Check access - customers can only see their own data
-    if (req.user?.role === 'customer' && req.user.customerId !== req.params.id) {
+    if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
       throw new AppError(403, 'Access denied');
     }
     
@@ -39,7 +39,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
 router.get('/:id/packages', async (req: AuthRequest, res, next) => {
   try {
     // Check access
-    if (req.user?.role === 'customer' && req.user.customerId !== req.params.id) {
+    if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
       throw new AppError(403, 'Access denied');
     }
     
@@ -54,7 +54,7 @@ router.get('/:id/packages', async (req: AuthRequest, res, next) => {
 router.get('/:id/invoices', async (req: AuthRequest, res, next) => {
   try {
     // Check access
-    if (req.user?.role === 'customer' && req.user.customerId !== req.params.id) {
+    if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
       throw new AppError(403, 'Access denied');
     }
     
@@ -79,7 +79,7 @@ router.post('/', authorize('staff', 'admin'), async (req: AuthRequest, res, next
 router.put('/:id', async (req: AuthRequest, res, next) => {
   try {
     // Check access
-    if (req.user?.role === 'customer' && req.user.customerId !== req.params.id) {
+    if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
       throw new AppError(403, 'Access denied');
     }
     

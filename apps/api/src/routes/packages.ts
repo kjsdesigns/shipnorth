@@ -89,7 +89,6 @@ router.post('/:id/capture-payment', async (req, res) => {
     
     res.json({
       success: true,
-      transactionId: result.transactionId,
       ...result,
     });
   } catch (error: any) {

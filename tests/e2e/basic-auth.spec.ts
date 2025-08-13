@@ -9,7 +9,7 @@ test.describe('Basic Authentication Tests', () => {
 
   test('login page loads successfully', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.locator('h2:has-text("Sign In")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Welcome back")')).toBeVisible();
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
   });
@@ -35,7 +35,7 @@ test.describe('Basic Authentication Tests', () => {
     await page.click('button[type="submit"]');
     
     await page.waitForURL('/staff', { timeout: 10000 });
-    await expect(page.locator('h1:has-text("Staff Portal")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Staff Dashboard")')).toBeVisible();
   });
 
   test('driver can login successfully', async ({ page }) => {
@@ -57,7 +57,7 @@ test.describe('Basic Authentication Tests', () => {
     await page.click('button[type="submit"]');
     
     await page.waitForURL('/portal', { timeout: 10000 });
-    await expect(page.locator('h1:has-text("Customer Portal")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Shipnorth")')).toBeVisible();
   });
 
   test('invalid credentials show error', async ({ page }) => {
