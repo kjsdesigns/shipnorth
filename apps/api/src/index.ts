@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 
 // Load environment variables
 dotenv.config();
@@ -35,7 +37,15 @@ const limiter = rateLimit({
 });
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+    },
+  },
+}));
 app.use(cors({
   origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
   credentials: true,
@@ -45,6 +55,21 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
+
+// Serve documentation
+app.get('/docs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
+});
+
+// Serve plan markdown files
+app.get('/plans/:file', (req, res) => {
+  const planPath = path.join(__dirname, '..', '..', '..', 'plans', req.params.file);
+  if (fs.existsSync(planPath)) {
+    res.sendFile(planPath);
+  } else {
+    res.status(404).json({ error: 'Plan not found' });
+  }
+});
 
 // Health check
 app.get('/health', (req, res) => {

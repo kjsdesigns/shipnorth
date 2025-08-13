@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipnorth Documentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 300px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #34495e;
+            padding-bottom: 10px;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #34495e;
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .content h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        .content h2 {
+            color: #34495e;
+            margin: 30px 0 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .content h3 {
+            color: #34495e;
+            margin: 20px 0 10px;
+        }
+        .content pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+        .content code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .content th, .content td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .content th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .content blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+        .content ul, .content ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        .content li {
+            margin: 5px 0;
+        }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #efe;
+            color: #0a0;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .change-history {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .api-endpoint {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .api-endpoint .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .method.get { background: #61affe; color: white; }
+        .method.post { background: #49cc90; color: white; }
+        .method.put { background: #fca130; color: white; }
+        .method.delete { background: #f93e3e; color: white; }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin: 20px 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background: white;
+            border-bottom: 2px solid #3498db;
+            margin-bottom: -2px;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>📚 Shipnorth Docs</h2>
+            <ul>
+                <li><a href="#overview" class="nav-link active">Overview</a></li>
+                <li><a href="#api" class="nav-link">API Reference</a></li>
+                <li><a href="#business" class="nav-link">Business Rules</a></li>
+                <li><a href="#plan" class="nav-link">Implementation Plan</a></li>
+                <li><a href="#database" class="nav-link">Database Schema</a></li>
+                <li><a href="#testing" class="nav-link">Test Assertions</a></li>
+                <li><a href="#changes" class="nav-link">Change History</a></li>
+            </ul>
+            
+            <h2 style="margin-top: 40px;">🔗 Quick Links</h2>
+            <ul>
+                <li><a href="https://github.com/kjsdesigns/shipnorth" target="_blank">GitHub Repository</a></li>
+                <li><a href="/health">Health Check</a></li>
+                <li><a href="/docs/api/swagger">Swagger UI</a></li>
+            </ul>
+        </div>
+        
+        <div class="content" id="content">
+            <div class="loading">Loading documentation...</div>
+        </div>
+    </div>
+
+    <script>
+        const docs = {
+            overview: `
+# Shipnorth Documentation
+
+## System Overview
+
+Shipnorth is an autonomous shipping and billing system that integrates with Stripe for payments and ShipStation for carrier label management.
+
+### Key Features
+- **Staff-only package intake**
+- **Automatic payment processing on label purchase**
+- **AI-optimized load planning with manual override**
+- **Real-time package tracking with live maps**
+- **Multi-carrier support through ShipStation**
+- **Comprehensive customer and driver portals**
+
+### Architecture
+- **Backend**: Node.js + Express (Traditional web app)
+- **Frontend**: Next.js 14 with Tailwind CSS
+- **Database**: AWS DynamoDB (Single-table design)
+- **Authentication**: JWT (24hr access, 30-day refresh)
+- **File Storage**: AWS S3 with session-based access
+- **Rate Limiting**: 200 requests per minute per IP
+
+### Environment Information
+- **Created**: 2025-08-13
+- **Version**: 1.0.0
+- **Status**: In Development
+`,
+            api: `
+# API Reference
+
+## Authentication
+
+All protected endpoints require a Bearer token in the Authorization header:
+\`\`\`
+Authorization: Bearer <token>
+\`\`\`
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/auth/login</code>
+    <p>Login with email and password</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/auth/refresh</code>
+    <p>Refresh access token using refresh token</p>
+</div>
+
+## Customers
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/customers</code>
+    <p>List all customers (staff only)</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/customers/{id}</code>
+    <p>Get customer details</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/customers</code>
+    <p>Create new customer (staff only)</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/customers/{id}/setup-payment</code>
+    <p>Create Stripe setup session for payment method</p>
+</div>
+
+## Packages
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/packages</code>
+    <p>List packages (filtered by user role)</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/packages/{id}</code>
+    <p>Get package details</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/packages</code>
+    <p>Create new package (staff only)</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/packages/{id}/quote</code>
+    <p>Get shipping rates from carriers</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/packages/{id}/purchase-label</code>
+    <p>Purchase shipping label</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/packages/{id}/charge</code>
+    <p>Process payment for package</p>
+</div>
+
+## Loads
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/loads</code>
+    <p>List all loads</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/loads/{id}</code>
+    <p>Get load details</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/loads</code>
+    <p>Create new load (staff only)</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method put">PUT</span>
+    <code>/loads/{id}/assign-packages</code>
+    <p>Assign packages to load</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/loads/{id}/manifest</code>
+    <p>Generate load manifest PDF</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/loads/{id}/gps</code>
+    <p>Update GPS position (driver)</p>
+</div>
+
+## Invoices
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/invoices</code>
+    <p>List invoices</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/invoices/{id}</code>
+    <p>Get invoice details</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/invoices/{id}/retry-payment</code>
+    <p>Retry failed payment</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/invoices/{id}/refund</code>
+    <p>Process refund (manual approval required)</p>
+</div>
+
+## Webhooks
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/webhooks/stripe</code>
+    <p>Stripe webhook endpoint</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method post">POST</span>
+    <code>/webhooks/shipstation</code>
+    <p>ShipStation webhook endpoint</p>
+</div>
+
+## Admin
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/admin/settings</code>
+    <p>Get system settings (admin only)</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method put">PUT</span>
+    <code>/admin/settings</code>
+    <p>Update system settings (admin only)</p>
+</div>
+
+<div class="api-endpoint">
+    <span class="method get">GET</span>
+    <code>/admin/reports</code>
+    <p>Generate reports (admin only)</p>
+</div>
+`,
+            business: `
+# Business Rules
+
+## Package Intake
+1. **Staff-only creation** - Customers cannot self-submit packages
+2. **Required fields** - All dimensions (L×W×H) and weight are mandatory
+3. **Address validation** - Canada Post API validation with manual override capability
+4. **Payment method** - Customer must have valid payment method on file
+
+## Rate Shopping
+1. **All carriers displayed** - Show all available ShipStation carrier options
+2. **Highlighting** - Cheapest and fastest options are highlighted
+3. **Markup formula**: \`(base_rate × percentage) + dollar_amount\` per carrier/service
+4. **Customer display**:
+   - Final price + tax (no breakdown)
+   - Retail price comparison showing savings
+
+## Label Purchase
+1. **Selection** - Staff selects rate or system auto-selects cheapest
+2. **Purchase** - Via ShipStation API
+3. **Storage** - PDF in S3 with session-based access
+4. **Status** - Package marked as "Ready"
+
+## Payment Processing
+1. **Timing** - Immediate charge on label purchase
+2. **Method** - Stripe Payment Intent with off-session flag
+3. **Success** - Invoice marked paid, confirmation sent
+4. **Failure** - Marked failed, payment link sent to customer
+
+## Load Planning
+1. **AI Optimization** - Suggests optimal package grouping by postal code
+2. **Manual Override** - Staff can adjust assignments
+3. **Manifest** - PDF generated automatically
+4. **Driver Access** - Mobile web link for updates
+
+## Tracking Updates
+1. **Frequency** - Poll ShipStation every 5 minutes
+2. **Database** - Update package status
+3. **Notifications** - Based on customer preferences
+4. **Live Map** - Real-time position updates
+
+## Refund Policy
+1. **Approval** - Manual approval required for all refunds
+2. **Process**:
+   - Void label in ShipStation first
+   - Process Stripe refund
+   - Update invoice status
+
+## Pricing Rules
+- **Base markup**: Percentage + dollar amount per carrier/service
+- **Minimum charge**: $9.99
+- **Tax**: Applied based on customer location
+- **Display**: Customer sees total only, not breakdown
+
+## Notification Settings
+- **Email**: Configurable per environment
+- **SMS**: Critical failures only
+- **Default admin**: kjsdesigns@gmail.com
+- **Customer preferences**: Stored per customer
+`,
+            database: `
+# Database Schema
+
+## DynamoDB Single Table Design
+
+### Table: shipnorth-main
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| PK | String | Partition Key (Entity#ID format) |
+| SK | String | Sort Key (Metadata or relationship) |
+| GSI1PK | String | Customer access patterns |
+| GSI1SK | String | Customer sort key |
+| GSI2PK | String | Date-based queries |
+| GSI2SK | String | Date sort key |
+| GSI3PK | String | Status-based queries |
+| GSI3SK | String | Status sort key |
+| Type | String | Entity type identifier |
+| Data | Map | Entity-specific attributes |
+
+### Entity Patterns
+
+#### Customers
+\`\`\`
+PK: CUSTOMER#${customerId}
+SK: METADATA
+GSI1PK: EMAIL#${email}
+Data: {
+  firstName, lastName, email, phone,
+  address, stripeCustomerId, paymentMethodId,
+  status, createdAt, updatedAt
+}
+\`\`\`
+
+#### Packages
+\`\`\`
+PK: PACKAGE#${packageId}
+SK: METADATA
+GSI1PK: CUSTOMER#${customerId}
+GSI1SK: PACKAGE#${packageId}
+GSI2PK: DATE#${receivedDate}
+GSI2SK: PACKAGE#${packageId}
+GSI3PK: STATUS#${status}
+GSI3SK: PACKAGE#${packageId}
+Data: {
+  dimensions, weight, tracking, carrier,
+  labelUrl, status, loadId, invoiceId,
+  shipTo, quotedRates, actualRate,
+  createdAt, updatedAt
+}
+\`\`\`
+
+#### Loads
+\`\`\`
+PK: LOAD#${loadId}
+SK: METADATA
+GSI2PK: DATE#${departureDate}
+Data: {
+  departureDate, arrivalDate, mode,
+  vehicleId, driverName, status,
+  manifestUrl, gpsTracking, packages[]
+}
+\`\`\`
+
+#### Invoices
+\`\`\`
+PK: INVOICE#${invoiceId}
+SK: METADATA
+GSI1PK: CUSTOMER#${customerId}
+GSI1SK: INVOICE#${invoiceId}
+Data: {
+  packageId, amount, tax, total,
+  stripePaymentIntentId, status,
+  pdfUrl, createdAt, paidAt
+}
+\`\`\`
+
+### Access Patterns
+
+1. **Get customer by ID**: Query PK = CUSTOMER#id
+2. **Get customer by email**: Query GSI1 where GSI1PK = EMAIL#email
+3. **List customer packages**: Query GSI1 where GSI1PK = CUSTOMER#id
+4. **Get packages by date**: Query GSI2 where GSI2PK = DATE#date
+5. **Get packages by status**: Query GSI3 where GSI3PK = STATUS#status
+6. **Get load packages**: Query PK = LOAD#id, SK begins with PACKAGE
+7. **List customer invoices**: Query GSI1 where GSI1PK = CUSTOMER#id
+`,
+            plan: `
+# Implementation Plan
+
+## Phase 1: Foundation (Week 1)
+- ✅ Project setup and structure
+- ✅ Database schema and models
+- ⏳ Authentication system
+- ⏳ Basic CRUD operations
+
+## Phase 2: Integrations (Week 2)
+- ⏳ Stripe payment setup
+- ⏳ ShipStation API integration
+- ⏳ Notification service
+- ⏳ File management
+
+## Phase 3: Staff Portal (Week 3)
+- ⏳ Package management UI
+- ⏳ Customer management
+- ⏳ Load planning interface
+- ⏳ Billing dashboard
+
+## Phase 4: Customer Portal (Week 4)
+- ⏳ Authentication flow
+- ⏳ Package tracking
+- ⏳ Invoice management
+- ⏳ Payment processing
+
+## Phase 5: Driver & Polish (Week 5)
+- ⏳ Driver mobile interface
+- ⏳ GPS tracking
+- ⏳ Documentation site
+- ⏳ Performance optimization
+
+## Success Metrics
+- Zero critical bugs in production
+- < 1% error rate on API calls
+- All tests passing (>80% coverage)
+- < 200ms API response time
+
+## Risk Mitigation
+- **API rate limits**: Implement queuing and caching
+- **Payment failures**: Retry logic and manual fallback
+- **Data loss**: Automated backups and recovery
+- **Security breach**: Regular audits and monitoring
+
+[View Full Plan](/plans/001-shipnorth-mvp.md)
+`,
+            testing: `
+# Test Assertions
+
+## Coverage Requirements
+- **Unit Tests**: Minimum 80% code coverage
+- **Integration Tests**: All API endpoints
+- **E2E Tests**: Critical user journeys
+- **Load Tests**: 200 req/min capacity
+
+## Test Categories
+
+### Authentication & Authorization (10 tests)
+- ✅ User can login with valid credentials
+- ✅ Invalid credentials return appropriate error
+- ✅ JWT access token expires after 24 hours
+- ✅ Refresh token works for 30 days
+- ✅ Expired refresh token requires re-login
+- ✅ Staff users can access staff-only endpoints
+- ✅ Customers cannot access staff endpoints
+- ✅ Unauthenticated requests are rejected
+- ✅ Rate limiting enforces 200 req/min per IP
+- ✅ Session-based S3 access control works
+
+### Customer Management (10 tests)
+- ⏳ Staff can create new customer
+- ⏳ Email validation prevents duplicates
+- ⏳ Stripe customer ID is created successfully
+- ⏳ Payment setup link is sent via email
+- ⏳ Webhook updates payment method ID
+- ⏳ Customer status can be updated
+- ⏳ Customer search works by name/email
+- ⏳ Customer details show package history
+- ⏳ Customer portal shows only own data
+- ⏳ Customer can update contact info
+
+### Package Intake (10 tests)
+- ⏳ Package requires all dimensions and weight
+- ⏳ Customer CID must be valid
+- ⏳ Address validation with Canada Post works
+- ⏳ Invalid addresses can be manually overridden
+- ⏳ Package ID is generated uniquely
+- ⏳ Package status defaults to "Unlabeled"
+- ⏳ Created timestamp is set automatically
+- ⏳ Staff can edit package details
+- ⏳ Barcode is generated/stored correctly
+- ⏳ Package appears in customer's list
+
+[View All 200+ Test Assertions](/plans/001-shipnorth-mvp.md#test-assertions)
+`,
+            changes: `
+# Change History
+
+## Version 1.0.0 - Initial Release
+**Date**: 2025-08-13  
+**Plan**: [001-shipnorth-mvp.md](/plans/001-shipnorth-mvp.md)  
+**Status**: In Progress
+
+### Changes
+- Initial project setup
+- Monorepo structure with Turborepo
+- Express API with TypeScript
+- Next.js frontend with Tailwind CSS
+- AWS CDK infrastructure
+- DynamoDB single-table design
+- GitHub Actions CI/CD pipeline
+- Comprehensive test assertions (200+)
+
+### Contributors
+- Keith Seim (kjsdesigns)
+- Claude (AI Assistant)
+
+### Commits
+- \`d705300\` Initial project setup: monorepo structure with Express API and Next.js
+
+---
+
+## Upcoming Changes
+
+### Version 1.1.0 (Planned)
+- Stripe integration
+- ShipStation API connection
+- Customer portal authentication
+- Package tracking UI
+
+### Version 1.2.0 (Planned)
+- Driver mobile interface
+- GPS tracking
+- Load optimization AI
+- Advanced reporting
+`
+        };
+
+        // Navigation handling
+        function loadContent(section) {
+            const contentDiv = document.getElementById('content');
+            const markdown = docs[section] || docs.overview;
+            contentDiv.innerHTML = marked.parse(markdown);
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.href.includes('#' + section)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Handle navigation clicks
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.href.split('#')[1];
+                loadContent(section);
+                window.location.hash = section;
+            });
+        });
+
+        // Load initial content
+        const initialSection = window.location.hash.slice(1) || 'overview';
+        loadContent(initialSection);
+
+        // Handle browser back/forward
+        window.addEventListener('hashchange', () => {
+            const section = window.location.hash.slice(1) || 'overview';
+            loadContent(section);
+        });
+    </script>
+</body>
+</html>

@@ -1,46 +1,325 @@
-import Link from 'next/link'
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { 
+  Package, Truck, MapPin, Shield, Clock, DollarSign,
+  Search, ArrowRight, CheckCircle, Users, Zap
+} from 'lucide-react';
+
+export default function HomePage() {
+  const router = useRouter();
+  const [trackingNumber, setTrackingNumber] = useState('');
+
+  const handleTracking = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (trackingNumber) {
+      router.push(`/track/${trackingNumber}`);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm">
-        <h1 className="text-4xl font-bold text-center mb-8">Shipnorth</h1>
-        <p className="text-center mb-8 text-gray-600">
-          Autonomous shipping and billing system
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-          <Link
-            href="/staff"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100"
-          >
-            <h2 className="mb-3 text-2xl font-semibold">
-              Staff Portal{' '}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                →
-              </span>
-            </h2>
-            <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              Package intake, label management, and billing operations
-            </p>
-          </Link>
-
-          <Link
-            href="/portal"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100"
-          >
-            <h2 className="mb-3 text-2xl font-semibold">
-              Customer Portal{' '}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                →
-              </span>
-            </h2>
-            <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              Track packages, view invoices, and manage payments
-            </p>
-          </Link>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center">
+              <Package className="h-8 w-8 text-blue-600 mr-3" />
+              <h1 className="text-2xl font-bold text-gray-900">Shipnorth</h1>
+            </div>
+            <nav className="hidden md:flex items-center space-x-8">
+              <a href="#features" className="text-gray-600 hover:text-gray-900">Features</a>
+              <a href="#how-it-works" className="text-gray-600 hover:text-gray-900">How It Works</a>
+              <a href="#pricing" className="text-gray-600 hover:text-gray-900">Pricing</a>
+              <Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Sign In
+              </Link>
+            </nav>
+          </div>
         </div>
-      </div>
-    </main>
-  )
+      </header>
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
+              Autonomous Shipping & Billing
+            </h2>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              Streamline your shipping operations with AI-powered load optimization, 
+              real-time tracking, and automated billing. Ship smarter, not harder.
+            </p>
+            
+            {/* Tracking Form */}
+            <form onSubmit={handleTracking} className="max-w-2xl mx-auto mb-8">
+              <div className="flex bg-white rounded-lg shadow-lg p-2">
+                <input
+                  type="text"
+                  placeholder="Enter tracking number..."
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  className="flex-1 px-4 py-3 text-lg focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center"
+                >
+                  <Search className="h-5 w-5 mr-2" />
+                  Track Package
+                </button>
+              </div>
+            </form>
+
+            <div className="flex justify-center space-x-4">
+              <Link
+                href="/register"
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 flex items-center text-lg font-medium"
+              >
+                Get Started
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </Link>
+              <Link
+                href="/login"
+                className="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-50 border border-blue-600 text-lg font-medium"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Why Choose Shipnorth?
+            </h2>
+            <p className="text-xl text-gray-600">
+              Everything you need to manage shipping operations efficiently
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">AI-Powered Optimization</h3>
+              <p className="text-gray-600">
+                Smart load planning maximizes efficiency and reduces costs with advanced algorithms
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Clock className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Real-Time Tracking</h3>
+              <p className="text-gray-600">
+                GPS tracking updates every 5 minutes for complete visibility of your shipments
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="h-8 w-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Automated Billing</h3>
+              <p className="text-gray-600">
+                Seamless payment processing with Stripe integration and instant invoicing
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-yellow-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Enterprise Security</h3>
+              <p className="text-gray-600">
+                Bank-level encryption and SOC 2 compliance keep your data safe
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Truck className="h-8 w-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Multi-Carrier Support</h3>
+              <p className="text-gray-600">
+                Integrate with all major carriers through ShipStation for best rates
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-indigo-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Role-Based Access</h3>
+              <p className="text-gray-600">
+                Separate portals for staff, customers, and drivers with custom permissions
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-600">
+              Simple, efficient shipping in four easy steps
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <span className="text-xl font-bold text-blue-600">1</span>
+              </div>
+              <h3 className="font-semibold mb-2">Create Package</h3>
+              <p className="text-sm text-gray-600">
+                Staff enters package details and customer information
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <span className="text-xl font-bold text-blue-600">2</span>
+              </div>
+              <h3 className="font-semibold mb-2">Get Quote</h3>
+              <p className="text-sm text-gray-600">
+                System calculates best shipping rates instantly
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <span className="text-xl font-bold text-blue-600">3</span>
+              </div>
+              <h3 className="font-semibold mb-2">Purchase Label</h3>
+              <p className="text-sm text-gray-600">
+                Automatic payment processing and label generation
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <span className="text-xl font-bold text-blue-600">4</span>
+              </div>
+              <h3 className="font-semibold mb-2">Track & Deliver</h3>
+              <p className="text-sm text-gray-600">
+                Real-time updates until successful delivery
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20 bg-blue-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <p className="text-4xl font-bold mb-2">99.9%</p>
+              <p className="text-blue-100">Uptime SLA</p>
+            </div>
+            <div>
+              <p className="text-4xl font-bold mb-2">5 min</p>
+              <p className="text-blue-100">Tracking Updates</p>
+            </div>
+            <div>
+              <p className="text-4xl font-bold mb-2">24/7</p>
+              <p className="text-blue-100">Customer Support</p>
+            </div>
+            <div>
+              <p className="text-4xl font-bold mb-2">30%</p>
+              <p className="text-blue-100">Cost Savings</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Ready to Transform Your Shipping?
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Join thousands of businesses shipping smarter with Shipnorth
+          </p>
+          <Link
+            href="/register"
+            className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 text-lg font-medium inline-flex items-center"
+          >
+            Start Free Trial
+            <ArrowRight className="h-5 w-5 ml-2" />
+          </Link>
+          <p className="mt-4 text-sm text-gray-500">
+            No credit card required • 30-day free trial • Cancel anytime
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center mb-4">
+                <Package className="h-6 w-6 text-blue-400 mr-2" />
+                <span className="text-xl font-bold">Shipnorth</span>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Autonomous shipping and billing for modern businesses
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Product</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-white">Features</a></li>
+                <li><a href="#" className="hover:text-white">Pricing</a></li>
+                <li><a href="#" className="hover:text-white">API Docs</a></li>
+                <li><a href="#" className="hover:text-white">Integrations</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-white">About</a></li>
+                <li><a href="#" className="hover:text-white">Blog</a></li>
+                <li><a href="#" className="hover:text-white">Careers</a></li>
+                <li><a href="#" className="hover:text-white">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-white">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-white">Security</a></li>
+                <li><a href="#" className="hover:text-white">Compliance</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
+            © 2024 Shipnorth. All rights reserved.
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
