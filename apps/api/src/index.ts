@@ -1,0 +1,77 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+// Import routers
+import authRouter from './routes/auth';
+import customersRouter from './routes/customers';
+import packagesRouter from './routes/packages';
+import loadsRouter from './routes/loads';
+import invoicesRouter from './routes/invoices';
+import webhooksRouter from './routes/webhooks';
+import adminRouter from './routes/admin';
+
+// Import middleware
+import { errorHandler } from './middleware/errorHandler';
+import { authenticate } from './middleware/auth';
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+// Global rate limiter - 200 req/min per IP
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 200, // 200 requests per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again later.',
+});
+
+// Middleware
+app.use(helmet());
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+  credentials: true,
+}));
+app.use(compression());
+app.use(morgan('combined'));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(limiter);
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// Public routes
+app.use('/auth', authRouter);
+app.use('/webhooks', webhooksRouter);
+
+// Protected routes
+app.use('/customers', authenticate, customersRouter);
+app.use('/packages', authenticate, packagesRouter);
+app.use('/loads', authenticate, loadsRouter);
+app.use('/invoices', authenticate, invoicesRouter);
+app.use('/admin', authenticate, adminRouter);
+
+// Error handling
+app.use(errorHandler);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 API server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
