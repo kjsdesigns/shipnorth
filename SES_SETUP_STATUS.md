@@ -11,7 +11,7 @@
 
 AWS has sent verification emails to:
 1. **noreply@shipnorth.com** 
-2. **keith@kjsdesigns.ca**
+2. **keith@kjsdesigns.com**
 
 ### ⚠️ ACTION REQUIRED:
 **Check your email inbox** for messages from:
