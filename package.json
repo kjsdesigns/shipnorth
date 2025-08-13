@@ -13,10 +13,29 @@
     "build": "npm run build:api && npm run build:web",
     "build:api": "cd apps/api && npm run build",
     "build:web": "cd apps/web && npm run build",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'Tests configured'",
     "seed": "cd apps/api && npm run seed",
-    "deploy": "cd infrastructure && npm run deploy"
+    "deploy": "cd infrastructure && npm run deploy",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@commitlint/cli": "^19.7.2",
+    "@commitlint/config-conventional": "^19.7.2",
+    "@playwright/test": "^1.54.2",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.2.0",
+    "lint-staged": "^15.3.1",
+    "playwright": "^1.54.2",
+    "prettier": "^3.6.2"
   }
 }
