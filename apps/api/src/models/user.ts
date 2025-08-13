@@ -23,9 +23,12 @@ export class UserModel {
     // Hash password
     const hashedPassword = await bcrypt.hash(user.password, 10);
     
+    // Destructure to avoid overwriting the hashed password
+    const { password, ...userDataWithoutPassword } = user;
+    
     const newUser: User = {
       id,
-      ...user,
+      ...userDataWithoutPassword,
       password: hashedPassword,
       status: user.status || 'active',
     };
@@ -40,7 +43,7 @@ export class UserModel {
     });
 
     // Return user without password
-    const { password, ...userWithoutPassword } = newUser;
+    const { password: _, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
   }
 

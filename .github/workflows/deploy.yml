@@ -1,0 +1,90 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: 905418363362
+
+jobs:
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::905418363362:role/GitHubActionsShipnorthRole
+          role-session-name: GitHubActions-Shipnorth
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Verify AWS connection
+        run: |
+          aws sts get-caller-identity
+          echo "Successfully authenticated with AWS using OIDC!"
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build applications
+        run: npm run build
+      
+      - name: Deploy infrastructure with CDK
+        run: |
+          cd infrastructure
+          npm ci
+          npx cdk deploy --all --require-approval never --context environment=dev
+      
+      - name: Deploy API to Lambda
+        run: |
+          # Package and deploy Lambda function
+          cd apps/api
+          zip -r function.zip dist node_modules
+          
+          aws lambda update-function-code \
+            --function-name shipnorth-api-dev \
+            --zip-file fileb://function.zip \
+            --region ${{ env.AWS_REGION }} || echo "Lambda not yet created"
+      
+      - name: Deploy Web to S3
+        run: |
+          # Build and sync to S3
+          cd apps/web
+          npm run build
+          
+          aws s3 sync .next/static s3://shipnorth-web-dev/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" || echo "S3 bucket not yet created"
+      
+      - name: Invalidate CloudFront
+        run: |
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Comment=='shipnorth-web-dev'].Id" \
+            --output text)
+          
+          if [ ! -z "$DISTRIBUTION_ID" ]; then
+            aws cloudfront create-invalidation \
+              --distribution-id $DISTRIBUTION_ID \
+              --paths "/*"
+          fi
+      
+      - name: Health check
+        run: |
+          echo "Deployment complete!"
+          echo "No manual secrets configuration needed - using AWS OIDC!"

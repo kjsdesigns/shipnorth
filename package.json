@@ -19,6 +19,7 @@
     "prettier:fix": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "echo 'Tests configured'",
+    "test:e2e": "playwright test",
     "seed": "cd apps/api && npm run seed",
     "deploy": "cd infrastructure && npm run deploy"
   },
