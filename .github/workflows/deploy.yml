@@ -40,7 +40,7 @@ jobs:
           echo "Successfully authenticated with AWS using OIDC!"
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Build applications
         run: npm run build
@@ -48,13 +48,13 @@ jobs:
       - name: Build Next.js web application
         run: |
           cd apps/web
-          npm ci
+          npm install
           NEXT_PUBLIC_API_URL=https://rv6q5b27n2.execute-api.ca-central-1.amazonaws.com npm run build
       
       - name: Deploy infrastructure with CDK
         run: |
           cd infrastructure
-          npm ci
+          npm install
           # Deploy both API and Web stacks
           npx cdk deploy ShipnorthSimple-dev --require-approval never --context environment=dev
           npx cdk deploy ShipnorthWeb-dev --require-approval never --context environment=dev
