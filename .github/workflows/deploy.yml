@@ -59,6 +59,21 @@ jobs:
           npx cdk deploy ShipnorthSimple-dev --require-approval never --context environment=dev
           npx cdk deploy ShipnorthWeb-dev --require-approval never --context environment=dev
       
+      - name: Invalidate CloudFront cache for instant updates
+        run: |
+          # Get CloudFront distribution ID
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[0].Id" --output text)
+          echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+          
+          # Create invalidation for all paths
+          aws cloudfront create-invalidation \
+            --distribution-id $DISTRIBUTION_ID \
+            --paths "/*" \
+            --query "Invalidation.Id" \
+            --output text
+          
+          echo "Cache invalidation initiated - updates will be visible immediately!"
+      
       - name: Run post-deployment tests
         run: |
           # Wait for deployment to be ready
