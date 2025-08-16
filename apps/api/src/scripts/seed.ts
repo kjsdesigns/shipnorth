@@ -122,19 +122,43 @@ async function seedDatabase() {
     // Create loads
     const load1 = await LoadModel.create({
       departureDate: new Date().toISOString(),
-      arrivalDate: new Date(Date.now() + 86400000).toISOString(),
+      defaultDeliveryDate: new Date(Date.now() + 86400000).toISOString(),
+      deliveryCities: [
+        {
+          city: 'Toronto',
+          province: 'ON',
+          country: 'CA',
+          expectedDeliveryDate: new Date(Date.now() + 86400000).toISOString(),
+        },
+      ],
       transportMode: 'truck',
       carrierOrTruck: 'Shipnorth Truck #1',
       vehicleId: 'TRUCK001',
       driverName: 'Mike Wilson',
+      driverId: driver.id,
       originAddress: '100 Warehouse Dr, Toronto, ON',
       status: 'planned',
       notes: 'Regular northern route',
+      locationHistory: [],
     });
     console.log('✅ Created load:', load1.id);
 
     const load2 = await LoadModel.create({
       departureDate: new Date(Date.now() + 172800000).toISOString(), // 2 days from now
+      defaultDeliveryDate: new Date(Date.now() + 259200000).toISOString(), // 3 days from now
+      deliveryCities: [
+        {
+          city: 'Montreal',
+          province: 'QC',
+          country: 'CA',
+          expectedDeliveryDate: new Date(Date.now() + 259200000).toISOString(),
+        },
+        {
+          city: 'Ottawa',
+          province: 'ON',
+          country: 'CA',
+        },
+      ],
       transportMode: 'truck',
       carrierOrTruck: 'Shipnorth Truck #2',
       vehicleId: 'TRUCK002',
@@ -142,6 +166,7 @@ async function seedDatabase() {
       originAddress: '100 Warehouse Dr, Toronto, ON',
       status: 'planned',
       notes: 'Eastern route',
+      locationHistory: [],
     });
     console.log('✅ Created load:', load2.id);
 
@@ -318,9 +343,9 @@ async function seedDatabase() {
     console.log('✅ Assigned packages to load');
 
     // Add GPS tracking to active load
-    await LoadModel.updateGPS(load1.id, 43.6532, -79.3832); // Toronto
-    await LoadModel.updateGPS(load1.id, 44.3894, -79.6903); // Barrie
-    await LoadModel.updateGPS(load1.id, 46.4917, -80.9930); // Sudbury
+    await LoadModel.addLocationTracking(load1.id, 43.6532, -79.3832, false, driver.id, 'Toronto, ON'); 
+    await LoadModel.addLocationTracking(load1.id, 44.3894, -79.6903, false, driver.id, 'Barrie, ON');
+    await LoadModel.addLocationTracking(load1.id, 46.4917, -80.9930, false, driver.id, 'Sudbury, ON');
     console.log('✅ Added GPS tracking data');
 
     console.log('\n🎉 Database seeded successfully!');

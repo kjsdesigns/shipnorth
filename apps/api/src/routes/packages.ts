@@ -3,22 +3,154 @@ import { authorize } from '../middleware/auth';
 import PayPalService from '../services/paypal';
 import { PackageModel } from '../models/package';
 import { CustomerModel } from '../models/customer';
+import { NotificationService } from '../services/notifications';
 
 const router = Router();
 
 // List packages
 router.get('/', async (req, res) => {
-  res.json({ packages: [] });
+  try {
+    const { status, limit = 50, page = 1 } = req.query;
+    
+    let packages;
+    if (status) {
+      packages = await PackageModel.getPackagesByLoadStatus(status as string);
+    } else {
+      packages = await PackageModel.list(Number(limit));
+    }
+    
+    // Add expected delivery dates
+    const packagesWithDelivery = await Promise.all(
+      packages.map(async (pkg) => {
+        const expectedDeliveryDate = await PackageModel.getExpectedDeliveryDate(pkg.id);
+        return { ...pkg, expectedDeliveryDate };
+      })
+    );
+    
+    res.json({ 
+      packages: packagesWithDelivery,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: packages.length
+      }
+    });
+  } catch (error: any) {
+    console.error('Error listing packages:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get package stats
+router.get('/stats/overview', async (req, res) => {
+  try {
+    const stats = await PackageModel.getPackageStats();
+    res.json(stats);
+  } catch (error: any) {
+    console.error('Error getting package stats:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Get package details
 router.get('/:id', async (req, res) => {
-  res.json({ package: { id: req.params.id } });
+  try {
+    const pkg = await PackageModel.findById(req.params.id);
+    if (!pkg) {
+      return res.status(404).json({ error: 'Package not found' });
+    }
+    
+    const expectedDeliveryDate = await PackageModel.getExpectedDeliveryDate(pkg.id);
+    res.json({ 
+      package: { ...pkg, expectedDeliveryDate }
+    });
+  } catch (error: any) {
+    console.error('Error getting package:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Bulk assign packages to load
+router.post('/bulk-assign', authorize('staff', 'admin'), async (req, res) => {
+  try {
+    const { packageIds, loadId } = req.body;
+    
+    if (!packageIds || !Array.isArray(packageIds)) {
+      return res.status(400).json({ error: 'packageIds array is required' });
+    }
+    
+    if (!loadId) {
+      return res.status(400).json({ error: 'loadId is required' });
+    }
+    
+    // Update each package with the load assignment
+    for (const packageId of packageIds) {
+      await PackageModel.update(packageId, { loadId });
+    }
+    
+    res.json({ success: true, assignedCount: packageIds.length });
+  } catch (error: any) {
+    console.error('Error bulk assigning packages:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Mark package as delivered
+router.post('/:id/mark-delivered', authorize('staff', 'admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { deliveredAt, photoUrl, signature, recipientName, relationship } = req.body;
+    const confirmedBy = req.user?.id || 'system';
+    
+    const updatedPackage = await PackageModel.markAsDelivered(id, {
+      deliveredAt,
+      photoUrl,
+      signature,
+      recipientName,
+      relationship,
+      confirmedBy,
+    });
+    
+    if (!updatedPackage) {
+      return res.status(404).json({ error: 'Package not found' });
+    }
+
+    // Send delivery notification
+    try {
+      const customer = await CustomerModel.findById(updatedPackage.customerId);
+      if (customer) {
+        await NotificationService.notifyPackageStatusChange(
+          id,
+          'delivered',
+          customer,
+          {
+            trackingNumber: updatedPackage.trackingNumber,
+            deliveryConfirmation: updatedPackage.deliveryConfirmation,
+          }
+        );
+      }
+    } catch (notificationError) {
+      console.error('Failed to send delivery notification:', notificationError);
+      // Don't fail the request if notification fails
+    }
+    
+    res.json({ success: true, package: updatedPackage });
+  } catch (error: any) {
+    console.error('Error marking package as delivered:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Create package (staff only)
 router.post('/', authorize('staff', 'admin'), async (req, res) => {
-  res.json({ package: { id: '123', ...req.body } });
+  try {
+    const packageData = req.body;
+    const newPackage = await PackageModel.create(packageData);
+    res.json({ package: newPackage });
+  } catch (error: any) {
+    console.error('Error creating package:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Get shipping quotes

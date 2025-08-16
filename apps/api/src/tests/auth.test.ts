@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import request from 'supertest';
-import app from '../index';
+import { app } from '../index';
 import { UserModel } from '../models/user';
 
 describe('Authentication API', () => {

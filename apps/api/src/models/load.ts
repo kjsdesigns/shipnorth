@@ -1,24 +1,44 @@
 import { DatabaseService, generateId } from '../services/database';
 
+export interface LoadDeliveryCity {
+  city: string;
+  province: string;
+  country: string;
+  expectedDeliveryDate?: string;
+  distance?: number;
+  drivingDuration?: number;
+}
+
+export interface LocationTracking {
+  lat: number;
+  lng: number;
+  timestamp: string;
+  address?: string;
+  isManual: boolean;
+  addedBy?: string; // userId who added manual entry
+}
+
 export interface Load {
   id: string;
   departureDate: string;
-  arrivalDate?: string;
+  defaultDeliveryDate?: string;
+  deliveryCities: LoadDeliveryCity[];
   transportMode: 'truck' | 'rail' | 'air' | 'sea';
   carrierOrTruck?: string;
   vehicleId?: string;
   driverName?: string;
+  driverId?: string;
   originAddress?: string;
   notes?: string;
-  status: 'planned' | 'departed' | 'arrived' | 'closed';
+  status: 'planned' | 'in_transit' | 'delivered' | 'complete';
   totalPackages?: number;
   totalWeight?: number;
   manifestUrl?: string;
-  gpsTracking?: {
-    lat: number;
-    lng: number;
-    timestamp: string;
-  }[];
+  currentLocation?: LocationTracking;
+  locationHistory: LocationTracking[];
+  routeOptimized?: boolean;
+  estimatedDistance?: number;
+  estimatedDuration?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -32,9 +52,10 @@ export class LoadModel {
       ...load,
       status: load.status || 'planned',
       transportMode: load.transportMode || 'truck',
+      deliveryCities: load.deliveryCities || [],
       totalPackages: 0,
       totalWeight: 0,
-      gpsTracking: [],
+      locationHistory: [],
     };
 
     await DatabaseService.put({
@@ -145,20 +166,51 @@ export class LoadModel {
     });
   }
 
-  static async updateGPS(loadId: string, lat: number, lng: number): Promise<boolean> {
+  static async addLocationTracking(loadId: string, lat: number, lng: number, isManual = false, addedBy?: string, address?: string): Promise<boolean> {
     const load = await this.findById(loadId);
     if (!load) return false;
 
-    const gpsEntry = {
+    const locationEntry: LocationTracking = {
       lat,
       lng,
       timestamp: new Date().toISOString(),
+      address,
+      isManual,
+      addedBy,
     };
 
-    const gpsTracking = [...(load.gpsTracking || []), gpsEntry];
+    const locationHistory = [...(load.locationHistory || []), locationEntry];
 
-    await this.update(loadId, { gpsTracking });
+    await this.update(loadId, { 
+      locationHistory,
+      currentLocation: locationEntry 
+    });
     return true;
+  }
+
+  static async updateDeliveryCities(loadId: string, cities: LoadDeliveryCity[]): Promise<boolean> {
+    const load = await this.findById(loadId);
+    if (!load) return false;
+
+    await this.update(loadId, { deliveryCities: cities });
+    return true;
+  }
+
+  static async getExpectedDeliveryDate(loadId: string, packageCity: string): Promise<string | null> {
+    const load = await this.findById(loadId);
+    if (!load) return null;
+
+    // Find city-specific delivery date
+    const cityDelivery = load.deliveryCities?.find(city => 
+      city.city.toLowerCase() === packageCity.toLowerCase()
+    );
+    
+    if (cityDelivery?.expectedDeliveryDate) {
+      return cityDelivery.expectedDeliveryDate;
+    }
+
+    // Fall back to default delivery date
+    return load.defaultDeliveryDate || null;
   }
 
   static async generateManifest(loadId: string): Promise<string> {

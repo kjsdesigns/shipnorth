@@ -1,4 +1,5 @@
 import { DatabaseService, generateId } from '../services/database';
+import { LoadModel } from './load';
 
 export interface Package {
   id: string;
@@ -28,6 +29,14 @@ export interface Package {
   shippingCost?: number;
   paidAt?: string;
   shipmentStatus: 'ready' | 'in_transit' | 'delivered' | 'exception' | 'returned';
+  deliveryConfirmation?: {
+    deliveredAt: string;
+    photoUrl?: string;
+    signature?: string;
+    recipientName?: string;
+    relationship?: string;
+    confirmedBy: string; // staff user ID
+  };
   shipTo: {
     name: string;
     address1: string;
@@ -202,6 +211,67 @@ export class PackageModel {
       trackingNumber,
       labelUrl,
       carrier: pkg.quotedCarrier || 'Canada Post',
+    };
+  }
+
+  static async markAsDelivered(id: string, deliveryData: {
+    deliveredAt?: string;
+    photoUrl?: string;
+    signature?: string;
+    recipientName?: string;
+    relationship?: string;
+    confirmedBy: string;
+  }): Promise<Package | null> {
+    const pkg = await this.findById(id);
+    if (!pkg) return null;
+
+    const deliveryConfirmation = {
+      deliveredAt: deliveryData.deliveredAt || new Date().toISOString(),
+      photoUrl: deliveryData.photoUrl,
+      signature: deliveryData.signature,
+      recipientName: deliveryData.recipientName,
+      relationship: deliveryData.relationship,
+      confirmedBy: deliveryData.confirmedBy,
+    };
+
+    return await this.update(id, {
+      shipmentStatus: 'delivered',
+      deliveryDate: deliveryConfirmation.deliveredAt,
+      deliveryConfirmation,
+    });
+  }
+
+  static async getExpectedDeliveryDate(id: string): Promise<string | null> {
+    const pkg = await this.findById(id);
+    if (!pkg?.loadId) return null;
+
+    return await LoadModel.getExpectedDeliveryDate(pkg.loadId, pkg.shipTo.city);
+  }
+
+  static async getPackagesByLoadStatus(status?: string): Promise<Package[]> {
+    const packages = await this.list(1000); // Get more packages for filtering
+    
+    if (!status) return packages;
+
+    return packages.filter(pkg => {
+      if (status === 'unassigned') return !pkg.loadId;
+      if (status === 'assigned') return pkg.loadId && pkg.shipmentStatus === 'ready';
+      if (status === 'in_transit') return pkg.shipmentStatus === 'in_transit';
+      return false;
+    });
+  }
+
+  static async getPackageStats(): Promise<{
+    unassigned: number;
+    assigned: number;
+    in_transit: number;
+  }> {
+    const packages = await this.list(1000);
+    
+    return {
+      unassigned: packages.filter(pkg => !pkg.loadId).length,
+      assigned: packages.filter(pkg => pkg.loadId && pkg.shipmentStatus === 'ready').length,
+      in_transit: packages.filter(pkg => pkg.shipmentStatus === 'in_transit').length,
     };
   }
 }

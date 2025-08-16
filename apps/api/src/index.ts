@@ -19,6 +19,7 @@ import loadsRouter from './routes/loads';
 import invoicesRouter from './routes/invoices';
 import webhooksRouter from './routes/webhooks';
 import adminRouter from './routes/admin';
+import settingsRouter from './routes/settings';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -80,12 +81,17 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/webhooks', webhooksRouter);
 
+// Customer registration (public)
+app.use('/customers/register', customersRouter);
+app.use('/customers/complete-registration', customersRouter);
+
 // Protected routes
 app.use('/customers', authenticate, customersRouter);
 app.use('/packages', authenticate, packagesRouter);
 app.use('/loads', authenticate, loadsRouter);
 app.use('/invoices', authenticate, invoicesRouter);
 app.use('/admin', authenticate, adminRouter);
+app.use('/settings', authenticate, settingsRouter);
 
 // Error handling
 app.use(errorHandler);
