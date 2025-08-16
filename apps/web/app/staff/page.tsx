@@ -30,6 +30,15 @@ export default function StaffDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+
+  useEffect(() => {
+    // Check URL parameters for tab
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam && ['overview', 'packages', 'customers', 'loads'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, []);
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
   const [currentFilter, setCurrentFilter] = useState('');
   const [savedFilters, setSavedFilters] = useState<any[]>([]);

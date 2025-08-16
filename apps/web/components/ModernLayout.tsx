@@ -59,10 +59,10 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
       case 'staff':
         return [
           ...baseItems,
-          { name: 'Customers', href: '/staff/customers', icon: Users },
-          { name: 'Packages', href: '/staff/packages', icon: Package },
-          { name: 'Loads', href: '/staff/loads', icon: Truck },
-          { name: 'Invoices', href: '/staff/invoices', icon: FileText },
+          { name: 'Customers', href: '/staff?tab=customers', icon: Users },
+          { name: 'Packages', href: '/staff?tab=packages', icon: Package },
+          { name: 'Loads', href: '/staff?tab=loads', icon: Truck },
+          { name: 'Invoices', href: '/staff?tab=invoices', icon: FileText },
           { name: 'Reports', href: '/staff/reports', icon: BarChart3 },
         ];
       case 'driver':
