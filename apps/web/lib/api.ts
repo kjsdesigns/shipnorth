@@ -107,11 +107,16 @@ export const customerAPI = {
   getPackages: (id: string) => api.get(`/customers/${id}/packages`),
   getInvoices: (id: string) => api.get(`/customers/${id}/invoices`),
   setupPayment: (id: string) => api.post(`/customers/${id}/setup-payment`),
+  register: (data: any) => api.post('/customers/register', data),
+  completeRegistration: (customerId: string, setupIntentId: string) => 
+    api.post('/customers/complete-registration', { customerId, setupIntentId }),
+  import: (customers: any[]) => api.post('/customers/import', { customers }),
 };
 
 // Package API
 export const packageAPI = {
-  list: () => api.get('/packages'),
+  list: (params?: { limit?: number; status?: string; page?: number }) => 
+    api.get('/packages', { params }),
   get: (id: string) => api.get(`/packages/${id}`),
   create: (data: any) => api.post('/packages', data),
   update: (id: string, data: any) => api.put(`/packages/${id}`, data),
@@ -120,6 +125,11 @@ export const packageAPI = {
   purchaseLabel: (id: string) => api.post(`/packages/${id}/purchase-label`),
   charge: (id: string) => api.post(`/packages/${id}/charge`),
   getTracking: (id: string) => api.get(`/packages/${id}/tracking`),
+  getStats: () => api.get('/packages/stats/overview'),
+  bulkAssign: (packageIds: string[], loadId: string) => 
+    api.post('/packages/bulk-assign', { packageIds, loadId }),
+  markDelivered: (id: string, deliveryData: any) => 
+    api.post(`/packages/${id}/mark-delivered`, deliveryData),
 };
 
 // Load API
@@ -134,6 +144,11 @@ export const loadAPI = {
   getManifest: (id: string) => api.get(`/loads/${id}/manifest`),
   updateGPS: (id: string, lat: number, lng: number) => 
     api.post(`/loads/${id}/gps`, { lat, lng }),
+  updateDeliveryCities: (id: string, cities: any[]) =>
+    api.put(`/loads/${id}/delivery-cities`, { cities }),
+  addLocation: (id: string, lat: number, lng: number, isManual: boolean, address?: string) =>
+    api.post(`/loads/${id}/location`, { lat, lng, isManual, address }),
+  getLocations: (id: string) => api.get(`/loads/${id}/locations`),
 };
 
 // Invoice API
@@ -142,4 +157,12 @@ export const invoiceAPI = {
   get: (id: string) => api.get(`/invoices/${id}`),
   retryPayment: (id: string) => api.post(`/invoices/${id}/retry-payment`),
   refund: (id: string) => api.post(`/invoices/${id}/refund`),
+};
+
+// Settings API
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (settings: any) => api.put('/settings', settings),
+  getOriginAddress: () => api.get('/settings/origin-address'),
+  updateOriginAddress: (address: any) => api.put('/settings/origin-address', address),
 };

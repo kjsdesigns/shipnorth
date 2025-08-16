@@ -4,12 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '@/lib/api';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Package, Truck, AlertCircle, Sun, Moon, Monitor, Eye, EyeOff } from 'lucide-react';
+import { Package, Truck, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { theme, setTheme, resolvedTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -67,58 +66,21 @@ export default function LoginPage() {
     }
   };
 
-  // Theme toggle component
-  const ThemeToggle = () => (
-    <div className="absolute top-4 right-4 flex items-center space-x-1 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-md border border-gray-200 dark:border-gray-700">
-      <button
-        onClick={() => setTheme('light')}
-        className={`p-2 rounded-md transition-colors ${
-          theme === 'light'
-            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-        }`}
-        title="Light theme"
-      >
-        <Sun className="h-4 w-4" />
-      </button>
-      <button
-        onClick={() => setTheme('dark')}
-        className={`p-2 rounded-md transition-colors ${
-          theme === 'dark'
-            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-        }`}
-        title="Dark theme"
-      >
-        <Moon className="h-4 w-4" />
-      </button>
-      <button
-        onClick={() => setTheme('system')}
-        className={`p-2 rounded-md transition-colors ${
-          theme === 'system'
-            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-        }`}
-        title="System theme"
-      >
-        <Monitor className="h-4 w-4" />
-      </button>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4 relative">
-      <ThemeToggle />
+      <ThemeToggle className="absolute top-4 right-4" />
       
       <div className="max-w-md w-full">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 backdrop-blur-sm bg-white/80 dark:bg-gray-800/80">
           <div className="flex items-center justify-center mb-8">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl mr-3">
-              <Package className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-              Shipnorth
-            </h1>
+            <Link href="/" className="flex items-center group transition-transform hover:scale-105">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl mr-3 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
+                <Package className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                Shipnorth
+              </h1>
+            </Link>
           </div>
           
           <div className="text-center mb-6">

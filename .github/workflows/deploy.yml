@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: ca-central-1
   AWS_ACCOUNT_ID: 905418363362
 
 jobs:
@@ -45,46 +45,31 @@ jobs:
       - name: Build applications
         run: npm run build
       
+      - name: Build Next.js web application
+        run: |
+          cd apps/web
+          npm ci
+          NEXT_PUBLIC_API_URL=https://rv6q5b27n2.execute-api.ca-central-1.amazonaws.com npm run build
+      
       - name: Deploy infrastructure with CDK
         run: |
           cd infrastructure
           npm ci
-          npx cdk deploy --all --require-approval never --context environment=dev
+          # Deploy both API and Web stacks
+          npx cdk deploy ShipnorthSimple-dev --require-approval never --context environment=dev
+          npx cdk deploy ShipnorthWeb-dev --require-approval never --context environment=dev
       
-      - name: Deploy API to Lambda
+      - name: Run post-deployment tests
         run: |
-          # Package and deploy Lambda function
-          cd apps/api
-          zip -r function.zip dist node_modules
+          # Wait for deployment to be ready
+          sleep 30
           
-          aws lambda update-function-code \
-            --function-name shipnorth-api-dev \
-            --zip-file fileb://function.zip \
-            --region ${{ env.AWS_REGION }} || echo "Lambda not yet created"
-      
-      - name: Deploy Web to S3
-        run: |
-          # Build and sync to S3
-          cd apps/web
-          npm run build
-          
-          aws s3 sync .next/static s3://shipnorth-web-dev/ \
-            --delete \
-            --cache-control "public, max-age=31536000, immutable" || echo "S3 bucket not yet created"
-      
-      - name: Invalidate CloudFront
-        run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions \
-            --query "DistributionList.Items[?Comment=='shipnorth-web-dev'].Id" \
-            --output text)
-          
-          if [ ! -z "$DISTRIBUTION_ID" ]; then
-            aws cloudfront create-invalidation \
-              --distribution-id $DISTRIBUTION_ID \
-              --paths "/*"
-          fi
+          # Run E2E tests against dev environment
+          TEST_ENV=dev npm run test:e2e
       
       - name: Health check
         run: |
           echo "Deployment complete!"
+          echo "API Backend: https://rv6q5b27n2.execute-api.ca-central-1.amazonaws.com"
+          echo "Web Frontend: https://d3i19husj7b5d7.cloudfront.net"
           echo "No manual secrets configuration needed - using AWS OIDC!"

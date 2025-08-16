@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal - Shipnorth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <svg class="h-8 w-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                        <h1 class="text-2xl font-bold text-gray-900">Shipnorth Customer Portal</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span id="userEmail" class="text-gray-600"></span>
+                        <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Customer Portal</h2>
+                
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">My Shipments</h3>
+                    </div>
+                    <div class="px-6 py-4">
+                        <div id="shipmentsList" class="space-y-4">
+                            <p class="text-gray-600">Loading your shipments...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'https://rv6q5b27n2.execute-api.ca-central-1.amazonaws.com';
+        
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const accessToken = localStorage.getItem('accessToken');
+            
+            if (!accessToken || user.role !== 'customer') {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            document.getElementById('userEmail').textContent = user.email;
+            loadShipments();
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        });
+        
+        // Load customer shipments
+        async function loadShipments() {
+            try {
+                const accessToken = localStorage.getItem('accessToken');
+                const response = await fetch(`${API_URL}/packages`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const shipmentsList = document.getElementById('shipmentsList');
+                    
+                    if (data.packages && data.packages.length > 0) {
+                        shipmentsList.innerHTML = data.packages.map(pkg => 
+                            `<div class="p-4 bg-gray-50 rounded-lg border">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Package #${pkg.id}</h4>
+                                        <p class="text-sm text-gray-600">Status: ${pkg.status || 'pending'}</p>
+                                        <p class="text-sm text-gray-600">Tracking: ${pkg.trackingNumber || 'Not assigned'}</p>
+                                    </div>
+                                    <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                        Track Package
+                                    </button>
+                                </div>
+                            </div>`
+                        ).join('');
+                    } else {
+                        shipmentsList.innerHTML = '<p class="text-gray-600">No shipments found</p>';
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load shipments:', error);
+                document.getElementById('shipmentsList').innerHTML = '<p class="text-red-600">Failed to load shipments</p>';
+            }
+        }
+    </script>
+</body>
+</html>

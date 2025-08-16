@@ -4,11 +4,11 @@ import { useState, useEffect, Fragment } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '@/lib/api';
-import { useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ThemeToggle';
 import {
   Package, Users, Truck, FileText, BarChart3, Settings,
   LogOut, Menu, X, Home, Bell, Search, ChevronDown,
-  User, CreditCard, Map, DollarSign, Sun, Moon, Monitor,
+  User, CreditCard, Map, DollarSign,
   Package2, UserCheck, TrendingUp, Activity, Layers
 } from 'lucide-react';
 
@@ -20,7 +20,6 @@ interface ModernLayoutProps {
 export default function ModernLayout({ children, role }: ModernLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { theme, setTheme, resolvedTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [notifications] = useState(3);
@@ -90,9 +89,9 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
   const navItems = getNavItems();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 flex">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out lg:translate-x-0 lg:relative lg:z-0 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex h-full flex-col">
@@ -175,9 +174,9 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="flex flex-col flex-1 min-h-screen">
         {/* Top bar */}
-        <header className="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shrink-0">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center flex-1">
@@ -203,29 +202,7 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
 
               <div className="flex items-center gap-4">
                 {/* Theme toggle */}
-                <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                  <button
-                    onClick={() => setTheme('light')}
-                    className={`p-1.5 rounded ${theme === 'light' ? 'bg-white dark:bg-gray-600 shadow-sm' : ''} transition-all`}
-                    title="Light mode"
-                  >
-                    <Sun className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                  </button>
-                  <button
-                    onClick={() => setTheme('system')}
-                    className={`p-1.5 rounded ${theme === 'system' ? 'bg-white dark:bg-gray-600 shadow-sm' : ''} transition-all`}
-                    title="System theme"
-                  >
-                    <Monitor className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                  </button>
-                  <button
-                    onClick={() => setTheme('dark')}
-                    className={`p-1.5 rounded ${theme === 'dark' ? 'bg-white dark:bg-gray-600 shadow-sm' : ''} transition-all`}
-                    title="Dark mode"
-                  >
-                    <Moon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                  </button>
-                </div>
+                <ThemeToggle />
 
                 {/* Notifications */}
                 <button className="relative text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
@@ -268,7 +245,7 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1">
+        <main className="flex-1 overflow-auto">
           <div className="py-6">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               {children}

@@ -47,6 +47,7 @@ Limit to maximum 6 questions at a time for easier responses.
    - Integration tests (API/DB)
    - E2E tests (Playwright in browser)
 4. Impossible to break dev server with changes
+5. **CRITICAL UI/UX Rule**: Any time making UI/UX changes, MUST use Playwright to verify functionality and visual correctness BEFORE telling user it's complete
 
 ### Development Workflow
 1. Local changes trigger tests automatically
