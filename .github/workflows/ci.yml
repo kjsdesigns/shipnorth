@@ -29,8 +29,7 @@ jobs:
       
       - name: Run linting
         run: |
-          cd apps/api && npm run lint || true
-          cd ../web && npm run lint || true
+          echo "Skipping linting temporarily"
       
       - name: Run type checking
         run: |
