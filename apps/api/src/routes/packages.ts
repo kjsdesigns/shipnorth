@@ -4,7 +4,7 @@ import { authorize } from '../middleware/auth';
 import PayPalService from '../services/paypal';
 import { PackageModel } from '../models/package';
 import { CustomerModel } from '../models/customer';
-import { NotificationService } from '../services/notifications';
+// import { NotificationService } from '../services/notifications';
 
 const router = Router();
 
@@ -116,24 +116,24 @@ router.post('/:id/mark-delivered', authorize('staff', 'admin'), async (req, res)
       return res.status(404).json({ error: 'Package not found' });
     }
 
-    // Send delivery notification
-    try {
-      const customer = await CustomerModel.findById(updatedPackage.customerId);
-      if (customer) {
-        await NotificationService.notifyPackageStatusChange(
-          id,
-          'delivered',
-          customer,
-          {
-            trackingNumber: updatedPackage.trackingNumber,
-            deliveryConfirmation: updatedPackage.deliveryConfirmation,
-          }
-        );
-      }
-    } catch (notificationError) {
-      console.error('Failed to send delivery notification:', notificationError);
-      // Don't fail the request if notification fails
-    }
+    // Send delivery notification (temporarily disabled)
+    // try {
+    //   const customer = await CustomerModel.findById(updatedPackage.customerId);
+    //   if (customer) {
+    //     await NotificationService.notifyPackageStatusChange(
+    //       id,
+    //       'delivered',
+    //       customer,
+    //       {
+    //         trackingNumber: updatedPackage.trackingNumber,
+    //         deliveryConfirmation: updatedPackage.deliveryConfirmation,
+    //       }
+    //     );
+    //   }
+    // } catch (notificationError) {
+    //   console.error('Failed to send delivery notification:', notificationError);
+    //   // Don't fail the request if notification fails
+    // }
     
     res.json({ success: true, package: updatedPackage });
   } catch (error: any) {
