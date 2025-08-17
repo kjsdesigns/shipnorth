@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
+// import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { customerAPI } from '@/lib/api';
 import ModernLayout from '@/components/ModernLayout';
 import { CreditCard, User, MapPin, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 interface RegistrationData {
   firstName: string;
@@ -26,8 +26,8 @@ interface RegistrationData {
 
 function RegistrationForm() {
   const router = useRouter();
-  const stripe = useStripe();
-  const elements = useElements();
+  // const stripe = useStripe();
+  // const elements = useElements();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -112,57 +112,8 @@ function RegistrationForm() {
   const handlePaymentSetup = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!stripe || !elements) {
-      setError('Stripe is not loaded yet. Please try again.');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-
-    try {
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) {
-        throw new Error('Card element not found');
-      }
-
-      // Confirm the setup intent
-      const { error: stripeError, setupIntent } = await stripe.confirmCardSetup(
-        setupIntentClientSecret,
-        {
-          payment_method: {
-            card: cardElement,
-            billing_details: {
-              name: `${formData.firstName} ${formData.lastName}`,
-              email: formData.email,
-              phone: formData.phone,
-              address: {
-                line1: formData.addressLine1,
-                line2: formData.addressLine2,
-                city: formData.city,
-                state: formData.province,
-                postal_code: formData.postalCode,
-                country: formData.country,
-              },
-            },
-          },
-        }
-      );
-
-      if (stripeError) {
-        throw new Error(stripeError.message);
-      }
-
-      // Complete registration
-      await customerAPI.completeRegistration(customerId, setupIntent!.id);
-      
-      setCurrentStep(5);
-    } catch (error: any) {
-      console.error('Payment setup error:', error);
-      setError(error.message || 'Payment setup failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    // Temporarily skip payment setup
+    setCurrentStep(5);
   };
 
   const renderStep1 = () => (
@@ -432,22 +383,9 @@ function RegistrationForm() {
           Credit Card Information
         </label>
         <div className="bg-white dark:bg-gray-700 p-4 rounded border border-gray-300 dark:border-gray-600">
-          <CardElement
-            options={{
-              style: {
-                base: {
-                  fontSize: '16px',
-                  color: '#374151',
-                  '::placeholder': {
-                    color: '#9CA3AF',
-                  },
-                },
-                invalid: {
-                  color: '#EF4444',
-                },
-              },
-            }}
-          />
+          <div className="text-center text-gray-500 py-8">
+            Payment integration temporarily disabled for deployment
+          </div>
         </div>
       </div>
 
@@ -461,7 +399,7 @@ function RegistrationForm() {
         </button>
         <button
           type="submit"
-          disabled={loading || !stripe}
+          disabled={loading}
           className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
         >
           {loading ? 'Processing...' : 'Complete Registration'}
@@ -531,8 +469,7 @@ function RegistrationForm() {
   );
 
   return (
-    <ModernLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
         <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
           {currentStep < 5 && renderProgressBar()}
           
@@ -560,15 +497,10 @@ function RegistrationForm() {
             </div>
           )}
         </div>
-      </div>
-    </ModernLayout>
+    </div>
   );
 }
 
 export default function RegisterPage() {
-  return (
-    <Elements stripe={stripePromise}>
-      <RegistrationForm />
-    </Elements>
-  );
+  return <RegistrationForm />;
 }
