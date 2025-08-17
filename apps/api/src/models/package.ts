@@ -1,5 +1,5 @@
 import { DatabaseService, generateId } from '../services/database';
-import { LoadModel } from './load';
+// import { LoadModel } from './load';
 
 export interface Package {
   id: string;
@@ -245,7 +245,8 @@ export class PackageModel {
     const pkg = await this.findById(id);
     if (!pkg?.loadId) return null;
 
-    return await LoadModel.getExpectedDeliveryDate(pkg.loadId, pkg.shipTo.city);
+    // return await LoadModel.getExpectedDeliveryDate(pkg.loadId, pkg.shipTo.city);
+    return null; // Temporarily disabled
   }
 
   static async getPackagesByLoadStatus(status?: string): Promise<Package[]> {
