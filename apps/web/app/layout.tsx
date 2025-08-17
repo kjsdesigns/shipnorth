@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { ThemeProvider } from '@/contexts/ThemeContext'
-import './globals.css'
+import './globals-simple.css'
 
 export const metadata: Metadata = {
   title: 'Shipnorth - Modern Logistics Platform',
