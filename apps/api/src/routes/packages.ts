@@ -1,3 +1,4 @@
+/// <reference path="../types/express.d.ts" />
 import { Router } from 'express';
 import { authorize } from '../middleware/auth';
 import PayPalService from '../services/paypal';
