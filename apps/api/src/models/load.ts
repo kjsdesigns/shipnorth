@@ -46,7 +46,7 @@ export interface Load {
 export class LoadModel {
   static async create(load: Omit<Load, 'id' | 'createdAt' | 'updatedAt'>): Promise<Load> {
     const id = generateId();
-    
+
     const newLoad: Load = {
       id,
       ...load,
@@ -77,9 +77,7 @@ export class LoadModel {
 
   static async findByDate(date: string): Promise<Load[]> {
     const items = await DatabaseService.queryByGSI('GSI2', `DATE#${date}`);
-    return items
-      .filter((item: any) => item.Type === 'Load')
-      .map((item: any) => item.Data);
+    return items.filter((item: any) => item.Type === 'Load').map((item: any) => item.Data);
   }
 
   static async update(id: string, updates: Partial<Load>): Promise<Load | null> {
@@ -87,11 +85,11 @@ export class LoadModel {
     if (!current) return null;
 
     const updatedLoad = { ...current, ...updates };
-    
+
     const result = await DatabaseService.update(`LOAD#${id}`, 'METADATA', {
       Data: updatedLoad,
     });
-    
+
     return result ? result.Data : null;
   }
 
@@ -127,7 +125,7 @@ export class LoadModel {
     if (!load) return false;
 
     // Add packages to load
-    const putItems = packageIds.map(packageId => ({
+    const putItems = packageIds.map((packageId) => ({
       PK: `LOAD#${loadId}`,
       SK: `PACKAGE#${packageId}`,
       Type: 'LoadPackageRelation',
@@ -152,7 +150,7 @@ export class LoadModel {
   static async updateTotals(loadId: string): Promise<void> {
     const packageIds = await this.getPackages(loadId);
     let totalWeight = 0;
-    
+
     for (const packageId of packageIds) {
       const pkg = await DatabaseService.get(`PACKAGE#${packageId}`, 'METADATA');
       if (pkg && pkg.Data) {
@@ -166,7 +164,14 @@ export class LoadModel {
     });
   }
 
-  static async addLocationTracking(loadId: string, lat: number, lng: number, isManual = false, addedBy?: string, address?: string): Promise<boolean> {
+  static async addLocationTracking(
+    loadId: string,
+    lat: number,
+    lng: number,
+    isManual = false,
+    addedBy?: string,
+    address?: string
+  ): Promise<boolean> {
     const load = await this.findById(loadId);
     if (!load) return false;
 
@@ -181,9 +186,9 @@ export class LoadModel {
 
     const locationHistory = [...(load.locationHistory || []), locationEntry];
 
-    await this.update(loadId, { 
+    await this.update(loadId, {
       locationHistory,
-      currentLocation: locationEntry 
+      currentLocation: locationEntry,
     });
     return true;
   }
@@ -196,15 +201,18 @@ export class LoadModel {
     return true;
   }
 
-  static async getExpectedDeliveryDate(loadId: string, packageCity: string): Promise<string | null> {
+  static async getExpectedDeliveryDate(
+    loadId: string,
+    packageCity: string
+  ): Promise<string | null> {
     const load = await this.findById(loadId);
     if (!load) return null;
 
     // Find city-specific delivery date
-    const cityDelivery = load.deliveryCities?.find(city => 
-      city.city.toLowerCase() === packageCity.toLowerCase()
+    const cityDelivery = load.deliveryCities?.find(
+      (city) => city.city.toLowerCase() === packageCity.toLowerCase()
     );
-    
+
     if (cityDelivery?.expectedDeliveryDate) {
       return cityDelivery.expectedDeliveryDate;
     }
@@ -218,12 +226,12 @@ export class LoadModel {
     if (!load) throw new Error('Load not found');
 
     const packages = await this.getPackages(loadId);
-    
+
     // Mock manifest URL
     const manifestUrl = `https://mock-manifests.s3.amazonaws.com/load-${loadId}.pdf`;
-    
+
     await this.update(loadId, { manifestUrl });
-    
+
     return manifestUrl;
   }
 
@@ -241,7 +249,37 @@ export class LoadModel {
     }
 
     await DatabaseService.delete(`LOAD#${id}`, 'METADATA');
-    
+
     return true;
+  }
+
+  static async findByDriver(driverId: string): Promise<Load[]> {
+    const items = await DatabaseService.scan({
+      FilterExpression: '#type = :type AND #data.#driverId = :driverId',
+      ExpressionAttributeNames: {
+        '#type': 'Type',
+        '#data': 'Data',
+        '#driverId': 'driverId',
+      },
+      ExpressionAttributeValues: {
+        ':type': 'Load',
+        ':driverId': driverId,
+      },
+    });
+
+    return items.map((item: any) => item.Data).filter(Boolean);
+  }
+
+  static async assignDriver(loadId: string, driverId: string): Promise<boolean> {
+    try {
+      const result = await this.update(loadId, {
+        driverId,
+        status: 'planned' as const,
+      });
+      return !!result;
+    } catch (error) {
+      console.error('Failed to assign driver to load:', error);
+      return false;
+    }
   }
 }

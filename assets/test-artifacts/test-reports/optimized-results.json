@@ -1,0 +1,1179 @@
+{
+  "config": {
+    "configFile": "/Users/keith/claude/shipnorth/playwright-optimized.config.ts",
+    "rootDir": "/Users/keith/claude/shipnorth/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 600000,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "testSuite": "Shipnorth Optimized E2E Tests",
+      "strategy": "Priority-based execution with consolidated test sequences",
+      "improvements": [
+        "Reduced redundant authentication steps",
+        "Consolidated portal journeys into single browser sessions",
+        "Priority-based test ordering for faster root cause detection",
+        "Increased parallelism",
+        "Comprehensive page load verification",
+        "Focused failure detection"
+      ],
+      "actualWorkers": 6
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        {
+          "printSteps": true
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-reports/optimized-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "test-reports/optimized-html",
+          "open": "never"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-reports/optimized-junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "critical-path",
+        "name": "critical-path",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "optimized-test-suite.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "core-functionality",
+        "name": "core-functionality",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "auth.spec.ts",
+          "customer-portal.spec.ts",
+          "staff-interface.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "extended-features",
+        "name": "extended-features",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "driver-mobile.spec.ts",
+          "ui-ux.spec.ts",
+          "api-integration.spec.ts"
+        ],
+        "timeout": 25000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "mobile-verification",
+        "name": "mobile-verification",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "optimized-test-suite.spec.ts"
+        ],
+        "timeout": 20000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.2",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "optimized-test-suite.spec.ts",
+      "file": "optimized-test-suite.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "🔥 Root Cause Detection",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "infrastructure health check @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3759,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Infrastructure health check passed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:19:57.900Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-65f37cfe715b4658e167",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 37,
+              "column": 7
+            },
+            {
+              "title": "database and authentication foundation @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2412,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Authentication foundation verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:19:57.886Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-3f751e2218785f9ac432",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "portal accessibility matrix @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 13501,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ All portals accessible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:19:57.884Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-ea281a429c2a5f38547f",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 72,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Customer Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 98,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete customer workflow @core",
+              "ok": true,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 11956,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Complete customer workflow verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:19:57.892Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-9637dcf2425899ce0ea0",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 106,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Staff Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 143,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete staff workflow @core",
+              "ok": false,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 9292,
+                      "error": {
+                        "message": "Error: expect.toBeVisible: Unexpected token \"=\" while parsing css selector \"table, text=\"No packages found\"\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for table, text=\"No packages found\"\u001b[22m\n",
+                        "stack": "Error: expect.toBeVisible: Unexpected token \"=\" while parsing css selector \"table, text=\"No packages found\"\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for table, text=\"No packages found\"\u001b[22m\n\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:167:67",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 67,
+                          "line": 167
+                        },
+                        "snippet": "  165 |     await packagesTab.click();\n  166 |     await page.waitForTimeout(2000);\n> 167 |     await expect(page.locator('table, text=\"No packages found\"')).toBeVisible();\n      |                                                                   ^\n  168 |     \n  169 |     // 4. Test customers section  \n  170 |     await customersTab.click();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 67,
+                            "line": 167
+                          },
+                          "message": "Error: expect.toBeVisible: Unexpected token \"=\" while parsing css selector \"table, text=\"No packages found\"\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for table, text=\"No packages found\"\u001b[22m\n\n\n  165 |     await packagesTab.click();\n  166 |     await page.waitForTimeout(2000);\n> 167 |     await expect(page.locator('table, text=\"No packages found\"')).toBeVisible();\n      |                                                                   ^\n  168 |     \n  169 |     // 4. Test customers section  \n  170 |     await customersTab.click();\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:167:67"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:19:57.885Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 67,
+                        "line": 167
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-ca957f7728b7acbf0ee5",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 151,
+              "column": 7
+            },
+            {
+              "title": "admin features visibility @admin",
+              "ok": false,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 29714,
+                      "error": {
+                        "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+                        "stack": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:62:21)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:188:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 21,
+                          "line": 62
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:62\n\n  60 |\n  61 |     const expectedUrl = role === 'customer' ? '/portal' : `/${role}`;\n> 62 |     await this.page.waitForURL(new RegExp(expectedUrl.replace('/', '\\\\/') + '\\\\/?'), {\n     |                     ^\n  63 |       timeout: 15000, // Increased timeout\n  64 |     });\n  65 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 21,
+                            "line": 62
+                          },
+                          "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n\n   at utils/auth-helpers.ts:62\n\n  60 |\n  61 |     const expectedUrl = role === 'customer' ? '/portal' : `/${role}`;\n> 62 |     await this.page.waitForURL(new RegExp(expectedUrl.replace('/', '\\\\/') + '\\\\/?'), {\n     |                     ^\n  63 |       timeout: 15000, // Increased timeout\n  64 |     });\n  65 |\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:62:21)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:188:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:19:57.894Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 21,
+                        "line": 62
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-e8a822ebb18020bee312",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 186,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Driver Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 203,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete driver workflow @core",
+              "ok": false,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 6372,
+                      "error": {
+                        "message": "Error: locator.isVisible: Unexpected token \"=\" while parsing css selector \"a[href*=\"dashboard\"], button:has-text(\"Dashboard\"), text=\"Dashboard\"\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m    - checking visibility of a[href*=\"dashboard\"], button:has-text(\"Dashboard\"), text=\"Dashboard\" >> nth=0\u001b[22m\n",
+                        "stack": "Error: locator.isVisible: Unexpected token \"=\" while parsing css selector \"a[href*=\"dashboard\"], button:has-text(\"Dashboard\"), text=\"Dashboard\"\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m    - checking visibility of a[href*=\"dashboard\"], button:has-text(\"Dashboard\"), text=\"Dashboard\" >> nth=0\u001b[22m\n\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:221:39",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 39,
+                          "line": 221
+                        },
+                        "snippet": "  219 |       // Look for navigation tabs, sidebar links, or buttons\n  220 |       const navItem = page.locator(`a[href*=\"${item.toLowerCase()}\"], button:has-text(\"${item}\"), text=\"${item}\"`).first();\n> 221 |       const isVisible = await navItem.isVisible();\n      |                                       ^\n  222 |       if (isVisible) {\n  223 |         console.log(`✅ Driver nav item found: ${item}`);\n  224 |       } else {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 39,
+                            "line": 221
+                          },
+                          "message": "Error: locator.isVisible: Unexpected token \"=\" while parsing css selector \"a[href*=\"dashboard\"], button:has-text(\"Dashboard\"), text=\"Dashboard\"\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m    - checking visibility of a[href*=\"dashboard\"], button:has-text(\"Dashboard\"), text=\"Dashboard\" >> nth=0\u001b[22m\n\n\n  219 |       // Look for navigation tabs, sidebar links, or buttons\n  220 |       const navItem = page.locator(`a[href*=\"${item.toLowerCase()}\"], button:has-text(\"${item}\"), text=\"${item}\"`).first();\n> 221 |       const isVisible = await navItem.isVisible();\n      |                                       ^\n  222 |       if (isVisible) {\n  223 |         console.log(`✅ Driver nav item found: ${item}`);\n  224 |       } else {\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:221:39"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:01.675Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 39,
+                        "line": 221
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-118367569cf30a30a0dc",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 211,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🔄 Unified Authentication System",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 241,
+          "column": 6,
+          "specs": [
+            {
+              "title": "unified login redirects to correct portal @auth",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9419,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ customer redirected to /portal\n"
+                        },
+                        {
+                          "text": "✅ staff redirected to /staff\n"
+                        },
+                        {
+                          "text": "✅ driver redirected to /driver\n"
+                        },
+                        {
+                          "text": "✅ admin redirected to /staff\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:02.996Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-1b216b04a6e15bfbbbf8",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 242,
+              "column": 7
+            },
+            {
+              "title": "portal switching functionality @auth",
+              "ok": false,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 17193,
+                      "error": {
+                        "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"/staff\" until \"load\"\n  navigated to \"http://localhost:3000/staff/\"\n============================================================",
+                        "stack": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"/staff\" until \"load\"\n  navigated to \"http://localhost:3000/staff/\"\n============================================================\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:286:16",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 16,
+                          "line": 286
+                        },
+                        "snippet": "  284 |     await adminButton.click();\n  285 |     \n> 286 |     await page.waitForURL('/staff', { timeout: 15000 });\n      |                ^\n  287 |     \n  288 |     // Look for portal switcher (if implemented)\n  289 |     const portalSwitcher = page.locator('[data-testid=\"portal-switcher\"], button:has-text(\"Portal\"), text=\"Staff Portal\"');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 16,
+                            "line": 286
+                          },
+                          "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"/staff\" until \"load\"\n  navigated to \"http://localhost:3000/staff/\"\n============================================================\n\n  284 |     await adminButton.click();\n  285 |     \n> 286 |     await page.waitForURL('/staff', { timeout: 15000 });\n      |                ^\n  287 |     \n  288 |     // Look for portal switcher (if implemented)\n  289 |     const portalSwitcher = page.locator('[data-testid=\"portal-switcher\"], button:has-text(\"Portal\"), text=\"Staff Portal\"');\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:286:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:11.720Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 16,
+                        "line": 286
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-cac28d6901255199af22",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 277,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "📄 Page Load Verification",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 304,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all pages load without 500/404 errors @pages",
+              "ok": true,
+              "tags": [
+                "pages"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 40541,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Homepage loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Login loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Register loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Customer Portal loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Portal loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Driver Portal loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Customers loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Packages loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Loads loads successfully\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:11.192Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-49a5e40fea0a33fb9a88",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 317,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "⚡ Performance & Stability",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 360,
+          "column": 6,
+          "specs": [
+            {
+              "title": "page load performance within limits @performance",
+              "ok": true,
+              "tags": [
+                "performance"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3207,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Homepage: 1073ms (target: 3000ms)\n"
+                        },
+                        {
+                          "text": "✅ Login: 788ms (target: 2000ms)\n"
+                        },
+                        {
+                          "text": "✅ Customer Portal: 673ms (target: 5000ms)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:12.070Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-d4898d0dc57ccc2c344e",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 361,
+              "column": 7
+            },
+            {
+              "title": "error boundary and crash detection @stability",
+              "ok": true,
+              "tags": [
+                "stability"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9200,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ No critical console errors detected\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:12.440Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-a53c6b86581417ef4b68",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 379,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🔧 Core Feature Integration",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 415,
+          "column": 6,
+          "specs": [
+            {
+              "title": "authentication and session management @integration",
+              "ok": true,
+              "tags": [
+                "integration"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 6642,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Authentication and session management verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:12.742Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-3ca9c9770983db6af68a",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 416,
+              "column": 7
+            },
+            {
+              "title": "theme system and UI consistency @ui",
+              "ok": true,
+              "tags": [
+                "ui"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 931,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Theme toggle not found\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:16.244Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-005fdf3bd663c62df4c9",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 441,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "♿ Essential Accessibility",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 467,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard navigation basics @accessibility",
+              "ok": true,
+              "tags": [
+                "accessibility"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1950,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Keyboard navigation working, focused: \n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:17.180Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-825f5cbc315f811fc0a6",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 468,
+              "column": 7
+            },
+            {
+              "title": "mobile viewport adaptation @mobile",
+              "ok": true,
+              "tags": [
+                "mobile"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 890,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Mobile viewport: no horizontal scroll (375px vs 375px)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-27T00:20:19.136Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-98e5a155c9b76806c07a",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 481,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-27T00:19:57.374Z",
+    "duration": 54497.524000000005,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

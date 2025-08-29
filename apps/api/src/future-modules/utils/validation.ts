@@ -24,11 +24,12 @@ export class ValidationHelper {
 
   static validatePostalCode(postalCode: string, country: string = 'CA'): string | null {
     if (!postalCode) return 'Postal code is required';
-    
-    const regex = country === 'CA' 
-      ? VALIDATION_RULES.POSTAL_CODE_CA_REGEX 
-      : VALIDATION_RULES.POSTAL_CODE_US_REGEX;
-    
+
+    const regex =
+      country === 'CA'
+        ? VALIDATION_RULES.POSTAL_CODE_CA_REGEX
+        : VALIDATION_RULES.POSTAL_CODE_US_REGEX;
+
     if (!regex.test(postalCode)) {
       return `Please enter a valid ${country === 'CA' ? 'Canadian' : 'US'} postal code`;
     }
@@ -58,7 +59,10 @@ export class ValidationHelper {
     return null;
   }
 
-  static validateFileSize(file: any, maxSizeMB: number = VALIDATION_RULES.MAX_FILE_SIZE_MB): string | null {
+  static validateFileSize(
+    file: any,
+    maxSizeMB: number = VALIDATION_RULES.MAX_FILE_SIZE_MB
+  ): string | null {
     if (!file) return null;
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
     if (file.size > maxSizeBytes) {
@@ -73,11 +77,18 @@ export class ValidationHelper {
 
     // Required fields
     const requiredFields = [
-      'firstName', 'lastName', 'email', 'phone',
-      'addressLine1', 'city', 'province', 'postalCode', 'country'
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+      'addressLine1',
+      'city',
+      'province',
+      'postalCode',
+      'country',
     ];
 
-    requiredFields.forEach(field => {
+    requiredFields.forEach((field) => {
       const error = this.validateRequired(data[field], field);
       if (error) errors.push({ field, message: error });
     });
@@ -115,10 +126,10 @@ export class ValidationHelper {
     if (requiredError) errors.push({ field: 'customerId', message: requiredError });
 
     // Dimensions validation
-    ['length', 'width', 'height', 'weight'].forEach(field => {
+    ['length', 'width', 'height', 'weight'].forEach((field) => {
       const numericError = this.validateNumeric(data[field], field);
       if (numericError) errors.push({ field, message: numericError });
-      
+
       if (data[field] !== undefined) {
         const positiveError = this.validatePositive(data[field], field);
         if (positiveError) errors.push({ field, message: positiveError });
@@ -133,7 +144,7 @@ export class ValidationHelper {
     // Ship-to address validation
     if (data.shipTo) {
       const shipToErrors = this.validateAddress(data.shipTo);
-      shipToErrors.forEach(error => {
+      shipToErrors.forEach((error) => {
         errors.push({ field: `shipTo.${error.field}`, message: error.message });
       });
     }
@@ -149,7 +160,7 @@ export class ValidationHelper {
     const errors: Array<{ field: string; message: string }> = [];
 
     const requiredFields = ['name', 'address1', 'city', 'province', 'postalCode', 'country'];
-    requiredFields.forEach(field => {
+    requiredFields.forEach((field) => {
       const error = this.validateRequired(address[field], field);
       if (error) errors.push({ field, message: error });
     });
@@ -174,9 +185,9 @@ export class ValidationHelper {
       const departureDate = new Date(data.departureDate);
       const now = new Date();
       if (departureDate < now) {
-        errors.push({ 
-          field: 'departureDate', 
-          message: 'Departure date must be in the future' 
+        errors.push({
+          field: 'departureDate',
+          message: 'Departure date must be in the future',
         });
       }
     }
@@ -185,15 +196,15 @@ export class ValidationHelper {
     if (data.deliveryCities && Array.isArray(data.deliveryCities)) {
       data.deliveryCities.forEach((city: any, index: number) => {
         if (!city.city) {
-          errors.push({ 
-            field: `deliveryCities[${index}].city`, 
-            message: 'City name is required' 
+          errors.push({
+            field: `deliveryCities[${index}].city`,
+            message: 'City name is required',
           });
         }
         if (!city.province) {
-          errors.push({ 
-            field: `deliveryCities[${index}].province`, 
-            message: 'Province is required' 
+          errors.push({
+            field: `deliveryCities[${index}].province`,
+            message: 'Province is required',
           });
         }
       });
@@ -206,7 +217,10 @@ export class ValidationHelper {
   }
 
   // General purpose object validator
-  static validateObject(obj: any, rules: Record<string, (value: any) => string | null>): ValidationResult {
+  static validateObject(
+    obj: any,
+    rules: Record<string, (value: any) => string | null>
+  ): ValidationResult {
     const errors: Array<{ field: string; message: string }> = [];
 
     Object.entries(rules).forEach(([field, validator]) => {

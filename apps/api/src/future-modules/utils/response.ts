@@ -22,9 +22,9 @@ export class ResponseHelper {
   }
 
   static error(
-    res: Response, 
-    statusCode: number, 
-    error: string, 
+    res: Response,
+    statusCode: number,
+    error: string,
     errorCode?: string,
     details?: any
   ): void {
@@ -93,9 +93,7 @@ export class ResponseHelper {
 }
 
 // Async wrapper for route handlers
-export function asyncHandler(
-  fn: (req: any, res: Response, next: any) => Promise<any>
-) {
+export function asyncHandler(fn: (req: any, res: Response, next: any) => Promise<any>) {
   return (req: any, res: Response, next: any) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };

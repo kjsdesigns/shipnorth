@@ -19,11 +19,21 @@ import loadsRouter from './routes/loads';
 import invoicesRouter from './routes/invoices';
 import webhooksRouter from './routes/webhooks';
 import adminRouter from './routes/admin';
+import searchRouter from './routes/search';
+import routeOptimizationRouter from './routes/route-optimization';
+import testRouteRouter from './routes/test-route';
+import gpsTrackingRouter from './routes/gps-tracking';
+import packageScanningRouter from './routes/package-scanning';
+import driverMediaRouter from './routes/driver-media';
+import offlineSyncRouter from './routes/offline-sync';
+import aiRouteGenerationRouter from './routes/ai-route-generation';
+import driverAssignmentRouter from './routes/driver-assignment';
+import enhancedRegistrationRouter from './routes/enhanced-registration';
 // import settingsRouter from './routes/settings';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
-import { authenticate } from './middleware/auth';
+import { authenticate, authorize } from './middleware/auth';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -38,19 +48,23 @@ const limiter = rateLimit({
 });
 
 // Middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'cdn.jsdelivr.net'],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+      },
     },
-  },
-}));
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-  credentials: true,
-}));
+  })
+);
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+    credentials: true,
+  })
+);
 app.use(compression());
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
@@ -80,17 +94,30 @@ app.get('/health', (req, res) => {
 // Public routes
 app.use('/auth', authRouter);
 app.use('/webhooks', webhooksRouter);
+app.use('/registration', enhancedRegistrationRouter);
 
-// Customer registration (public)
-app.use('/customers/register', customersRouter);
-app.use('/customers/complete-registration', customersRouter);
-
-// Protected routes
-app.use('/customers', authenticate, customersRouter);
-app.use('/packages', authenticate, packagesRouter);
-app.use('/loads', authenticate, loadsRouter);
+// Mixed routes (some public, some protected) - authentication handled per route
+app.use('/customers', customersRouter);
+app.use('/packages', packagesRouter);
+app.use('/loads', authenticate, authorize('admin', 'staff'), loadsRouter);
 app.use('/invoices', authenticate, invoicesRouter);
 app.use('/admin', authenticate, adminRouter);
+app.use('/search', authenticate, searchRouter);
+app.use('/routes', authenticate, authorize('admin', 'staff'), routeOptimizationRouter);
+app.use('/test', authenticate, testRouteRouter);
+
+// Driver-specific routes
+app.use('/gps', authenticate, authorize('driver', 'staff', 'admin'), gpsTrackingRouter);
+app.use('/scanning', authenticate, authorize('driver', 'staff', 'admin'), packageScanningRouter);
+app.use('/media', authenticate, authorize('driver', 'staff', 'admin'), driverMediaRouter);
+app.use('/sync', authenticate, authorize('driver', 'staff', 'admin'), offlineSyncRouter);
+
+// AI Route generation (staff and drivers)
+app.use('/ai-routes', authenticate, authorize('staff', 'driver', 'admin'), aiRouteGenerationRouter);
+
+// Driver assignment (staff only)
+app.use('/driver-assignment', authenticate, authorize('staff', 'admin'), driverAssignmentRouter);
+
 // app.use('/settings', authenticate, settingsRouter);
 
 // Error handling

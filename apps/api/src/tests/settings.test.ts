@@ -186,12 +186,12 @@ describe('SettingsModel', () => {
 
     it('should set updatedAt timestamp', async () => {
       const beforeUpdate = Date.now();
-      
+
       (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockSettings });
       (DatabaseService.put as jest.Mock).mockResolvedValue(undefined);
 
       const result = await SettingsModel.update({ googleMapsApiKey: 'new-key' });
-      
+
       const afterUpdate = Date.now();
 
       expect(new Date(result.updatedAt!).getTime()).toBeGreaterThanOrEqual(beforeUpdate);

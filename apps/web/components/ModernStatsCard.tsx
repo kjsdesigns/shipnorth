@@ -10,14 +10,14 @@ interface ModernStatsCardProps {
   href?: string;
 }
 
-export default function ModernStatsCard({ 
-  title, 
-  value, 
-  icon: Icon, 
-  change, 
+export default function ModernStatsCard({
+  title,
+  value,
+  icon: Icon,
+  change,
   changeLabel,
   color = 'blue',
-  href
+  href,
 }: ModernStatsCardProps) {
   const colorClasses = {
     blue: 'bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400',
@@ -32,7 +32,7 @@ export default function ModernStatsCard({
   const cardProps = href ? { href } : {};
 
   return (
-    <Card 
+    <Card
       {...cardProps}
       className="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-all duration-200 group"
     >
@@ -45,22 +45,18 @@ export default function ModernStatsCard({
             )}
           </div>
           <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
-          
+
           {change !== undefined && (
             <div className="mt-3 flex items-center text-sm">
               {change >= 0 ? (
                 <>
                   <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                  <span className="text-green-600 dark:text-green-400">
-                    +{change}%
-                  </span>
+                  <span className="text-green-600 dark:text-green-400">+{change}%</span>
                 </>
               ) : (
                 <>
                   <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
-                  <span className="text-red-600 dark:text-red-400">
-                    {change}%
-                  </span>
+                  <span className="text-red-600 dark:text-red-400">{change}%</span>
                 </>
               )}
               {changeLabel && (
@@ -69,7 +65,7 @@ export default function ModernStatsCard({
             </div>
           )}
         </div>
-        
+
         <div className={`p-3 rounded-xl ${colorClasses[color]}`}>
           <Icon className="h-6 w-6" />
         </div>

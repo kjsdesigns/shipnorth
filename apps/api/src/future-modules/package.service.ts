@@ -5,7 +5,9 @@ import { LoadModel } from '../models/load';
 import { NotificationService } from './notifications';
 
 export class PackageService {
-  static async createPackage(packageData: Omit<Package, 'id' | 'createdAt' | 'updatedAt'>): Promise<Package> {
+  static async createPackage(
+    packageData: Omit<Package, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Package> {
     // Validate customer exists
     const customer = await CustomerModel.findById(packageData.customerId);
     if (!customer) {
@@ -16,12 +18,9 @@ export class PackageService {
 
     // Send notification for package creation
     try {
-      await NotificationService.notifyPackageStatusChange(
-        newPackage.id,
-        'ready',
-        customer,
-        { trackingNumber: newPackage.trackingNumber }
-      );
+      await NotificationService.notifyPackageStatusChange(newPackage.id, 'ready', customer, {
+        trackingNumber: newPackage.trackingNumber,
+      });
     } catch (error) {
       console.error('Failed to send package creation notification:', error);
     }
@@ -29,19 +28,24 @@ export class PackageService {
     return newPackage;
   }
 
-  static async getPackageWithExpectedDelivery(packageId: string): Promise<Package & { expectedDeliveryDate?: string } | null> {
+  static async getPackageWithExpectedDelivery(
+    packageId: string
+  ): Promise<(Package & { expectedDeliveryDate?: string }) | null> {
     const pkg = await PackageModel.findById(packageId);
     if (!pkg) return null;
 
     const expectedDeliveryDate = await PackageModel.getExpectedDeliveryDate(packageId);
-    
+
     return {
       ...pkg,
       expectedDeliveryDate: expectedDeliveryDate || undefined,
     };
   }
 
-  static async bulkAssignToLoad(packageIds: string[], loadId: string): Promise<{ success: number; failed: string[] }> {
+  static async bulkAssignToLoad(
+    packageIds: string[],
+    loadId: string
+  ): Promise<{ success: number; failed: string[] }> {
     const results = { success: 0, failed: [] as string[] };
 
     // Validate load exists
@@ -61,15 +65,10 @@ export class PackageService {
           const customer = await CustomerModel.findById(pkg.customerId);
           if (customer) {
             const expectedDeliveryDate = await PackageModel.getExpectedDeliveryDate(packageId);
-            await NotificationService.notifyPackageStatusChange(
-              packageId,
-              'in_transit',
-              customer,
-              {
-                trackingNumber: pkg.trackingNumber,
-                expectedDeliveryDate,
-              }
-            );
+            await NotificationService.notifyPackageStatusChange(packageId, 'in_transit', customer, {
+              trackingNumber: pkg.trackingNumber,
+              expectedDeliveryDate,
+            });
           }
         }
       } catch (error) {
@@ -95,15 +94,10 @@ export class PackageService {
     try {
       const customer = await CustomerModel.findById(pkg.customerId);
       if (customer) {
-        await NotificationService.notifyPackageStatusChange(
-          packageId,
-          'delivered',
-          customer,
-          {
-            trackingNumber: updatedPackage.trackingNumber,
-            deliveryConfirmation: updatedPackage.deliveryConfirmation,
-          }
-        );
+        await NotificationService.notifyPackageStatusChange(packageId, 'delivered', customer, {
+          trackingNumber: updatedPackage.trackingNumber,
+          deliveryConfirmation: updatedPackage.deliveryConfirmation,
+        });
       }
     } catch (error) {
       console.error('Failed to send delivery notification:', error);
@@ -114,7 +108,7 @@ export class PackageService {
 
   static async getPackageStats(): Promise<PackageStats> {
     const stats = await PackageModel.getPackageStats();
-    
+
     return {
       ...stats,
       delivered: 0, // Would need to implement this query
@@ -130,7 +124,7 @@ export class PackageService {
     dateTo?: string;
     limit?: number;
     page?: number;
-  }): Promise<{ packages: (Package & { expectedDeliveryDate?: string })[], total: number }> {
+  }): Promise<{ packages: (Package & { expectedDeliveryDate?: string })[]; total: number }> {
     let packages: Package[];
 
     if (filters.status) {
@@ -170,12 +164,9 @@ export class PackageService {
       if (pkg) {
         const customer = await CustomerModel.findById(pkg.customerId);
         if (customer) {
-          await NotificationService.notifyPackageStatusChange(
-            packageId,
-            'ready',
-            customer,
-            { trackingNumber: result.trackingNumber }
-          );
+          await NotificationService.notifyPackageStatusChange(packageId, 'ready', customer, {
+            trackingNumber: result.trackingNumber,
+          });
         }
       }
     } catch (error) {

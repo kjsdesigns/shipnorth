@@ -9,13 +9,13 @@ interface StatsCardProps {
   color?: 'blue' | 'green' | 'purple' | 'orange' | 'red';
 }
 
-export default function StatsCard({ 
-  title, 
-  value, 
-  icon: Icon, 
-  change, 
+export default function StatsCard({
+  title,
+  value,
+  icon: Icon,
+  change,
   changeLabel,
-  color = 'blue' 
+  color = 'blue',
 }: StatsCardProps) {
   const colorClasses = {
     blue: 'from-blue-500 to-blue-600',
@@ -31,7 +31,7 @@ export default function StatsCard({
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-400">{title}</p>
           <p className="mt-2 text-3xl font-bold text-white">{value}</p>
-          
+
           {change !== undefined && (
             <div className="mt-3 flex items-center text-sm">
               {change >= 0 ? (
@@ -42,13 +42,11 @@ export default function StatsCard({
               <span className={change >= 0 ? 'text-green-400' : 'text-red-400'}>
                 {Math.abs(change)}%
               </span>
-              {changeLabel && (
-                <span className="ml-2 text-gray-400">{changeLabel}</span>
-              )}
+              {changeLabel && <span className="ml-2 text-gray-400">{changeLabel}</span>}
             </div>
           )}
         </div>
-        
+
         <div className={`p-3 rounded-lg bg-gradient-to-br ${colorClasses[color]} bg-opacity-10`}>
           <Icon className="h-8 w-8 text-white" />
         </div>

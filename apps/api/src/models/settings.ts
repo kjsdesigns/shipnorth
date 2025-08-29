@@ -26,7 +26,7 @@ export interface SystemSettings {
 export class SettingsModel {
   static async get(): Promise<SystemSettings> {
     const item = await DatabaseService.get('SETTINGS', 'system');
-    
+
     if (!item?.Data) {
       // Return default settings if none exist
       return {
@@ -48,7 +48,7 @@ export class SettingsModel {
         },
       };
     }
-    
+
     return item.Data;
   }
 
@@ -75,7 +75,9 @@ export class SettingsModel {
     return settings.defaultOriginAddress;
   }
 
-  static async updateDefaultOriginAddress(address: SystemSettings['defaultOriginAddress']): Promise<void> {
+  static async updateDefaultOriginAddress(
+    address: SystemSettings['defaultOriginAddress']
+  ): Promise<void> {
     await this.update({ defaultOriginAddress: address });
   }
 }

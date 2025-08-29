@@ -130,16 +130,16 @@ describe('LoadModel', () => {
       ];
 
       (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockLoad });
-      (DatabaseService.update as jest.Mock).mockResolvedValue({ Data: { ...mockLoad, deliveryCities: newCities } });
+      (DatabaseService.update as jest.Mock).mockResolvedValue({
+        Data: { ...mockLoad, deliveryCities: newCities },
+      });
 
       const result = await LoadModel.updateDeliveryCities(loadId, newCities);
 
       expect(result).toBe(true);
-      expect(DatabaseService.update).toHaveBeenCalledWith(
-        `LOAD#${loadId}`,
-        'METADATA',
-        { Data: expect.objectContaining({ deliveryCities: newCities }) }
-      );
+      expect(DatabaseService.update).toHaveBeenCalledWith(`LOAD#${loadId}`, 'METADATA', {
+        Data: expect.objectContaining({ deliveryCities: newCities }),
+      });
     });
 
     it('should return false for nonexistent load', async () => {
@@ -162,7 +162,14 @@ describe('LoadModel', () => {
       (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: existingLoad });
       (DatabaseService.update as jest.Mock).mockResolvedValue({ Data: existingLoad });
 
-      const result = await LoadModel.addLocationTracking(loadId, lat, lng, true, 'user-123', address);
+      const result = await LoadModel.addLocationTracking(
+        loadId,
+        lat,
+        lng,
+        true,
+        'user-123',
+        address
+      );
 
       expect(result).toBe(true);
       expect(DatabaseService.update).toHaveBeenCalledWith(
@@ -205,7 +212,7 @@ describe('LoadModel', () => {
             expectedDeliveryDate: '2024-01-18T17:00:00Z',
           },
           {
-            city: 'Montreal', 
+            city: 'Montreal',
             province: 'QC',
             country: 'CA',
             expectedDeliveryDate: '2024-01-20T17:00:00Z',
@@ -282,11 +289,9 @@ describe('LoadModel', () => {
       );
 
       // Should update each package with loadId
-      expect(DatabaseService.update).toHaveBeenCalledWith(
-        'PACKAGE#pkg-1',
-        'METADATA',
-        { 'Data.loadId': loadId }
-      );
+      expect(DatabaseService.update).toHaveBeenCalledWith('PACKAGE#pkg-1', 'METADATA', {
+        'Data.loadId': loadId,
+      });
     });
   });
 

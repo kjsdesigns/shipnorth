@@ -33,9 +33,8 @@ export const errorHandler = (
 
   // Prepare error response
   const statusCode = err instanceof AppError ? err.statusCode : 500;
-  const message = err instanceof AppError && err.isOperational 
-    ? err.message 
-    : 'Internal server error';
+  const message =
+    err instanceof AppError && err.isOperational ? err.message : 'Internal server error';
 
   res.status(statusCode).json({
     error: message,

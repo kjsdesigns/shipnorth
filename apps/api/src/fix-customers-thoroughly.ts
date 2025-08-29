@@ -3,7 +3,7 @@ import { CustomerModel } from './models/customer';
 
 const fixCustomersThoroughly = async () => {
   console.log('🔧 Thoroughly fixing customer data...\n');
-  
+
   // Get all customer items from database
   const items = await DatabaseService.scan({
     FilterExpression: '#type = :type',
@@ -14,12 +14,12 @@ const fixCustomersThoroughly = async () => {
       ':type': 'Customer',
     },
   });
-  
+
   console.log(`Found ${items.length} customer items in database`);
-  
+
   // Group by email to find duplicates
   const customersByEmail = new Map<string, any[]>();
-  
+
   for (const item of items) {
     const customer = item.Data;
     if (!customersByEmail.has(customer.email)) {
@@ -27,12 +27,12 @@ const fixCustomersThoroughly = async () => {
     }
     customersByEmail.get(customer.email)!.push(item);
   }
-  
+
   // Clean up duplicates
   for (const [email, customerItems] of customersByEmail) {
     if (customerItems.length > 1) {
       console.log(`\nFound ${customerItems.length} entries for ${email}:`);
-      
+
       // Keep the one without password field, or the most complete one
       let keepIndex = 0;
       for (let i = 0; i < customerItems.length; i++) {
@@ -43,7 +43,7 @@ const fixCustomersThoroughly = async () => {
           break;
         }
       }
-      
+
       // Delete all except the one we're keeping
       for (let i = 0; i < customerItems.length; i++) {
         if (i !== keepIndex) {
@@ -60,7 +60,7 @@ const fixCustomersThoroughly = async () => {
       }
     }
   }
-  
+
   // Delete any items with 'cust-001' ID
   for (const item of items) {
     if (item.Data.id === 'cust-001') {
@@ -71,14 +71,16 @@ const fixCustomersThoroughly = async () => {
       }
     }
   }
-  
+
   console.log('\n✨ Cleanup complete!');
-  
+
   // Show remaining customers
   const cleanedCustomers = await CustomerModel.list();
   console.log(`\nRemaining customers: ${cleanedCustomers.length}`);
   for (const customer of cleanedCustomers) {
-    console.log(`  - ${customer.firstName} ${customer.lastName} (${customer.email}) - ID: ${customer.id}`);
+    console.log(
+      `  - ${customer.firstName} ${customer.lastName} (${customer.email}) - ID: ${customer.id}`
+    );
   }
 };
 

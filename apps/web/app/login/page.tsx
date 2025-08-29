@@ -15,6 +15,42 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Helper function to provide better error messages
+  const getErrorMessage = (err: any): string => {
+    // Network/connection errors
+    if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED')) {
+      return 'Unable to connect to server. Please check if the API server is running.';
+    }
+
+    if (err.code === 'NETWORK_ERROR' || err.message?.includes('Network Error')) {
+      return 'Network error. Please check your connection and try again.';
+    }
+
+    // API server is down or unreachable
+    if (!err.response) {
+      return 'Cannot reach the server. The API may be down. Please try again later.';
+    }
+
+    // HTTP status-based errors
+    const status = err.response?.status;
+    const serverMessage = err.response?.data?.error;
+
+    switch (status) {
+      case 401:
+        return serverMessage || 'Invalid email or password. Please check your credentials.';
+      case 403:
+        return 'Access forbidden. Your account may be disabled.';
+      case 500:
+        return 'Server error occurred. Please try again later.';
+      case 502:
+      case 503:
+      case 504:
+        return 'Server is temporarily unavailable. Please try again in a few moments.';
+      default:
+        return serverMessage || 'Login failed. Please try again.';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -22,19 +58,26 @@ export default function LoginPage() {
 
     try {
       const { user } = await authAPI.login(email, password);
-      
-      // Redirect based on role
-      if (user.role === 'admin') {
-        router.push('/admin');
-      } else if (user.role === 'staff') {
-        router.push('/staff');
-      } else if (user.role === 'driver') {
-        router.push('/driver');
-      } else {
+
+      // Redirect to default portal based on new system
+      if (user.defaultPortal === 'customer') {
         router.push('/portal');
+      } else if (user.defaultPortal === 'driver') {
+        router.push('/driver');
+      } else if (user.defaultPortal === 'staff') {
+        router.push('/staff');
+      } else {
+        // Fallback for legacy users
+        if (user.roles?.includes('customer')) {
+          router.push('/portal');
+        } else if (user.roles?.includes('driver')) {
+          router.push('/driver');
+        } else {
+          router.push('/staff');
+        }
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Invalid credentials');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -46,30 +89,36 @@ export default function LoginPage() {
     setPassword(password);
     setError('');
     setLoading(true);
-    
+
     try {
       const { user } = await authAPI.login(email, password);
-      
-      if (user.role === 'admin') {
-        router.push('/admin');
-      } else if (user.role === 'staff') {
-        router.push('/staff');
-      } else if (user.role === 'driver') {
-        router.push('/driver');
-      } else {
+
+      // Redirect to default portal based on new system
+      if (user.defaultPortal === 'customer') {
         router.push('/portal');
+      } else if (user.defaultPortal === 'driver') {
+        router.push('/driver');
+      } else if (user.defaultPortal === 'staff') {
+        router.push('/staff');
+      } else {
+        // Fallback for legacy users
+        if (user.roles?.includes('customer')) {
+          router.push('/portal');
+        } else if (user.roles?.includes('driver')) {
+          router.push('/driver');
+        } else {
+          router.push('/staff');
+        }
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Invalid credentials');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4 relative">
-      <ThemeToggle className="absolute top-4 right-4" />
-      
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 backdrop-blur-sm bg-white/80 dark:bg-gray-800/80">
           <div className="flex items-center justify-center mb-8">
@@ -82,22 +131,29 @@ export default function LoginPage() {
               </h1>
             </Link>
           </div>
-          
+
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Welcome back</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Sign in to your account to continue</p>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+              Welcome back
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Sign in to your account to continue
+            </p>
           </div>
-          
+
           {error && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center text-red-700 dark:text-red-400">
               <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
               <span className="text-sm">{error}</span>
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Email Address
               </label>
               <input
@@ -110,9 +166,12 @@ export default function LoginPage() {
                 required
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -134,7 +193,7 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-            
+
             <button
               type="submit"
               disabled={loading}
@@ -150,18 +209,23 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-          
+
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               New customer?{' '}
-              <Link href="/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
+              <Link
+                href="/register"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
+              >
                 Create an account
               </Link>
             </p>
           </div>
-          
+
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center font-medium">Quick Login (Demo)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center font-medium">
+              Quick Login (Demo)
+            </p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => quickLogin('admin@shipnorth.com', 'admin123')}
@@ -170,7 +234,7 @@ export default function LoginPage() {
               >
                 <div className="flex items-center justify-center">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                  Admin
+                  Staff (Admin)
                 </div>
               </button>
               <button
@@ -194,7 +258,7 @@ export default function LoginPage() {
                 </div>
               </button>
               <button
-                onClick={() => quickLogin('john.doe@example.com', 'customer123')}
+                onClick={() => quickLogin('test@test.com', 'test123')}
                 disabled={loading}
                 className="px-4 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 text-sm font-medium transition-all duration-200 border border-blue-200 dark:border-blue-800 disabled:opacity-50"
               >
@@ -207,6 +271,13 @@ export default function LoginPage() {
             <p className="text-xs text-gray-500 dark:text-gray-500 mt-3 text-center">
               Click any role above to sign in instantly
             </p>
+          </div>
+
+          {/* Theme Color Picker - Centered at bottom */}
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex justify-center">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ export interface Invoice {
 export class InvoiceModel {
   static async create(invoice: Omit<Invoice, 'id' | 'createdAt' | 'updatedAt'>): Promise<Invoice> {
     const id = generateId();
-    
+
     const newInvoice: Invoice = {
       id,
       ...invoice,
@@ -54,9 +54,7 @@ export class InvoiceModel {
 
   static async findByCustomer(customerId: string): Promise<Invoice[]> {
     const items = await DatabaseService.queryByGSI('GSI1', `CUSTOMER#${customerId}`);
-    return items
-      .filter((item: any) => item.Type === 'Invoice')
-      .map((item: any) => item.Data);
+    return items.filter((item: any) => item.Type === 'Invoice').map((item: any) => item.Data);
   }
 
   static async findByPackage(packageId: string): Promise<Invoice | null> {
@@ -81,7 +79,7 @@ export class InvoiceModel {
     if (!current) return null;
 
     const updatedInvoice = { ...current, ...updates };
-    
+
     // Track payment time
     if (updates.status === 'paid' && current.status !== 'paid') {
       updatedInvoice.paidAt = new Date().toISOString();
@@ -90,7 +88,7 @@ export class InvoiceModel {
     const result = await DatabaseService.update(`INVOICE#${id}`, 'METADATA', {
       Data: updatedInvoice,
     });
-    
+
     return result ? result.Data : null;
   }
 
@@ -109,13 +107,15 @@ export class InvoiceModel {
     return items.map((item: any) => item.Data).filter(Boolean);
   }
 
-  static async calculateTotal(packageId: string): Promise<{ amount: number; tax: number; total: number }> {
+  static async calculateTotal(
+    packageId: string
+  ): Promise<{ amount: number; tax: number; total: number }> {
     const pkg = await DatabaseService.get(`PACKAGE#${packageId}`, 'METADATA');
     if (!pkg || !pkg.Data) {
       throw new Error('Package not found');
     }
 
-    const baseAmount = pkg.Data.price || pkg.Data.quotedRate || 25.00;
+    const baseAmount = pkg.Data.price || pkg.Data.quotedRate || 25.0;
     const taxRate = 0.13; // 13% HST for Ontario
     const tax = Math.round(baseAmount * taxRate * 100) / 100;
     const total = Math.round((baseAmount + tax) * 100) / 100;
@@ -192,15 +192,15 @@ export class InvoiceModel {
     }
 
     await DatabaseService.delete(`INVOICE#${id}`, 'METADATA');
-    
+
     return true;
   }
 
   static async generateInvoiceUrl(id: string): Promise<string> {
     const invoiceUrl = `https://mock-invoices.s3.amazonaws.com/invoice-${id}.pdf`;
-    
+
     await this.update(id, { invoiceUrl });
-    
+
     return invoiceUrl;
   }
 }

@@ -36,12 +36,12 @@ export class ShipnorthLambdaStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
     });
-    
+
     // Create Origin Access Identity for CloudFront
     const oai = new cloudfront.OriginAccessIdentity(this, 'OAI', {
       comment: `OAI for ${env} distribution`,
     });
-    
+
     // Grant read permissions to CloudFront
     webBucket.grantRead(oai);
 

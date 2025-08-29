@@ -1,13 +1,13 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { 
-  DynamoDBDocumentClient, 
-  PutCommand, 
-  GetCommand, 
-  QueryCommand, 
-  UpdateCommand, 
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  GetCommand,
+  QueryCommand,
+  UpdateCommand,
   DeleteCommand,
   ScanCommand,
-  BatchWriteCommand
+  BatchWriteCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -64,7 +64,7 @@ export class DatabaseService {
     Object.keys(updates).forEach((key, index) => {
       const placeholder = `#attr${index}`;
       const valuePlaceholder = `:val${index}`;
-      
+
       updateExpressions.push(`${placeholder} = ${valuePlaceholder}`);
       expressionAttributeNames[placeholder] = key;
       expressionAttributeValues[valuePlaceholder] = updates[key];
@@ -106,7 +106,7 @@ export class DatabaseService {
   }
 
   static async batchWrite(items: any[]) {
-    const putRequests = items.map(item => ({
+    const putRequests = items.map((item) => ({
       PutRequest: {
         Item: {
           ...item,

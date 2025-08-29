@@ -7,6 +7,7 @@ import Link from 'next/link';
 // import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { customerAPI } from '@/lib/api';
 import ModernLayout from '@/components/ModernLayout';
+import PayPalCardForm from '@/components/PayPalCardForm';
 import { CreditCard, User, MapPin, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 
 // const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -28,13 +29,13 @@ function RegistrationForm() {
   const router = useRouter();
   // const stripe = useStripe();
   // const elements = useElements();
-  
+
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [customerId, setCustomerId] = useState('');
-  const [setupIntentClientSecret, setSetupIntentClientSecret] = useState('');
-  
+  const [paypalOrderId, setPaypalOrderId] = useState('');
+
   const [formData, setFormData] = useState<RegistrationData>({
     firstName: '',
     lastName: '',
@@ -57,12 +58,12 @@ function RegistrationForm() {
 
   const validateStep1 = () => {
     const required = ['firstName', 'lastName', 'email', 'phone'];
-    return required.every(field => formData[field as keyof RegistrationData].trim() !== '');
+    return required.every((field) => formData[field as keyof RegistrationData].trim() !== '');
   };
 
   const validateStep2 = () => {
     const required = ['addressLine1', 'city', 'province', 'postalCode'];
-    return required.every(field => formData[field as keyof RegistrationData].trim() !== '');
+    return required.every((field) => formData[field as keyof RegistrationData].trim() !== '');
   };
 
   const handleStep1Submit = async (e: React.FormEvent) => {
@@ -91,15 +92,16 @@ function RegistrationForm() {
 
     try {
       const response = await customerAPI.register(formData);
-      
+
       if (response.data.loginSuggested) {
         // Redirect to login with pre-filled email
-        router.push(`/login?email=${encodeURIComponent(formData.email)}&message=${encodeURIComponent('Account already exists. Please sign in.')}`);
+        router.push(
+          `/login?email=${encodeURIComponent(formData.email)}&message=${encodeURIComponent('Account already exists. Please sign in.')}`
+        );
         return;
       }
 
-      setCustomerId(response.data.customer.id);
-      setSetupIntentClientSecret(response.data.setupIntent.client_secret);
+      setCustomerId(response.data.customerId);
       setCurrentStep(4);
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -109,18 +111,17 @@ function RegistrationForm() {
     }
   };
 
-  const handlePaymentSetup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Temporarily skip payment setup
-    setCurrentStep(5);
+  const handlePaymentSetup = async () => {
+    // This will be handled by the PayPal SDK inline form
   };
 
   const renderStep1 = () => (
     <form onSubmit={handleStep1Submit} className="space-y-6">
       <div className="text-center mb-8">
         <User className="mx-auto h-12 w-12 text-blue-600" />
-        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">Personal Information</h2>
+        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
+          Personal Information
+        </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400">Let's start with your basic details</p>
       </div>
 
@@ -324,26 +325,34 @@ function RegistrationForm() {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <Shield className="mx-auto h-12 w-12 text-blue-600" />
-        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">Review & Create Account</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">Confirm your information before proceeding</p>
+        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
+          Review & Create Account
+        </h2>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
+          Confirm your information before proceeding
+        </p>
       </div>
 
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 space-y-4">
         <div>
           <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Personal Information</h3>
           <p className="text-gray-600 dark:text-gray-400">
-            {formData.firstName} {formData.lastName}<br />
-            {formData.email}<br />
+            {formData.firstName} {formData.lastName}
+            <br />
+            {formData.email}
+            <br />
             {formData.phone}
           </p>
         </div>
-        
+
         <div>
           <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Shipping Address</h3>
           <p className="text-gray-600 dark:text-gray-400">
-            {formData.addressLine1}<br />
+            {formData.addressLine1}
+            <br />
             {formData.addressLine2 && `${formData.addressLine2}\n`}
-            {formData.city}, {formData.province} {formData.postalCode}<br />
+            {formData.city}, {formData.province} {formData.postalCode}
+            <br />
             {formData.country === 'CA' ? 'Canada' : 'United States'}
           </p>
         </div>
@@ -368,45 +377,16 @@ function RegistrationForm() {
     </div>
   );
 
-  const renderStep4 = () => (
-    <form onSubmit={handlePaymentSetup} className="space-y-6">
-      <div className="text-center mb-8">
-        <CreditCard className="mx-auto h-12 w-12 text-blue-600" />
-        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">Add Payment Method</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Add a credit card for shipping charges. You won't be charged until you ship packages.
-        </p>
-      </div>
-
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-          Credit Card Information
-        </label>
-        <div className="bg-white dark:bg-gray-700 p-4 rounded border border-gray-300 dark:border-gray-600">
-          <div className="text-center text-gray-500 py-8">
-            Payment integration temporarily disabled for deployment
-          </div>
-        </div>
-      </div>
-
-      <div className="flex space-x-4">
-        <button
-          type="button"
-          onClick={() => setCurrentStep(3)}
-          className="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-        >
-          Back
-        </button>
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
-        >
-          {loading ? 'Processing...' : 'Complete Registration'}
-        </button>
-      </div>
-    </form>
-  );
+  const renderStep4 = () => {
+    return (
+      <PayPalCardForm
+        customerId={customerId}
+        onSuccess={() => setCurrentStep(5)}
+        onError={(errorMsg) => setError(errorMsg)}
+        onBack={() => setCurrentStep(3)}
+      />
+    );
+  };
 
   const renderStep5 = () => (
     <div className="text-center space-y-6">
@@ -415,7 +395,7 @@ function RegistrationForm() {
       <p className="text-lg text-gray-600 dark:text-gray-400">
         Your account has been created successfully. You can now start shipping packages.
       </p>
-      
+
       <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6">
         <h3 className="font-semibold text-green-800 dark:text-green-200 mb-2">What's Next?</h3>
         <ul className="text-green-700 dark:text-green-300 space-y-1 text-left">
@@ -450,9 +430,7 @@ function RegistrationForm() {
           <div
             key={step}
             className={`flex items-center justify-center w-8 h-8 rounded-full ${
-              step <= currentStep
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-300 text-gray-500'
+              step <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-500'
             }`}
           >
             {step < currentStep ? <CheckCircle className="w-5 h-5" /> : step}
@@ -470,33 +448,33 @@ function RegistrationForm() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-          {currentStep < 5 && renderProgressBar()}
-          
-          {error && (
-            <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-center">
-              <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
-              <span className="text-red-700 dark:text-red-300">{error}</span>
-            </div>
-          )}
+      <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+        {currentStep < 5 && renderProgressBar()}
 
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
-          {currentStep === 5 && renderStep5()}
+        {error && (
+          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-center">
+            <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
+            <span className="text-red-700 dark:text-red-300">{error}</span>
+          </div>
+        )}
 
-          {currentStep < 5 && (
-            <div className="mt-8 text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Already have an account?{' '}
-                <Link href="/login" className="text-blue-600 hover:text-blue-500">
-                  Sign in here
-                </Link>
-              </p>
-            </div>
-          )}
-        </div>
+        {currentStep === 1 && renderStep1()}
+        {currentStep === 2 && renderStep2()}
+        {currentStep === 3 && renderStep3()}
+        {currentStep === 4 && renderStep4()}
+        {currentStep === 5 && renderStep5()}
+
+        {currentStep < 5 && (
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Already have an account?{' '}
+              <Link href="/login" className="text-blue-600 hover:text-blue-500">
+                Sign in here
+              </Link>
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

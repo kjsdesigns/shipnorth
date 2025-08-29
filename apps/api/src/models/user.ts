@@ -5,27 +5,31 @@ export interface User {
   id: string;
   email: string;
   password: string;
-  role: 'customer' | 'staff' | 'admin' | 'driver';
-  customerId?: string; // Link to customer record if role is customer
+  role: 'customer' | 'staff' | 'admin' | 'driver'; // Keep for backward compatibility
+  roles?: ('staff' | 'admin' | 'driver' | 'customer')[]; // Optional multi-role support
+  customerId?: string; // Link to customer record if role includes customer
   firstName: string;
   lastName: string;
   phone?: string;
   status: 'active' | 'inactive';
   lastLogin?: string;
+  lastUsedPortal?: 'staff' | 'driver' | 'customer'; // Track last portal used
   createdAt?: string;
   updatedAt?: string;
 }
 
 export class UserModel {
-  static async create(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<Omit<User, 'password'>> {
+  static async create(
+    user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Omit<User, 'password'>> {
     const id = generateId();
-    
+
     // Hash password
     const hashedPassword = await bcrypt.hash(user.password, 10);
-    
+
     // Destructure to avoid overwriting the hashed password
     const { password, ...userDataWithoutPassword } = user;
-    
+
     const newUser: User = {
       id,
       ...userDataWithoutPassword,
@@ -58,7 +62,10 @@ export class UserModel {
     return userItems.length > 0 ? userItems[0].Data : null;
   }
 
-  static async validatePassword(email: string, password: string): Promise<Omit<User, 'password'> | null> {
+  static async validatePassword(
+    email: string,
+    password: string
+  ): Promise<Omit<User, 'password'> | null> {
     const user = await this.findByEmail(email);
     if (!user || user.status !== 'active') return null;
 
@@ -89,7 +96,7 @@ export class UserModel {
     }
 
     const updatedUser = { ...current, ...updates };
-    
+
     const updateData: any = {
       Data: updatedUser,
     };
@@ -98,24 +105,24 @@ export class UserModel {
     if (updates.email && updates.email !== current.email) {
       // Delete old email index
       await DatabaseService.delete(`EMAIL#${current.email.toLowerCase()}`, `USER#${id}`);
-      
+
       // Create new email index
       updateData.GSI1PK = `EMAIL#${updates.email.toLowerCase()}`;
     }
 
     const result = await DatabaseService.update(`USER#${id}`, 'METADATA', updateData);
-    
+
     if (result && result.Data) {
       const { password, ...userWithoutPassword } = result.Data;
       return userWithoutPassword;
     }
-    
+
     return null;
   }
 
   static async list(role?: string, limit = 100): Promise<Omit<User, 'password'>[]> {
     let items;
-    
+
     if (role) {
       items = await DatabaseService.scan({
         FilterExpression: '#type = :type AND #data.#role = :role',
@@ -143,10 +150,12 @@ export class UserModel {
       });
     }
 
-    return items.map((item: any) => {
-      const { password, ...userWithoutPassword } = item.Data;
-      return userWithoutPassword;
-    }).filter(Boolean);
+    return items
+      .map((item: any) => {
+        const { password, ...userWithoutPassword } = item.Data;
+        return userWithoutPassword;
+      })
+      .filter(Boolean);
   }
 
   static async delete(id: string): Promise<boolean> {
@@ -155,11 +164,15 @@ export class UserModel {
 
     await DatabaseService.delete(`USER#${id}`, 'METADATA');
     await DatabaseService.delete(`EMAIL#${user.email.toLowerCase()}`, `USER#${id}`);
-    
+
     return true;
   }
 
-  static async changePassword(id: string, oldPassword: string, newPassword: string): Promise<boolean> {
+  static async changePassword(
+    id: string,
+    oldPassword: string,
+    newPassword: string
+  ): Promise<boolean> {
     const user = await this.findById(id);
     if (!user) return false;
 
@@ -167,11 +180,78 @@ export class UserModel {
     if (!isValid) return false;
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
+
     await DatabaseService.update(`USER#${id}`, 'METADATA', {
       'Data.password': hashedPassword,
     });
 
     return true;
+  }
+
+  // Helper methods for new multi-role system
+  static async updateLastUsedPortal(
+    id: string,
+    portal: 'staff' | 'driver' | 'customer'
+  ): Promise<boolean> {
+    try {
+      await this.update(id, {
+        lastUsedPortal: portal,
+        lastLogin: new Date().toISOString(),
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to update last used portal:', error);
+      return false;
+    }
+  }
+
+  static getAvailablePortals(
+    user: User | Omit<User, 'password'>
+  ): ('staff' | 'driver' | 'customer')[] {
+    const portals: ('staff' | 'driver' | 'customer')[] = [];
+    const userRoles = user.roles || [user.role];
+
+    if (userRoles.includes('customer')) {
+      portals.push('customer');
+    }
+    if (userRoles.includes('staff') || userRoles.includes('admin')) {
+      portals.push('staff');
+    }
+    if (userRoles.includes('driver')) {
+      portals.push('driver');
+    }
+
+    return portals;
+  }
+
+  static getDefaultPortal(user: User | Omit<User, 'password'>): 'staff' | 'driver' | 'customer' {
+    // Return last used portal if available and user still has access
+    if (user.lastUsedPortal && this.getAvailablePortals(user).includes(user.lastUsedPortal)) {
+      return user.lastUsedPortal;
+    }
+
+    const userRoles = user.roles || [user.role];
+
+    // Default priority: customer > staff > driver
+    if (userRoles.includes('customer')) return 'customer';
+    if (
+      userRoles.includes('staff') ||
+      userRoles.includes('admin') ||
+      user.role === 'staff' ||
+      user.role === 'admin'
+    )
+      return 'staff';
+    if (userRoles.includes('driver') || user.role === 'driver') return 'driver';
+
+    throw new Error('User has no valid portal access');
+  }
+
+  static hasAdminAccess(user: User | Omit<User, 'password'>): boolean {
+    const userRoles = user.roles || [user.role];
+    return userRoles.includes('admin') || user.role === 'admin';
+  }
+
+  static canAccessPortal(user: User, portal: 'staff' | 'driver' | 'customer'): boolean {
+    return this.getAvailablePortals(user).includes(portal);
   }
 }

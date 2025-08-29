@@ -20,9 +20,8 @@ export class DatabaseStack extends cdk.Stack {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       pointInTimeRecovery: true,
       encryption: dynamodb.TableEncryption.AWS_MANAGED,
-      removalPolicy: props.environment === 'prod' 
-        ? cdk.RemovalPolicy.RETAIN 
-        : cdk.RemovalPolicy.DESTROY,
+      removalPolicy:
+        props.environment === 'prod' ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
     });
 
     // GSI1: Customer access patterns
@@ -35,7 +34,7 @@ export class DatabaseStack extends cdk.Stack {
 
     // GSI2: Date-based queries
     this.mainTable.addGlobalSecondaryIndex({
-      indexName: 'GSI2', 
+      indexName: 'GSI2',
       partitionKey: { name: 'GSI2PK', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'GSI2SK', type: dynamodb.AttributeType.STRING },
       projectionType: dynamodb.ProjectionType.ALL,

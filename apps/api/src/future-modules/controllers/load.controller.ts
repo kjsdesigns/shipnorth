@@ -6,50 +6,59 @@ import { ValidationHelper } from '../utils/validation';
 export class LoadController {
   static listLoads = asyncHandler(async (req: Request, res: Response) => {
     const loads = await LoadModel.list();
-    
+
     // Add package counts and destination info
     const loadsWithDetails = await Promise.all(
       loads.map(async (load) => {
         const packages = await LoadModel.getPackages(load.id);
-        const destinationsWithDates = load.deliveryCities?.filter(city => city.expectedDeliveryDate).length || 0;
+        const destinationsWithDates =
+          load.deliveryCities?.filter((city) => city.expectedDeliveryDate).length || 0;
         const totalDestinations = load.deliveryCities?.length || 0;
-        
+
         return {
           ...load,
           packageCount: packages.length,
           destinationInfo: {
             withDates: destinationsWithDates,
             total: totalDestinations,
-            cities: load.deliveryCities || []
+            cities: load.deliveryCities || [],
           },
           deliveryDateRange: {
-            earliest: load.deliveryCities?.reduce((min, city) => 
-              city.expectedDeliveryDate && (!min || city.expectedDeliveryDate < min) 
-                ? city.expectedDeliveryDate : min, ''),
-            latest: load.deliveryCities?.reduce((max, city) => 
-              city.expectedDeliveryDate && (!max || city.expectedDeliveryDate > max) 
-                ? city.expectedDeliveryDate : max, '')
-          }
+            earliest: load.deliveryCities?.reduce(
+              (min, city) =>
+                city.expectedDeliveryDate && (!min || city.expectedDeliveryDate < min)
+                  ? city.expectedDeliveryDate
+                  : min,
+              ''
+            ),
+            latest: load.deliveryCities?.reduce(
+              (max, city) =>
+                city.expectedDeliveryDate && (!max || city.expectedDeliveryDate > max)
+                  ? city.expectedDeliveryDate
+                  : max,
+              ''
+            ),
+          },
         };
       })
     );
-    
+
     ResponseHelper.success(res, { loads: loadsWithDetails });
   });
 
   static getLoad = asyncHandler(async (req: Request, res: Response) => {
     const load = await LoadService.getLoadWithDetails(req.params.id);
-    
+
     if (!load) {
       return ResponseHelper.notFound(res, 'Load not found');
     }
-    
+
     ResponseHelper.success(res, { load });
   });
 
   static createLoad = asyncHandler(async (req: Request, res: Response) => {
     const validation = ValidationHelper.validateLoadData(req.body);
-    
+
     if (!validation.isValid) {
       return ResponseHelper.validationError(res, validation.errors);
     }
@@ -60,41 +69,45 @@ export class LoadController {
 
   static updateLoad = asyncHandler(async (req: Request, res: Response) => {
     const load = await LoadModel.update(req.params.id, req.body);
-    
+
     if (!load) {
       return ResponseHelper.notFound(res, 'Load not found');
     }
-    
+
     ResponseHelper.success(res, { load }, 'Load updated successfully');
   });
 
   static assignPackages = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const { packageIds } = req.body;
-    
+
     if (!packageIds || !Array.isArray(packageIds)) {
       return ResponseHelper.badRequest(res, 'packageIds array is required');
     }
 
     await LoadService.assignPackagesToLoad(id, packageIds);
-    
-    ResponseHelper.success(res, { assignedCount: packageIds.length }, 'Packages assigned successfully');
+
+    ResponseHelper.success(
+      res,
+      { assignedCount: packageIds.length },
+      'Packages assigned successfully'
+    );
   });
 
   static updateDeliveryCities = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const { cities, originAddress } = req.body;
-    
+
     if (!Array.isArray(cities)) {
       return ResponseHelper.badRequest(res, 'cities array is required');
     }
 
     const updatedCities = await LoadService.updateDeliveryCitiesWithOptimization(
-      id, 
-      cities, 
+      id,
+      cities,
       originAddress
     );
-    
+
     ResponseHelper.success(res, { cities: updatedCities }, 'Delivery cities updated');
   });
 
@@ -102,34 +115,38 @@ export class LoadController {
     const { id } = req.params;
     const { lat, lng, address, isManual } = req.body;
     const addedBy = req.user?.id;
-    
+
     if (typeof lat !== 'number' || typeof lng !== 'number') {
       return ResponseHelper.badRequest(res, 'Valid latitude and longitude are required');
     }
 
     const location = await LoadService.addLocationTracking(
-      id, 
-      lat, 
-      lng, 
-      isManual || false, 
-      addedBy, 
+      id,
+      lat,
+      lng,
+      isManual || false,
+      addedBy,
       address
     );
-    
+
     ResponseHelper.success(res, { location }, 'Location added successfully');
   });
 
   static getLocations = asyncHandler(async (req: Request, res: Response) => {
     const load = await LoadModel.findById(req.params.id);
-    
+
     if (!load) {
       return ResponseHelper.notFound(res, 'Load not found');
     }
-    
-    ResponseHelper.success(res, {
-      locations: load.locationHistory || [],
-      currentLocation: load.currentLocation
-    }, 'Locations retrieved successfully');
+
+    ResponseHelper.success(
+      res,
+      {
+        locations: load.locationHistory || [],
+        currentLocation: load.currentLocation,
+      },
+      'Locations retrieved successfully'
+    );
   });
 
   static startLoad = asyncHandler(async (req: Request, res: Response) => {
@@ -155,10 +172,14 @@ export class LoadController {
 
     const loads = await LoadService.getDriverLoads(driverId);
     const activeLoad = await LoadService.getActiveLoadForDriver(driverId);
-    
-    ResponseHelper.success(res, { 
-      loads, 
-      activeLoad 
-    }, 'Driver loads retrieved successfully');
+
+    ResponseHelper.success(
+      res,
+      {
+        loads,
+        activeLoad,
+      },
+      'Driver loads retrieved successfully'
+    );
   });
 }

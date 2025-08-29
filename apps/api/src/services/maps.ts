@@ -26,11 +26,11 @@ export class MapsService {
   private static async getApiKey(): Promise<string> {
     const settings = await SettingsModel.get();
     const apiKey = settings.googleMapsApiKey;
-    
+
     if (!apiKey) {
       throw new Error('Google Maps API key not configured in system settings');
     }
-    
+
     return apiKey;
   }
 
@@ -38,7 +38,7 @@ export class MapsService {
     try {
       const apiKey = await this.getApiKey();
       const encodedAddress = encodeURIComponent(address);
-      
+
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${apiKey}`
       );
@@ -50,7 +50,7 @@ export class MapsService {
           lng: location.lng,
         };
       }
-      
+
       return null;
     } catch (error) {
       console.error('Geocoding error:', error);
@@ -64,7 +64,7 @@ export class MapsService {
   ): Promise<RouteOptimizationResult> {
     try {
       const apiKey = await this.getApiKey();
-      
+
       // First, geocode all destinations
       const geocodedDestinations = await Promise.all(
         destinations.map(async (dest, index) => {
@@ -79,7 +79,7 @@ export class MapsService {
       );
 
       // Filter out destinations that couldn't be geocoded
-      const validDestinations = geocodedDestinations.filter(dest => dest.coordinates);
+      const validDestinations = geocodedDestinations.filter((dest) => dest.coordinates);
 
       if (validDestinations.length === 0) {
         throw new Error('No valid destinations found');
@@ -87,16 +87,16 @@ export class MapsService {
 
       // Use Google Maps Directions API with waypoint optimization
       const waypoints = validDestinations
-        .map(dest => dest.coordinates!)
-        .map(coord => `${coord.lat},${coord.lng}`)
+        .map((dest) => dest.coordinates!)
+        .map((coord) => `${coord.lat},${coord.lng}`)
         .join('|');
 
       const directionsResponse = await axios.get(
         `https://maps.googleapis.com/maps/api/directions/json?` +
-        `origin=${encodeURIComponent(origin)}&` +
-        `destination=${encodeURIComponent(origin)}&` +
-        `waypoints=optimize:true|${waypoints}&` +
-        `key=${apiKey}`
+          `origin=${encodeURIComponent(origin)}&` +
+          `destination=${encodeURIComponent(origin)}&` +
+          `waypoints=optimize:true|${waypoints}&` +
+          `key=${apiKey}`
       );
 
       if (directionsResponse.data.status !== 'OK') {
@@ -105,13 +105,13 @@ export class MapsService {
 
       const route = directionsResponse.data.routes[0];
       const waypointOrder = route.waypoint_order || [];
-      
+
       // Calculate distances and durations for each leg
       const legs = route.legs;
       const optimizedWaypoints = waypointOrder.map((optimizedIndex: number, legIndex: number) => {
         const originalDestination = validDestinations[optimizedIndex];
         const leg = legs[legIndex];
-        
+
         return {
           city: originalDestination.city,
           province: originalDestination.province,
@@ -122,8 +122,10 @@ export class MapsService {
         };
       });
 
-      const totalDistance = legs.reduce((sum: number, leg: any) => sum + leg.distance.value, 0) / 1000;
-      const totalDuration = legs.reduce((sum: number, leg: any) => sum + leg.duration.value, 0) / 60;
+      const totalDistance =
+        legs.reduce((sum: number, leg: any) => sum + leg.distance.value, 0) / 1000;
+      const totalDuration =
+        legs.reduce((sum: number, leg: any) => sum + leg.duration.value, 0) / 60;
 
       return {
         optimizedOrder: waypointOrder,
@@ -133,7 +135,7 @@ export class MapsService {
       };
     } catch (error) {
       console.error('Route optimization error:', error);
-      
+
       // Fallback: return original order with estimated distances
       const fallbackWaypoints = destinations.map((dest, index) => ({
         city: dest.city,
@@ -153,22 +155,19 @@ export class MapsService {
     }
   }
 
-  static async getDistanceMatrix(
-    origins: string[],
-    destinations: string[]
-  ): Promise<any> {
+  static async getDistanceMatrix(origins: string[], destinations: string[]): Promise<any> {
     try {
       const apiKey = await this.getApiKey();
-      
-      const originsStr = origins.map(o => encodeURIComponent(o)).join('|');
-      const destinationsStr = destinations.map(d => encodeURIComponent(d)).join('|');
-      
+
+      const originsStr = origins.map((o) => encodeURIComponent(o)).join('|');
+      const destinationsStr = destinations.map((d) => encodeURIComponent(d)).join('|');
+
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/distancematrix/json?` +
-        `origins=${originsStr}&` +
-        `destinations=${destinationsStr}&` +
-        `units=metric&` +
-        `key=${apiKey}`
+          `origins=${originsStr}&` +
+          `destinations=${destinationsStr}&` +
+          `units=metric&` +
+          `key=${apiKey}`
       );
 
       return response.data;
@@ -181,7 +180,7 @@ export class MapsService {
   static async reverseGeocode(lat: number, lng: number): Promise<string | null> {
     try {
       const apiKey = await this.getApiKey();
-      
+
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
       );
@@ -189,7 +188,7 @@ export class MapsService {
       if (response.data.status === 'OK' && response.data.results.length > 0) {
         return response.data.results[0].formatted_address;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Reverse geocoding error:', error);
@@ -213,7 +212,7 @@ export class MapsService {
       components.postalCode,
       components.country,
     ].filter(Boolean);
-    
+
     return parts.join(', ');
   }
 
@@ -223,7 +222,7 @@ export class MapsService {
     destinations: RouteWaypoint[]
   ): RouteOptimizationResult {
     const shuffledDestinations = [...destinations].sort(() => Math.random() - 0.5);
-    
+
     const waypoints = shuffledDestinations.map((dest, index) => ({
       city: dest.city,
       province: dest.province,

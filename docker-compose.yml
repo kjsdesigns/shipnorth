@@ -1,56 +1,45 @@
 version: '3.8'
 
 services:
-  api:
-    build:
-      context: ./apps/api
-      dockerfile: Dockerfile
+  # Simple nginx proxy for clean domains
+  nginx:
+    image: nginx:alpine
+    container_name: shipnorth-nginx
     ports:
-      - "4000:4000"
-    environment:
-      - NODE_ENV=development
-      - PORT=4000
-      - AWS_REGION=us-east-1
-    env_file:
-      - .env
+      - "80:80"
     volumes:
-      - ./apps/api:/app
-      - /app/node_modules
-    command: npm run dev
-    networks:
-      - shipnorth
-
-  web:
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://localhost:4000
-    volumes:
-      - ./apps/web:/app
-      - /app/node_modules
-      - /app/.next
-    command: npm run dev
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
     depends_on:
-      - api
-    networks:
       - shipnorth
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    networks:
-      - shipnorth
-
-networks:
   shipnorth:
-    driver: bridge
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: shipnorth-app
+    ports:
+      - "8849:8849"  # Web frontend
+      - "8850:8850"  # API backend
+    volumes:
+      # Bind mount the entire project for development
+      - .:/app
+      # Persist node_modules to avoid reinstalling on every container start
+      - node_modules:/app/node_modules
+      - api_node_modules:/app/apps/api/node_modules
+      - web_node_modules:/app/apps/web/node_modules
+    environment:
+      - NODE_ENV=development
+      - API_PORT=8850
+      - WEB_PORT=8849
+      - NEXT_PUBLIC_API_URL=http://snapi.local.com
+    command: npm run docker:dev
+    restart: unless-stopped
+    # Ensure the container has access to file system events for hot reload
+    stdin_open: true
+    tty: true
 
 volumes:
-  redis-data:
+  node_modules:
+  api_node_modules:
+  web_node_modules:

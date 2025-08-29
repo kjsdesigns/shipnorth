@@ -27,7 +27,7 @@ export class PackageController {
     };
 
     const result = await PackageService.getPackagesWithFilters(filters);
-    
+
     ResponseHelper.paginated(
       res,
       result.packages,
@@ -45,17 +45,17 @@ export class PackageController {
 
   static getPackage = asyncHandler(async (req: Request, res: Response) => {
     const pkg = await PackageService.getPackageWithExpectedDelivery(req.params.id);
-    
+
     if (!pkg) {
       return ResponseHelper.notFound(res, 'Package not found');
     }
-    
+
     ResponseHelper.success(res, { package: pkg });
   });
 
   static createPackage = asyncHandler(async (req: Request, res: Response) => {
     const validation = ValidationHelper.validatePackageData(req.body);
-    
+
     if (!validation.isValid) {
       return ResponseHelper.validationError(res, validation.errors);
     }
@@ -76,12 +76,16 @@ export class PackageController {
     }
 
     const result = await PackageService.bulkAssignToLoad(packageIds, loadId);
-    
-    ResponseHelper.success(res, {
-      assignedCount: result.success,
-      failedCount: result.failed.length,
-      failedPackages: result.failed,
-    }, 'Bulk assignment completed');
+
+    ResponseHelper.success(
+      res,
+      {
+        assignedCount: result.success,
+        failedCount: result.failed.length,
+        failedPackages: result.failed,
+      },
+      'Bulk assignment completed'
+    );
   });
 
   static markPackageDelivered = asyncHandler(async (req: Request, res: Response) => {
@@ -112,11 +116,11 @@ export class PackageController {
 
   static deletePackage = asyncHandler(async (req: Request, res: Response) => {
     const success = await PackageService.deletePackage(req.params.id);
-    
+
     if (!success) {
       return ResponseHelper.notFound(res, 'Package not found');
     }
-    
+
     ResponseHelper.success(res, null, 'Package deleted successfully');
   });
 }

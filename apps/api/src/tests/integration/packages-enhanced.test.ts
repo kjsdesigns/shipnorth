@@ -11,10 +11,12 @@ jest.mock('../../middleware/auth', () => ({
     req.user = { id: 'staff-123', role: 'staff' };
     next();
   },
-  authorize: (...roles: string[]) => (req: any, res: any, next: any) => {
-    req.user = { id: 'staff-123', role: 'staff' };
-    next();
-  },
+  authorize:
+    (...roles: string[]) =>
+    (req: any, res: any, next: any) => {
+      req.user = { id: 'staff-123', role: 'staff' };
+      next();
+    },
 }));
 
 describe('Packages API Enhanced Endpoints', () => {
@@ -32,9 +34,7 @@ describe('Packages API Enhanced Endpoints', () => {
 
       (PackageModel.getPackageStats as jest.Mock).mockResolvedValue(mockStats);
 
-      const response = await request(app)
-        .get('/packages/stats/overview')
-        .expect(200);
+      const response = await request(app).get('/packages/stats/overview').expect(200);
 
       expect(response.body).toEqual(mockStats);
       expect(PackageModel.getPackageStats).toHaveBeenCalled();
@@ -43,9 +43,7 @@ describe('Packages API Enhanced Endpoints', () => {
     it('should handle errors gracefully', async () => {
       (PackageModel.getPackageStats as jest.Mock).mockRejectedValue(new Error('Database error'));
 
-      const response = await request(app)
-        .get('/packages/stats/overview')
-        .expect(500);
+      const response = await request(app).get('/packages/stats/overview').expect(500);
 
       expect(response.body).toHaveProperty('error', 'Database error');
     });
@@ -61,9 +59,7 @@ describe('Packages API Enhanced Endpoints', () => {
       (PackageModel.getPackagesByLoadStatus as jest.Mock).mockResolvedValue(mockPackages);
       (PackageModel.getExpectedDeliveryDate as jest.Mock).mockResolvedValue(null);
 
-      const response = await request(app)
-        .get('/packages?status=unassigned&limit=50')
-        .expect(200);
+      const response = await request(app).get('/packages?status=unassigned&limit=50').expect(200);
 
       expect(response.body.packages).toHaveLength(2);
       expect(PackageModel.getPackagesByLoadStatus).toHaveBeenCalledWith('unassigned');
@@ -80,9 +76,7 @@ describe('Packages API Enhanced Endpoints', () => {
         .mockResolvedValueOnce('2024-01-20T17:00:00Z')
         .mockResolvedValueOnce(null);
 
-      const response = await request(app)
-        .get('/packages')
-        .expect(200);
+      const response = await request(app).get('/packages').expect(200);
 
       expect(response.body.packages[0].expectedDeliveryDate).toBe('2024-01-20T17:00:00Z');
       expect(response.body.packages[1].expectedDeliveryDate).toBeNull();
@@ -91,9 +85,7 @@ describe('Packages API Enhanced Endpoints', () => {
     it('should return pagination info', async () => {
       (PackageModel.getPackagesByLoadStatus as jest.Mock).mockResolvedValue([]);
 
-      const response = await request(app)
-        .get('/packages?page=2&limit=100')
-        .expect(200);
+      const response = await request(app).get('/packages?page=2&limit=100').expect(200);
 
       expect(response.body.pagination).toEqual({
         page: 2,
@@ -223,9 +215,7 @@ describe('Packages API Enhanced Endpoints', () => {
       (PackageModel.findById as jest.Mock).mockResolvedValue(mockPackage);
       (PackageModel.getExpectedDeliveryDate as jest.Mock).mockResolvedValue(expectedDate);
 
-      const response = await request(app)
-        .get(`/packages/${packageId}`)
-        .expect(200);
+      const response = await request(app).get(`/packages/${packageId}`).expect(200);
 
       expect(response.body.package).toEqual({
         ...mockPackage,
@@ -236,9 +226,7 @@ describe('Packages API Enhanced Endpoints', () => {
     it('should handle package not found', async () => {
       (PackageModel.findById as jest.Mock).mockResolvedValue(null);
 
-      const response = await request(app)
-        .get('/packages/nonexistent')
-        .expect(404);
+      const response = await request(app).get('/packages/nonexistent').expect(404);
 
       expect(response.body.error).toBe('Package not found');
     });

@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- complementary:
+  - link "Shipnorth":
+    - /url: /
+  - text: AU
+  - paragraph: Admin User
+  - paragraph: admin
+  - navigation:
+    - link "Dashboard":
+      - /url: /admin/
+    - link "Analytics":
+      - /url: /admin/analytics/
+    - link "Customers":
+      - /url: /admin/customers/
+    - link "Packages":
+      - /url: /admin/packages/
+    - link "Loads":
+      - /url: /admin/loads/
+    - link "Invoices":
+      - /url: /admin/invoices/
+    - link "Cities":
+      - /url: /admin/cities/
+    - link "Staff":
+      - /url: /admin/staff/
+    - link "Settings":
+      - /url: /admin/settings/
+  - button "Sign out"
+- banner:
+  - searchbox "Search packages, customers, loads..."
+  - text: K
+  - button "System"
+  - button "3"
+  - button "AU"
+- main:
+  - heading "Admin Dashboard" [level=1]
+  - paragraph: System overview and management
+  - combobox:
+    - option "Last 7 days"
+    - option "Last 30 days" [selected]
+    - option "Last 90 days"
+    - option "Last year"
+  - button "Export Report"
+  - paragraph: Total Revenue
+  - paragraph: $0
+  - text: +23% vs last period
+  - paragraph: Active Customers
+  - paragraph: "13"
+  - text: +12% new this month
+  - paragraph: Completion Rate
+  - paragraph: 0%
+  - text: +5% improvement
+  - paragraph: Active Loads
+  - paragraph: "0"
+  - text: "-8% from peak"
+  - heading "Monthly Revenue" [level=3]
+  - paragraph: $0
+  - paragraph: "Target: $75,000"
+  - heading "Avg Delivery Time" [level=3]
+  - paragraph: 2.4 days
+  - paragraph: ↓ 0.3 days from last month
+  - heading "Pending Invoices" [level=3]
+  - paragraph: "0"
+  - paragraph: Worth $0
+  - navigation:
+    - button "overview"
+    - button "analytics"
+    - button "operations"
+    - button "finance"
+    - button "system"
+  - heading "Revenue Trend" [level=3]
+  - paragraph: Jan
+  - paragraph: Feb
+  - paragraph: Mar
+  - paragraph: Apr
+  - paragraph: May
+  - paragraph: Jun
+  - heading "Recent Activity" [level=3]
+  - paragraph: New customer registered
+  - paragraph: Alice Johnson - 2 minutes ago
+  - paragraph: "Load #L-1234 departed"
+  - paragraph: "Driver: Bob Wilson - 15 minutes ago"
+  - paragraph: "Invoice #INV-5678 paid"
+  - paragraph: "Amount: $2,450 - 1 hour ago"
+- alert
+```

@@ -82,7 +82,7 @@ export class CustomerService {
 
     // Retrieve setup intent from Stripe
     const setupIntent = await StripeService.stripe.setupIntents.retrieve(setupIntentId);
-    
+
     if (setupIntent.status !== 'succeeded') {
       throw new Error('Payment method setup not completed');
     }
@@ -121,7 +121,7 @@ export class CustomerService {
     for (const customerData of customersData) {
       try {
         const existingCustomer = await CustomerModel.findByEmail(customerData.email);
-        
+
         if (existingCustomer) {
           // Update existing customer
           await CustomerModel.update(existingCustomer.id, customerData);
@@ -168,12 +168,12 @@ export class CustomerService {
     if (!customer) return null;
 
     const packages = await CustomerModel.getPackages(customerId);
-    
+
     // Enhance packages with expected delivery dates and load locations
     const enhancedPackages = await Promise.all(
       packages.map(async (pkg: Package) => {
         const expectedDeliveryDate = await PackageModel.getExpectedDeliveryDate(pkg.id);
-        
+
         let loadLocation = null;
         if (pkg.loadId) {
           try {
@@ -213,7 +213,7 @@ export class CustomerService {
 
     // Attach payment method to Stripe customer
     await StripeService.attachPaymentMethodToCustomer(paymentMethodId, customer.stripeCustomerId);
-    
+
     // Set as default
     await StripeService.setDefaultPaymentMethod(customer.stripeCustomerId, paymentMethodId);
 
@@ -244,8 +244,8 @@ export class CustomerService {
 
     // Check if customer has active packages
     const packages = await CustomerModel.getPackages(customerId);
-    const activePackages = packages.filter((pkg: Package) => 
-      pkg.shipmentStatus !== 'delivered' && pkg.paymentStatus !== 'refunded'
+    const activePackages = packages.filter(
+      (pkg: Package) => pkg.shipmentStatus !== 'delivered' && pkg.paymentStatus !== 'refunded'
     );
 
     if (activePackages.length > 0) {
@@ -268,14 +268,15 @@ export class CustomerService {
   static async searchCustomers(query: string, limit: number = 50): Promise<Customer[]> {
     // This is a simplified search - in production you'd use a proper search service
     const allCustomers = await CustomerModel.list(1000);
-    
+
     const lowercaseQuery = query.toLowerCase();
     return allCustomers
-      .filter(customer => 
-        customer.firstName.toLowerCase().includes(lowercaseQuery) ||
-        customer.lastName.toLowerCase().includes(lowercaseQuery) ||
-        customer.email.toLowerCase().includes(lowercaseQuery) ||
-        customer.phone.includes(query)
+      .filter(
+        (customer) =>
+          customer.firstName.toLowerCase().includes(lowercaseQuery) ||
+          customer.lastName.toLowerCase().includes(lowercaseQuery) ||
+          customer.email.toLowerCase().includes(lowercaseQuery) ||
+          customer.phone.includes(query)
       )
       .slice(0, limit);
   }

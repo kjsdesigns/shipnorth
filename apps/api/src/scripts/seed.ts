@@ -9,6 +9,7 @@ import { CustomerModel } from '../models/customer';
 import { PackageModel } from '../models/package';
 import { LoadModel } from '../models/load';
 import { InvoiceModel } from '../models/invoice';
+import { CityModel } from '../models/city';
 
 async function seedDatabase() {
   console.log('🌱 Starting database seed...');
@@ -61,8 +62,8 @@ async function seedDatabase() {
       province: 'ON',
       postalCode: 'M5V 3A8',
       country: 'Canada',
-      stripeCustomerId: 'cus_mock_' + Date.now(),
-      stripePaymentMethodId: 'pm_mock_' + Date.now(),
+      paypalCustomerId: 'pp_customer_mock_' + Date.now(),
+      paypalPaymentTokenId: 'pt_mock_' + Date.now(),
       status: 'active',
     });
 
@@ -89,7 +90,7 @@ async function seedDatabase() {
       province: 'ON',
       postalCode: 'K1P 5H3',
       country: 'Canada',
-      stripeCustomerId: 'cus_mock_' + Date.now(),
+      paypalCustomerId: 'pp_customer_mock_' + Date.now(),
       status: 'active',
     });
 
@@ -157,6 +158,7 @@ async function seedDatabase() {
           city: 'Ottawa',
           province: 'ON',
           country: 'CA',
+          expectedDeliveryDate: new Date(Date.now() + 345600000).toISOString(),
         },
       ],
       transportMode: 'truck',
@@ -191,12 +193,10 @@ async function seedDatabase() {
       loadId: load1.id,
       shipTo: {
         name: 'Alice Johnson',
-        address1: '321 Pine Street',
-        city: 'Thunder Bay',
-        province: 'ON',
-        postalCode: 'P7B 1K3',
-        country: 'Canada',
+        addressId: 'temp-address-1', // TODO: Create proper address and reference
       },
+      // Legacy structure temporarily preserved as comment:
+      // address: { address1: '321 Pine Street', city: 'Thunder Bay', province: 'ON', postalCode: 'P7B 1K3', country: 'Canada' }
     });
 
     await InvoiceModel.create({
@@ -220,18 +220,18 @@ async function seedDatabase() {
       weight: 8.2,
       quotedCarrier: 'FedEx',
       quotedService: 'Ground',
-      quotedRate: 35.50,
+      quotedRate: 35.5,
       labelStatus: 'quoted',
-      price: 42.50,
+      price: 42.5,
       paymentStatus: 'unpaid',
       shipmentStatus: 'ready',
       shipTo: {
         name: 'Bob Smith',
-        address1: '555 Elm Avenue',
-        city: 'Sudbury',
-        province: 'ON',
-        postalCode: 'P3E 2T5',
-        country: 'Canada',
+        addressId: 'temp-address-' + Math.random(), // TODO: Fix '555 Elm Avenue',
+        // city: 'Sudbury',
+        // province: 'ON',
+        // postalCode: 'P3E 2T5',
+        // country: 'Canada',
       },
     });
     console.log('✅ Created package:', package2.barcode);
@@ -246,28 +246,28 @@ async function seedDatabase() {
       weight: 4.0,
       quotedCarrier: 'UPS',
       quotedService: 'Standard',
-      quotedRate: 22.00,
+      quotedRate: 22.0,
       labelStatus: 'purchased',
       carrier: 'UPS',
       trackingNumber: '1Z999AA10123456784',
       labelUrl: 'https://mock-labels.s3.amazonaws.com/label3.pdf',
-      price: 28.00,
+      price: 28.0,
       paymentStatus: 'paid',
       shipmentStatus: 'delivered',
       shipTo: {
         name: 'Carol White',
-        address1: '777 Oak Road',
-        city: 'London',
-        province: 'ON',
-        postalCode: 'N6A 1H7',
-        country: 'Canada',
+        addressId: 'temp-address-' + Math.random(), // TODO: Fix '777 Oak Road',
+        // city: 'London',
+        // province: 'ON',
+        // postalCode: 'N6A 1H7',
+        // country: 'Canada',
       },
     });
 
     await InvoiceModel.create({
       customerId: customer1.id,
       packageId: package3.id,
-      amount: 28.00,
+      amount: 28.0,
       tax: 3.64,
       total: 31.64,
       currency: 'CAD',
@@ -288,11 +288,11 @@ async function seedDatabase() {
       shipmentStatus: 'ready',
       shipTo: {
         name: 'David Lee',
-        address1: '999 Maple Drive',
-        city: 'Kingston',
-        province: 'ON',
-        postalCode: 'K7L 4V1',
-        country: 'Canada',
+        addressId: 'temp-address-' + Math.random(), // TODO: Fix '999 Maple Drive',
+        // city: 'Kingston',
+        // province: 'ON',
+        // postalCode: 'K7L 4V1',
+        // country: 'Canada',
       },
       notes: 'Fragile - Handle with care',
     });
@@ -318,11 +318,11 @@ async function seedDatabase() {
       shipmentStatus: 'ready',
       shipTo: {
         name: 'Eve Brown',
-        address1: '111 Cedar Lane',
-        city: 'Windsor',
-        province: 'ON',
-        postalCode: 'N9A 6J3',
-        country: 'Canada',
+        addressId: 'temp-address-' + Math.random(), // TODO: Fix '111 Cedar Lane',
+        // city: 'Windsor',
+        // province: 'ON',
+        // postalCode: 'N9A 6J3',
+        // country: 'Canada',
       },
     });
 
@@ -343,10 +343,88 @@ async function seedDatabase() {
     console.log('✅ Assigned packages to load');
 
     // Add GPS tracking to active load
-    await LoadModel.addLocationTracking(load1.id, 43.6532, -79.3832, false, driver.id, 'Toronto, ON'); 
-    await LoadModel.addLocationTracking(load1.id, 44.3894, -79.6903, false, driver.id, 'Barrie, ON');
-    await LoadModel.addLocationTracking(load1.id, 46.4917, -80.9930, false, driver.id, 'Sudbury, ON');
+    await LoadModel.addLocationTracking(
+      load1.id,
+      43.6532,
+      -79.3832,
+      false,
+      driver.id,
+      'Toronto, ON'
+    );
+    await LoadModel.addLocationTracking(
+      load1.id,
+      44.3894,
+      -79.6903,
+      false,
+      driver.id,
+      'Barrie, ON'
+    );
+    await LoadModel.addLocationTracking(
+      load1.id,
+      46.4917,
+      -80.993,
+      false,
+      driver.id,
+      'Sudbury, ON'
+    );
     console.log('✅ Added GPS tracking data');
+
+    // Create cities with alternative names
+    const toronto = await CityModel.create({
+      name: 'Toronto',
+      province: 'ON',
+      alternativeNames: ['Downtown Toronto', 'T.O.', 'The Big Smoke'],
+    });
+    console.log('✅ Created city:', toronto.name);
+
+    const mississauga = await CityModel.create({
+      name: 'Mississauga',
+      province: 'ON',
+      alternativeNames: ['Sauga', 'Square One'],
+    });
+    console.log('✅ Created city:', mississauga.name);
+
+    const london = await CityModel.create({
+      name: 'London',
+      province: 'ON',
+      alternativeNames: ['Forest City', 'London Ontario'],
+    });
+    console.log('✅ Created city:', london.name);
+
+    const windsor = await CityModel.create({
+      name: 'Windsor',
+      province: 'ON',
+      alternativeNames: ['City of Roses', 'Windsor Ontario'],
+    });
+    console.log('✅ Created city:', windsor.name);
+
+    const kingston = await CityModel.create({
+      name: 'Kingston',
+      province: 'ON',
+      alternativeNames: ['Limestone City', 'K-Town'],
+    });
+    console.log('✅ Created city:', kingston.name);
+
+    const vancouver = await CityModel.create({
+      name: 'Vancouver',
+      province: 'BC',
+      alternativeNames: ['Van City', 'Rain City', 'Hollywood North'],
+    });
+    console.log('✅ Created city:', vancouver.name);
+
+    const montreal = await CityModel.create({
+      name: 'Montreal',
+      province: 'QC',
+      alternativeNames: ['Montréal', 'MTL', 'City of Saints'],
+    });
+    console.log('✅ Created city:', montreal.name);
+
+    const calgary = await CityModel.create({
+      name: 'Calgary',
+      province: 'AB',
+      alternativeNames: ['Cowtown', 'C-Town', 'Stampede City'],
+    });
+    console.log('✅ Created city:', calgary.name);
 
     console.log('\n🎉 Database seeded successfully!');
     console.log('\n📝 Login Credentials:');
@@ -357,7 +435,6 @@ async function seedDatabase() {
     console.log('Customer: john.doe@example.com / customer123');
     console.log('Customer: jane.smith@example.com / customer123');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
   } catch (error) {
     console.error('❌ Error seeding database:', error);
     process.exit(1);
@@ -365,10 +442,12 @@ async function seedDatabase() {
 }
 
 // Run the seed function
-seedDatabase().then(() => {
-  console.log('\n✅ Seed complete!');
-  process.exit(0);
-}).catch((error) => {
-  console.error('❌ Seed failed:', error);
-  process.exit(1);
-});
+seedDatabase()
+  .then(() => {
+    console.log('\n✅ Seed complete!');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('❌ Seed failed:', error);
+    process.exit(1);
+  });

@@ -4,9 +4,18 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
-import { 
-  Package, Truck, MapPin, Shield, Clock, DollarSign,
-  Search, ArrowRight, CheckCircle, Users, Zap
+import {
+  Package,
+  Truck,
+  MapPin,
+  Shield,
+  Clock,
+  DollarSign,
+  Search,
+  ArrowRight,
+  CheckCircle,
+  Users,
+  Zap,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -31,11 +40,29 @@ export default function HomePage() {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Shipnorth</h1>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
-              <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Features</a>
-              <a href="#how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">How It Works</a>
-              <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Pricing</a>
+              <a
+                href="#features"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                Features
+              </a>
+              <a
+                href="#how-it-works"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                How It Works
+              </a>
+              <a
+                href="#pricing"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                Pricing
+              </a>
               <ThemeToggle />
-              <Link href="/login" className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600">
+              <Link
+                href="/login"
+                className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
+              >
                 Sign In
               </Link>
             </nav>
@@ -51,10 +78,10 @@ export default function HomePage() {
               Autonomous Shipping & Billing
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-              Streamline your shipping operations with AI-powered load optimization, 
-              real-time tracking, and automated billing. Ship smarter, not harder.
+              Streamline your shipping operations with AI-powered load optimization, real-time
+              tracking, and automated billing. Ship smarter, not harder.
             </p>
-            
+
             {/* Tracking Form */}
             <form onSubmit={handleTracking} className="max-w-2xl mx-auto mb-8">
               <div className="flex bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2">
@@ -111,7 +138,9 @@ export default function HomePage() {
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Zap className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">AI-Powered Optimization</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                AI-Powered Optimization
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Smart load planning maximizes efficiency and reduces costs with advanced algorithms
               </p>
@@ -121,7 +150,9 @@ export default function HomePage() {
               <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Clock className="h-8 w-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Real-Time Tracking</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Real-Time Tracking
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 GPS tracking updates every 5 minutes for complete visibility of your shipments
               </p>
@@ -131,7 +162,9 @@ export default function HomePage() {
               <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <DollarSign className="h-8 w-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Automated Billing</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Automated Billing
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Seamless payment processing with Stripe integration and instant invoicing
               </p>
@@ -141,7 +174,9 @@ export default function HomePage() {
               <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="h-8 w-8 text-yellow-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Enterprise Security</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Enterprise Security
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Bank-level encryption and SOC 2 compliance keep your data safe
               </p>
@@ -151,7 +186,9 @@ export default function HomePage() {
               <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Truck className="h-8 w-8 text-red-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Multi-Carrier Support</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Multi-Carrier Support
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Integrate with all major carriers through ShipStation for best rates
               </p>
@@ -161,7 +198,9 @@ export default function HomePage() {
               <div className="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-indigo-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Role-Based Access</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Role-Based Access
+              </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Separate portals for staff, customers, and drivers with custom permissions
               </p>
@@ -174,9 +213,7 @@ export default function HomePage() {
       <section id="how-it-works" className="py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              How It Works
-            </h2>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">How It Works</h2>
             <p className="text-xl text-gray-600 dark:text-gray-300">
               Simple, efficient shipping in four easy steps
             </p>
@@ -285,38 +322,86 @@ export default function HomePage() {
                 Autonomous shipping and billing for modern businesses
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white">Features</a></li>
-                <li><a href="#" className="hover:text-white">Pricing</a></li>
-                <li><a href="#" className="hover:text-white">API Docs</a></li>
-                <li><a href="#" className="hover:text-white">Integrations</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    API Docs
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Integrations
+                  </a>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white">About</a></li>
-                <li><a href="#" className="hover:text-white">Blog</a></li>
-                <li><a href="#" className="hover:text-white">Careers</a></li>
-                <li><a href="#" className="hover:text-white">Contact</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Contact
+                  </a>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white">Security</a></li>
-                <li><a href="#" className="hover:text-white">Compliance</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Security
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Compliance
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
-          
+
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
             © 2024 Shipnorth. All rights reserved.
           </div>

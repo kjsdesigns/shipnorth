@@ -5,23 +5,28 @@ import bcrypt from 'bcryptjs';
 
 const forceResetUsers = async () => {
   console.log('🔥 Force resetting all demo users...\n');
-  
+
   try {
     // Delete ALL users first
     const allUsers = await UserModel.list();
     console.log(`Found ${allUsers.length} users. Deleting all demo users...\n`);
-    
-    const demoEmails = ['admin@shipnorth.com', 'staff@shipnorth.com', 'driver@shipnorth.com', 'john.doe@example.com'];
-    
+
+    const demoEmails = [
+      'admin@shipnorth.com',
+      'staff@shipnorth.com',
+      'driver@shipnorth.com',
+      'john.doe@example.com',
+    ];
+
     for (const user of allUsers) {
       if (demoEmails.includes(user.email)) {
         await UserModel.delete(user.id);
         console.log(`🗑️  Deleted: ${user.email} (ID: ${user.id})`);
       }
     }
-    
+
     console.log('\n🌱 Creating fresh demo users...\n');
-    
+
     // Now create fresh users with properly hashed passwords
     const freshUsers = [
       {
@@ -58,19 +63,19 @@ const forceResetUsers = async () => {
         status: 'active' as const,
       },
     ];
-    
+
     for (const userData of freshUsers) {
       // Create the user through UserModel.create which will hash the password
       const user = await UserModel.create(userData);
       console.log(`✅ Created ${userData.role}: ${userData.email}`);
-      
+
       // Immediately test the password
       const testResult = await UserModel.validatePassword(userData.email, userData.password);
       if (testResult) {
         console.log(`   ✅ Password validation successful`);
       } else {
         console.log(`   ❌ Password validation FAILED - investigating...`);
-        
+
         // Debug the issue
         const createdUser = await UserModel.findByEmail(userData.email);
         if (createdUser) {
@@ -81,7 +86,7 @@ const forceResetUsers = async () => {
         }
       }
     }
-    
+
     // Create customer record for John Doe
     const existing = await CustomerModel.findByEmail('john.doe@example.com');
     if (!existing) {
@@ -99,7 +104,7 @@ const forceResetUsers = async () => {
       });
       console.log(`\n✅ Created customer record: john.doe@example.com`);
     }
-    
+
     console.log('\n🔐 Final authentication test...\n');
     const testUsers = [
       { email: 'admin@shipnorth.com', password: 'admin123' },
@@ -107,7 +112,7 @@ const forceResetUsers = async () => {
       { email: 'driver@shipnorth.com', password: 'driver123' },
       { email: 'john.doe@example.com', password: 'customer123' },
     ];
-    
+
     let allPassed = true;
     for (const test of testUsers) {
       const result = await UserModel.validatePassword(test.email, test.password);
@@ -118,13 +123,12 @@ const forceResetUsers = async () => {
         allPassed = false;
       }
     }
-    
+
     if (allPassed) {
       console.log('\n✨ All users authenticated successfully!');
     } else {
       console.log('\n⚠️  Some users failed authentication. Check the logs above.');
     }
-    
   } catch (error) {
     console.error('Error during force reset:', error);
   }

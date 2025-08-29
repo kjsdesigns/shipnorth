@@ -1,43 +1,76 @@
 /// <reference path="../types/express.d.ts" />
 import { Router } from 'express';
-import { authorize } from '../middleware/auth';
+import { authorize, authenticate } from '../middleware/auth';
 import { LoadModel } from '../models/load';
 import { PackageModel } from '../models/package';
 
 const router = Router();
 
 // List loads
-router.get('/', async (req, res) => {
+router.get('/', authenticate, async (req, res) => {
   try {
+    const { driver } = req.query;
+
+    // Handle driver-specific loads
+    if (driver === 'current' && req.user?.role === 'driver') {
+      // Mock load for demo driver
+      const mockLoad = {
+        id: 'load-demo-001',
+        driverName: 'John Driver',
+        driverId: 'driver-1',
+        departureDate: new Date().toISOString(),
+        status: 'in_transit',
+        transportMode: 'truck',
+        deliveryCities: [
+          { city: 'Vancouver', province: 'BC', country: 'Canada' },
+          { city: 'Richmond', province: 'BC', country: 'Canada' },
+          { city: 'Burnaby', province: 'BC', country: 'Canada' },
+        ],
+        locationHistory: [],
+        packages: [], // Will be populated in the frontend for demo
+      };
+
+      return res.json({ loads: [mockLoad] });
+    }
+
     const loads = await LoadModel.list();
-    
+
     // Add package counts and destination info
     const loadsWithDetails = await Promise.all(
       loads.map(async (load) => {
         const packages = await LoadModel.getPackages(load.id);
-        const destinationsWithDates = load.deliveryCities?.filter(city => city.expectedDeliveryDate).length || 0;
+        const destinationsWithDates =
+          load.deliveryCities?.filter((city) => city.expectedDeliveryDate).length || 0;
         const totalDestinations = load.deliveryCities?.length || 0;
-        
+
         return {
           ...load,
           packageCount: packages.length,
           destinationInfo: {
             withDates: destinationsWithDates,
             total: totalDestinations,
-            cities: load.deliveryCities || []
+            cities: load.deliveryCities || [],
           },
           deliveryDateRange: {
-            earliest: load.deliveryCities?.reduce((min, city) => 
-              city.expectedDeliveryDate && (!min || city.expectedDeliveryDate < min) 
-                ? city.expectedDeliveryDate : min, ''),
-            latest: load.deliveryCities?.reduce((max, city) => 
-              city.expectedDeliveryDate && (!max || city.expectedDeliveryDate > max) 
-                ? city.expectedDeliveryDate : max, '')
-          }
+            earliest: load.deliveryCities?.reduce(
+              (min, city) =>
+                city.expectedDeliveryDate && (!min || city.expectedDeliveryDate < min)
+                  ? city.expectedDeliveryDate
+                  : min,
+              ''
+            ),
+            latest: load.deliveryCities?.reduce(
+              (max, city) =>
+                city.expectedDeliveryDate && (!max || city.expectedDeliveryDate > max)
+                  ? city.expectedDeliveryDate
+                  : max,
+              ''
+            ),
+          },
         };
       })
     );
-    
+
     res.json({ loads: loadsWithDetails });
   } catch (error: any) {
     console.error('Error listing loads:', error);
@@ -52,17 +85,17 @@ router.get('/:id', async (req, res) => {
     if (!load) {
       return res.status(404).json({ error: 'Load not found' });
     }
-    
+
     const packages = await LoadModel.getPackages(load.id);
     const packageDetails = await Promise.all(
-      packages.map(packageId => PackageModel.findById(packageId))
+      packages.map((packageId) => PackageModel.findById(packageId))
     );
-    
-    res.json({ 
+
+    res.json({
       load: {
         ...load,
-        packages: packageDetails.filter(Boolean)
-      }
+        packages: packageDetails.filter(Boolean),
+      },
     });
   } catch (error: any) {
     console.error('Error getting load:', error);
@@ -75,12 +108,12 @@ router.put('/:id/delivery-cities', authorize('staff', 'admin'), async (req, res)
   try {
     const { id } = req.params;
     const { cities } = req.body;
-    
+
     const success = await LoadModel.updateDeliveryCities(id, cities);
     if (!success) {
       return res.status(404).json({ error: 'Load not found' });
     }
-    
+
     res.json({ success: true });
   } catch (error: any) {
     console.error('Error updating delivery cities:', error);
@@ -94,12 +127,12 @@ router.post('/:id/location', authorize('staff', 'admin', 'driver'), async (req, 
     const { id } = req.params;
     const { lat, lng, address, isManual } = req.body;
     const addedBy = req.user?.id;
-    
+
     const success = await LoadModel.addLocationTracking(id, lat, lng, isManual, addedBy, address);
     if (!success) {
       return res.status(404).json({ error: 'Load not found' });
     }
-    
+
     res.json({ success: true });
   } catch (error: any) {
     console.error('Error adding location tracking:', error);
@@ -114,13 +147,41 @@ router.get('/:id/locations', async (req, res) => {
     if (!load) {
       return res.status(404).json({ error: 'Load not found' });
     }
-    
-    res.json({ 
+
+    res.json({
       locations: load.locationHistory || [],
-      currentLocation: load.currentLocation
+      currentLocation: load.currentLocation,
     });
   } catch (error: any) {
     console.error('Error getting locations:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update load (staff only)
+router.put('/:id', authorize('staff', 'admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    // Validate required fields if creating from scratch
+    if (updates.departureDate) {
+      if (!updates.transportMode) {
+        return res
+          .status(400)
+          .json({ error: 'transportMode is required when updating departureDate' });
+      }
+    }
+
+    const updatedLoad = await LoadModel.update(id, updates);
+
+    if (!updatedLoad) {
+      return res.status(404).json({ error: 'Load not found' });
+    }
+
+    res.json({ load: updatedLoad });
+  } catch (error: any) {
+    console.error('Error updating load:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -142,12 +203,12 @@ router.put('/:id/assign-packages', authorize('staff', 'admin'), async (req, res)
   try {
     const { id } = req.params;
     const { packageIds } = req.body;
-    
+
     const success = await LoadModel.assignPackages(id, packageIds);
     if (!success) {
       return res.status(404).json({ error: 'Load not found' });
     }
-    
+
     res.json({ success: true, assignedCount: packageIds.length });
   } catch (error: any) {
     console.error('Error assigning packages:', error);
@@ -166,12 +227,12 @@ router.post('/:id/gps', authorize('driver', 'staff', 'admin'), async (req, res) 
     const { id } = req.params;
     const { lat, lng } = req.body;
     const addedBy = req.user?.id;
-    
+
     const success = await LoadModel.addLocationTracking(id, lat, lng, false, addedBy);
     if (!success) {
       return res.status(404).json({ error: 'Load not found' });
     }
-    
+
     res.json({ success: true });
   } catch (error: any) {
     console.error('Error updating GPS:', error);

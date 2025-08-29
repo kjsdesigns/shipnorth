@@ -31,11 +31,7 @@ describe('PackageModel Enhanced Features', () => {
     shipmentStatus: 'ready',
     shipTo: {
       name: 'John Doe',
-      address1: '123 Main St',
-      city: 'Toronto',
-      province: 'ON',
-      postalCode: 'M5V 1A1',
-      country: 'CA',
+      addressId: 'test-address-123',
     },
     notes: 'Fragile item',
   };
@@ -57,12 +53,12 @@ describe('PackageModel Enhanced Features', () => {
 
       const existingPackage = { id: packageId, ...mockPackage };
       (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: existingPackage });
-      (DatabaseService.update as jest.Mock).mockResolvedValue({ 
-        Data: { 
-          ...existingPackage, 
+      (DatabaseService.update as jest.Mock).mockResolvedValue({
+        Data: {
+          ...existingPackage,
           shipmentStatus: 'delivered',
           deliveryConfirmation: expect.any(Object),
-        }
+        },
       });
 
       const result = await PackageModel.markAsDelivered(packageId, deliveryData);
@@ -121,11 +117,11 @@ describe('PackageModel Enhanced Features', () => {
       const loadId = 'load-456';
       const expectedDate = '2024-01-20T17:00:00Z';
 
-      const packageWithLoad = { 
-        ...mockPackage, 
-        id: packageId, 
+      const packageWithLoad = {
+        ...mockPackage,
+        id: packageId,
         loadId,
-        shipTo: { ...mockPackage.shipTo, city: 'Toronto' }
+        shipTo: { ...mockPackage.shipTo, city: 'Toronto' },
       };
 
       (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: packageWithLoad });
@@ -166,7 +162,7 @@ describe('PackageModel Enhanced Features', () => {
 
     beforeEach(() => {
       (DatabaseService.scan as jest.Mock).mockResolvedValue(
-        mockPackages.map(pkg => ({ Data: pkg }))
+        mockPackages.map((pkg) => ({ Data: pkg }))
       );
     });
 
@@ -174,7 +170,7 @@ describe('PackageModel Enhanced Features', () => {
       const result = await PackageModel.getPackagesByLoadStatus('unassigned');
 
       expect(result).toHaveLength(2);
-      expect(result.every(pkg => !pkg.loadId)).toBe(true);
+      expect(result.every((pkg) => !pkg.loadId)).toBe(true);
     });
 
     it('should return assigned packages', async () => {
@@ -214,7 +210,7 @@ describe('PackageModel Enhanced Features', () => {
       ];
 
       (DatabaseService.scan as jest.Mock).mockResolvedValue(
-        mockPackages.map(pkg => ({ Data: pkg }))
+        mockPackages.map((pkg) => ({ Data: pkg }))
       );
 
       const result = await PackageModel.getPackageStats();
@@ -271,7 +267,7 @@ describe('PackageModel Enhanced Features', () => {
   describe('integration scenarios', () => {
     it('should handle package lifecycle from creation to delivery', async () => {
       const packageId = 'pkg-lifecycle';
-      
+
       // 1. Create package
       const newPackage = await PackageModel.create(mockPackage);
       expect(newPackage.shipmentStatus).toBe('ready');
@@ -280,8 +276,8 @@ describe('PackageModel Enhanced Features', () => {
       // 2. Assign to load (simulate via update)
       const loadId = 'load-123';
       (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: newPackage });
-      (DatabaseService.update as jest.Mock).mockResolvedValue({ 
-        Data: { ...newPackage, loadId } 
+      (DatabaseService.update as jest.Mock).mockResolvedValue({
+        Data: { ...newPackage, loadId },
       });
 
       await PackageModel.update(packageId, { loadId });
@@ -290,7 +286,7 @@ describe('PackageModel Enhanced Features', () => {
       const updatedPackage = { ...newPackage, loadId };
       (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: updatedPackage });
       (DatabaseService.update as jest.Mock).mockResolvedValue({
-        Data: { ...updatedPackage, shipmentStatus: 'delivered' }
+        Data: { ...updatedPackage, shipmentStatus: 'delivered' },
       });
 
       const deliveryResult = await PackageModel.markAsDelivered(packageId, {

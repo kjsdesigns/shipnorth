@@ -1,0 +1,290 @@
+<testsuites id="" name="" tests="16" failures="4" skipped="0" errors="0" time="54.497524000000006">
+<testsuite name="optimized-test-suite.spec.ts" timestamp="2025-08-27T00:19:57.470Z" hostname="critical-path" tests="16" failures="4" skipped="0" time="166.979" errors="0">
+<testcase name="🔥 Root Cause Detection › infrastructure health check @critical" classname="optimized-test-suite.spec.ts" time="3.759">
+<system-out>
+<![CDATA[✅ Infrastructure health check passed
+]]>
+</system-out>
+</testcase>
+<testcase name="🔥 Root Cause Detection › database and authentication foundation @critical" classname="optimized-test-suite.spec.ts" time="2.412">
+<system-out>
+<![CDATA[✅ Authentication foundation verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🔥 Root Cause Detection › portal accessibility matrix @critical" classname="optimized-test-suite.spec.ts" time="13.501">
+<system-out>
+<![CDATA[✅ All portals accessible
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Customer Portal Journey › complete customer workflow @core" classname="optimized-test-suite.spec.ts" time="11.956">
+<system-out>
+<![CDATA[✅ Complete customer workflow verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Staff Portal Journey › complete staff workflow @core" classname="optimized-test-suite.spec.ts" time="9.292">
+<failure message="optimized-test-suite.spec.ts:151:7 complete staff workflow @core" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:151:7 › 🎯 Staff Portal Journey › complete staff workflow @core 
+
+    Error: expect.toBeVisible: Unexpected token "=" while parsing css selector "table, text="No packages found"". Did you mean to CSS.escape it?
+    Call log:
+      - Expect "toBeVisible" with timeout 15000ms
+      - waiting for table, text="No packages found"
+
+
+      165 |     await packagesTab.click();
+      166 |     await page.waitForTimeout(2000);
+    > 167 |     await expect(page.locator('table, text="No packages found"')).toBeVisible();
+          |                                                                   ^
+      168 |     
+      169 |     // 4. Test customers section  
+      170 |     await customersTab.click();
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:167:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Staff Portal Journey › admin features visibility @admin" classname="optimized-test-suite.spec.ts" time="29.714">
+<failure message="optimized-test-suite.spec.ts:186:7 admin features visibility @admin" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:186:7 › 🎯 Staff Portal Journey › admin features visibility @admin 
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+       at utils/auth-helpers.ts:62
+
+      60 |
+      61 |     const expectedUrl = role === 'customer' ? '/portal' : `/${role}`;
+    > 62 |     await this.page.waitForURL(new RegExp(expectedUrl.replace('/', '\\/') + '\\/?'), {
+         |                     ^
+      63 |       timeout: 15000, // Increased timeout
+      64 |     });
+      65 |
+        at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:62:21)
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:188:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Driver Portal Journey › complete driver workflow @core" classname="optimized-test-suite.spec.ts" time="6.372">
+<failure message="optimized-test-suite.spec.ts:211:7 complete driver workflow @core" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:211:7 › 🎯 Driver Portal Journey › complete driver workflow @core 
+
+    Error: locator.isVisible: Unexpected token "=" while parsing css selector "a[href*="dashboard"], button:has-text("Dashboard"), text="Dashboard"". Did you mean to CSS.escape it?
+    Call log:
+        - checking visibility of a[href*="dashboard"], button:has-text("Dashboard"), text="Dashboard" >> nth=0
+
+
+      219 |       // Look for navigation tabs, sidebar links, or buttons
+      220 |       const navItem = page.locator(`a[href*="${item.toLowerCase()}"], button:has-text("${item}"), text="${item}"`).first();
+    > 221 |       const isVisible = await navItem.isVisible();
+          |                                       ^
+      222 |       if (isVisible) {
+      223 |         console.log(`✅ Driver nav item found: ${item}`);
+      224 |       } else {
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:221:39
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔄 Unified Authentication System › unified login redirects to correct portal @auth" classname="optimized-test-suite.spec.ts" time="9.419">
+<system-out>
+<![CDATA[✅ customer redirected to /portal
+✅ staff redirected to /staff
+✅ driver redirected to /driver
+✅ admin redirected to /staff
+]]>
+</system-out>
+</testcase>
+<testcase name="🔄 Unified Authentication System › portal switching functionality @auth" classname="optimized-test-suite.spec.ts" time="17.193">
+<failure message="optimized-test-suite.spec.ts:277:7 portal switching functionality @auth" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:277:7 › 🔄 Unified Authentication System › portal switching functionality @auth 
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "/staff" until "load"
+      navigated to "http://localhost:3000/staff/"
+    ============================================================
+
+      284 |     await adminButton.click();
+      285 |     
+    > 286 |     await page.waitForURL('/staff', { timeout: 15000 });
+          |                ^
+      287 |     
+      288 |     // Look for portal switcher (if implemented)
+      289 |     const portalSwitcher = page.locator('[data-testid="portal-switcher"], button:has-text("Portal"), text="Staff Portal"');
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:286:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="📄 Page Load Verification › all pages load without 500/404 errors @pages" classname="optimized-test-suite.spec.ts" time="40.541">
+<system-out>
+<![CDATA[✅ Homepage loads successfully
+✅ Login loads successfully
+✅ Register loads successfully
+✅ Customer Portal loads successfully
+✅ Staff Portal loads successfully
+✅ Driver Portal loads successfully
+✅ Staff Customers loads successfully
+✅ Staff Packages loads successfully
+✅ Staff Loads loads successfully
+]]>
+</system-out>
+</testcase>
+<testcase name="⚡ Performance &amp; Stability › page load performance within limits @performance" classname="optimized-test-suite.spec.ts" time="3.207">
+<system-out>
+<![CDATA[✅ Homepage: 1073ms (target: 3000ms)
+✅ Login: 788ms (target: 2000ms)
+✅ Customer Portal: 673ms (target: 5000ms)
+]]>
+</system-out>
+</testcase>
+<testcase name="⚡ Performance &amp; Stability › error boundary and crash detection @stability" classname="optimized-test-suite.spec.ts" time="9.2">
+<system-out>
+<![CDATA[✅ No critical console errors detected
+]]>
+</system-out>
+</testcase>
+<testcase name="🔧 Core Feature Integration › authentication and session management @integration" classname="optimized-test-suite.spec.ts" time="6.642">
+<system-out>
+<![CDATA[✅ Authentication and session management verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🔧 Core Feature Integration › theme system and UI consistency @ui" classname="optimized-test-suite.spec.ts" time="0.931">
+<system-out>
+<![CDATA[⚠️ Theme toggle not found
+]]>
+</system-out>
+</testcase>
+<testcase name="♿ Essential Accessibility › keyboard navigation basics @accessibility" classname="optimized-test-suite.spec.ts" time="1.95">
+<system-out>
+<![CDATA[✅ Keyboard navigation working, focused: 
+]]>
+</system-out>
+</testcase>
+<testcase name="♿ Essential Accessibility › mobile viewport adaptation @mobile" classname="optimized-test-suite.spec.ts" time="0.89">
+<system-out>
+<![CDATA[✅ Mobile viewport: no horizontal scroll (375px vs 375px)
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

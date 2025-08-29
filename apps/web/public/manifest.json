@@ -1,0 +1,28 @@
+{
+  "name": "Shipnorth Driver Portal",
+  "short_name": "Shipnorth Driver",
+  "description": "Mobile driver interface for Shipnorth shipping management",
+  "start_url": "/driver",
+  "display": "standalone",
+  "background_color": "#2563eb",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "scope": "/driver",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["logistics", "productivity"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

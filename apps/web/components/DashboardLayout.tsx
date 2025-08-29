@@ -5,10 +5,29 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '@/lib/api';
 import {
-  Package, Users, Truck, FileText, BarChart3, Settings,
-  LogOut, Menu, X, Home, Bell, Search, ChevronDown,
-  User, CreditCard, Map, DollarSign, TrendingUp, Activity,
-  Layers, UserCheck, Package2, AlertCircle
+  Package,
+  Users,
+  Truck,
+  FileText,
+  BarChart3,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Home,
+  Bell,
+  Search,
+  ChevronDown,
+  User,
+  CreditCard,
+  Map,
+  DollarSign,
+  TrendingUp,
+  Activity,
+  Layers,
+  UserCheck,
+  Package2,
+  AlertCircle,
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -38,9 +57,7 @@ export default function DashboardLayout({ children, role }: DashboardLayoutProps
 
   // Navigation items based on role
   const getNavItems = () => {
-    const baseItems = [
-      { name: 'Dashboard', href: `/${role}`, icon: Home },
-    ];
+    const baseItems = [{ name: 'Dashboard', href: `/${role}`, icon: Home }];
 
     switch (role) {
       case 'admin':
@@ -89,9 +106,11 @@ export default function DashboardLayout({ children, role }: DashboardLayoutProps
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Sidebar for desktop */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center justify-between px-6 bg-gray-900">
@@ -126,9 +145,10 @@ export default function DashboardLayout({ children, role }: DashboardLayoutProps
           <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || 
+              const isActive =
+                pathname === item.href ||
                 (item.href !== `/${role}` && pathname.startsWith(item.href));
-              
+
               return (
                 <Link
                   key={item.name}
@@ -172,7 +192,7 @@ export default function DashboardLayout({ children, role }: DashboardLayoutProps
                 >
                   <Menu className="h-6 w-6" />
                 </button>
-                
+
                 {/* Search bar */}
                 <div className="ml-4 lg:ml-0 flex-1 max-w-md">
                   <div className="relative">
@@ -217,9 +237,7 @@ export default function DashboardLayout({ children, role }: DashboardLayoutProps
         {/* Page content */}
         <main className="flex-1">
           <div className="py-6">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {children}
-            </div>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
           </div>
         </main>
       </div>

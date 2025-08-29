@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { authorize, AuthRequest } from '../middleware/auth';
+import { authenticate, authorize, AuthRequest } from '../middleware/auth';
 import { CustomerModel } from '../models/customer';
-import { StripeService } from '../services/stripe';
+import paypalService from '../services/paypal';
 import { AppError } from '../middleware/errorHandler';
 
 const router = Router();
@@ -33,52 +33,177 @@ router.post('/register', async (req, res, next) => {
       });
     }
 
-    // Create Stripe customer
-    const stripeCustomer = await StripeService.createCustomer({
-      email,
-      name: `${firstName} ${lastName}`,
-      phone,
-      address: {
-        line1: addressLine1,
-        line2: addressLine2,
-        city,
-        state: province,
-        postal_code: postalCode,
-        country,
-      },
-    });
-
-    // Create setup intent for payment method
-    const setupIntent = await StripeService.createSetupIntent(stripeCustomer.id);
-
-    // Create customer record
-    const customer = await CustomerModel.create({
+    // Create customer record first (without payment method)
+    const customerData: any = {
       firstName,
       lastName,
       email,
       phone,
       addressLine1,
-      addressLine2,
       city,
       province,
       postalCode,
       country,
-      stripeCustomerId: stripeCustomer.id,
       status: 'active',
-    });
+    };
+
+    // Only add optional fields if they have values
+    if (addressLine2) customerData.addressLine2 = addressLine2;
+
+    const customer = await CustomerModel.create(customerData);
 
     res.status(201).json({
+      customerId: customer.id,
       customer: {
         id: customer.id,
         firstName: customer.firstName,
         lastName: customer.lastName,
         email: customer.email,
       },
-      setupIntent: {
-        client_secret: setupIntent.client_secret,
-        id: setupIntent.id,
-      },
       message: 'Registration successful. Please add a payment method to complete setup.',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Create vault order for inline card collection
+router.post('/create-vault-order', async (req, res, next) => {
+  try {
+    const { customerId } = req.body;
+
+    const customer = await CustomerModel.findById(customerId);
+    if (!customer) {
+      throw new AppError(404, 'Customer not found');
+    }
+
+    // For development/demo, return a mock order ID (only if PayPal credentials missing)
+    if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
+      res.json({
+        orderId: `MOCK_ORDER_${Date.now()}`,
+        status: 'CREATED',
+      });
+      return;
+    }
+
+    const vaultOrder = await paypalService.createVaultOrder({
+      email: customer.email,
+      name: `${customer.firstName} ${customer.lastName}`,
+      phone: customer.phone,
+    });
+
+    res.json({
+      orderId: vaultOrder.orderId,
+      status: vaultOrder.status,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Complete payment method setup with vault order
+router.post('/complete-payment-method', async (req, res, next) => {
+  try {
+    const { customerId, orderId } = req.body;
+
+    const customer = await CustomerModel.findById(customerId);
+    if (!customer) {
+      throw new AppError(404, 'Customer not found');
+    }
+
+    // For development/demo, return mock payment method data (only if PayPal credentials missing)
+    if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
+      const mockPaymentMethod = {
+        last4: '1234',
+        brand: 'visa',
+        expiryMonth: '12',
+        expiryYear: '2027',
+        type: 'CARD' as const,
+        token: `MOCK_TOKEN_${Date.now()}`,
+      };
+
+      // Update customer with mock payment method details
+      await CustomerModel.update(customerId, {
+        paymentMethod: mockPaymentMethod,
+      });
+
+      res.json({
+        success: true,
+        paymentMethod: mockPaymentMethod,
+        message: 'Payment method added successfully',
+      });
+      return;
+    }
+
+    // Capture the vault order to get the payment token and card details
+    const vaultResult = await paypalService.captureVaultOrder(orderId);
+
+    // Update customer with payment method details
+    const paymentMethod = {
+      ...vaultResult.paymentSource.card,
+      type: 'CARD' as const,
+    };
+
+    await CustomerModel.update(customerId, {
+      paymentMethod,
+    });
+
+    res.json({
+      success: true,
+      paymentMethod,
+      message: 'Payment method added successfully',
+    });
+  } catch (error) {
+    console.error('Payment method completion error:', error);
+    next(error);
+  }
+});
+
+// Process payment using stored token
+router.post('/process-payment', async (req, res, next) => {
+  try {
+    const { customerId, amount, description, referenceId } = req.body;
+
+    const customer = await CustomerModel.findById(customerId);
+    if (!customer) {
+      throw new AppError(404, 'Customer not found');
+    }
+
+    if (!customer.paymentMethod?.token) {
+      throw new AppError(400, 'No payment method available');
+    }
+
+    // For development/demo, return mock transaction data (only if PayPal credentials missing)
+    if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
+      const mockTransaction = {
+        orderId: `MOCK_ORDER_${Date.now()}`,
+        transactionId: `MOCK_TXN_${Date.now()}`,
+        status: 'COMPLETED',
+        amount: parseFloat(amount.toString()),
+        currency: 'CAD',
+        payerEmail: customer.email,
+        payerName: `${customer.firstName} ${customer.lastName}`,
+      };
+
+      res.json({
+        success: true,
+        transaction: mockTransaction,
+        message: 'Payment processed successfully',
+      });
+      return;
+    }
+
+    const paymentResult = await paypalService.processPaymentWithToken(
+      customer.paymentMethod.token,
+      amount,
+      description,
+      referenceId
+    );
+
+    res.json({
+      success: true,
+      transaction: paymentResult,
+      message: 'Payment processed successfully',
     });
   } catch (error) {
     next(error);
@@ -88,32 +213,24 @@ router.post('/register', async (req, res, next) => {
 // Complete registration with payment method
 router.post('/complete-registration', async (req, res, next) => {
   try {
-    const { customerId, setupIntentId } = req.body;
+    const { customerId, setupTokenId } = req.body;
 
     const customer = await CustomerModel.findById(customerId);
     if (!customer) {
       throw new AppError(404, 'Customer not found');
     }
 
-    // Retrieve setup intent from Stripe
-    const setupIntent = await StripeService.stripe.setupIntents.retrieve(setupIntentId);
-    
-    if (setupIntent.status !== 'succeeded') {
+    // Create PayPal payment token from approved setup token
+    const paymentToken = await paypalService.createPaymentToken(setupTokenId);
+
+    if (!paymentToken.paymentTokenId) {
       throw new AppError(400, 'Payment method setup not completed');
     }
 
     // Update customer with payment method
     await CustomerModel.update(customerId, {
-      stripePaymentMethodId: setupIntent.payment_method as string,
+      paypalPaymentTokenId: paymentToken.paymentTokenId,
     });
-
-    // Set as default payment method
-    if (customer.stripeCustomerId) {
-      await StripeService.setDefaultPaymentMethod(
-        customer.stripeCustomerId,
-        setupIntent.payment_method as string
-      );
-    }
 
     res.json({
       message: 'Registration completed successfully',
@@ -125,7 +242,7 @@ router.post('/complete-registration', async (req, res, next) => {
 });
 
 // CSV import endpoint (staff only)
-router.post('/import', authorize('staff', 'admin'), async (req, res, next) => {
+router.post('/import', authenticate, authorize('staff', 'admin'), async (req, res, next) => {
   try {
     const { customers } = req.body;
 
@@ -142,30 +259,15 @@ router.post('/import', authorize('staff', 'admin'), async (req, res, next) => {
     for (const customerData of customers) {
       try {
         const existingCustomer = await CustomerModel.findByEmail(customerData.email);
-        
+
         if (existingCustomer) {
           // Update existing customer
           await CustomerModel.update(existingCustomer.id, customerData);
           results.updated++;
         } else {
-          // Create new customer
-          const stripeCustomer = await StripeService.createCustomer({
-            email: customerData.email,
-            name: `${customerData.firstName} ${customerData.lastName}`,
-            phone: customerData.phone,
-            address: {
-              line1: customerData.addressLine1,
-              line2: customerData.addressLine2,
-              city: customerData.city,
-              state: customerData.province,
-              postal_code: customerData.postalCode,
-              country: customerData.country || 'CA',
-            },
-          });
-
+          // Create new customer (PayPal setup will be done during registration)
           await CustomerModel.create({
             ...customerData,
-            stripeCustomerId: stripeCustomer.id,
             status: 'active',
           });
           results.created++;
@@ -187,8 +289,29 @@ router.post('/import', authorize('staff', 'admin'), async (req, res, next) => {
   }
 });
 
+// Search customers (staff only)
+router.get(
+  '/search',
+  authenticate,
+  authorize('staff', 'admin'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { q } = req.query;
+
+      if (!q || typeof q !== 'string') {
+        return res.json({ customers: [] });
+      }
+
+      const customers = await CustomerModel.search(q as string);
+      res.json({ customers });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // List customers (staff only)
-router.get('/', authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
+router.get('/', authenticate, authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
   try {
     const customers = await CustomerModel.list();
     res.json({ customers });
@@ -198,24 +321,29 @@ router.get('/', authorize('staff', 'admin'), async (req: AuthRequest, res, next)
 });
 
 // Get customer details
-router.get('/:id', async (req: AuthRequest, res, next) => {
-  try {
-    const customer = await CustomerModel.findById(req.params.id);
-    
-    if (!customer) {
-      throw new AppError(404, 'Customer not found');
+router.get(
+  '/:id',
+  authenticate,
+  authorize('staff', 'admin'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const customer = await CustomerModel.findById(req.params.id);
+
+      if (!customer) {
+        throw new AppError(404, 'Customer not found');
+      }
+
+      // Check access - customers can only see their own data
+      if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
+        throw new AppError(403, 'Access denied');
+      }
+
+      res.json({ customer });
+    } catch (error) {
+      next(error);
     }
-    
-    // Check access - customers can only see their own data
-    if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
-      throw new AppError(403, 'Access denied');
-    }
-    
-    res.json({ customer });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Get customer packages
 router.get('/:id/packages', async (req: AuthRequest, res, next) => {
@@ -224,7 +352,7 @@ router.get('/:id/packages', async (req: AuthRequest, res, next) => {
     if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
       throw new AppError(403, 'Access denied');
     }
-    
+
     const packages = await CustomerModel.getPackages(req.params.id);
     res.json({ packages });
   } catch (error) {
@@ -239,7 +367,7 @@ router.get('/:id/invoices', async (req: AuthRequest, res, next) => {
     if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
       throw new AppError(403, 'Access denied');
     }
-    
+
     const invoices = await CustomerModel.getInvoices(req.params.id);
     res.json({ invoices });
   } catch (error) {
@@ -258,19 +386,24 @@ router.post('/', authorize('staff', 'admin'), async (req: AuthRequest, res, next
 });
 
 // Update customer
-router.put('/:id', async (req: AuthRequest, res, next) => {
+router.put('/:id', authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
   try {
-    // Check access
-    if (req.user?.role === 'customer' && (req.user as any).customerId !== req.params.id) {
-      throw new AppError(403, 'Access denied');
+    const { id } = req.params;
+    const updates = req.body;
+
+    // Validate required fields if creating from scratch
+    if (updates.email) {
+      if (!updates.firstName || !updates.lastName) {
+        throw new AppError(400, 'firstName and lastName are required when updating email');
+      }
     }
-    
-    const customer = await CustomerModel.update(req.params.id, req.body);
-    
+
+    const customer = await CustomerModel.update(id, updates);
+
     if (!customer) {
       throw new AppError(404, 'Customer not found');
     }
-    
+
     res.json({ customer });
   } catch (error) {
     next(error);
@@ -278,39 +411,297 @@ router.put('/:id', async (req: AuthRequest, res, next) => {
 });
 
 // Create Stripe setup session (mock for now)
-router.post('/:id/setup-payment', authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
-  try {
-    const customer = await CustomerModel.findById(req.params.id);
-    
-    if (!customer) {
-      throw new AppError(404, 'Customer not found');
+router.post(
+  '/:id/setup-payment',
+  authorize('staff', 'admin'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const customer = await CustomerModel.findById(req.params.id);
+
+      if (!customer) {
+        throw new AppError(404, 'Customer not found');
+      }
+
+      // Mock Stripe checkout session
+      const setupUrl = `https://checkout.stripe.com/setup/mock_session_${Date.now()}`;
+
+      // In real implementation, would create actual Stripe session
+      // and save the session ID for webhook processing
+
+      res.json({ setupUrl });
+    } catch (error) {
+      next(error);
     }
-    
-    // Mock Stripe checkout session
-    const setupUrl = `https://checkout.stripe.com/setup/mock_session_${Date.now()}`;
-    
-    // In real implementation, would create actual Stripe session
-    // and save the session ID for webhook processing
-    
-    res.json({ setupUrl });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Delete customer (admin only)
 router.delete('/:id', authorize('admin'), async (req: AuthRequest, res, next) => {
   try {
     const success = await CustomerModel.delete(req.params.id);
-    
+
     if (!success) {
       throw new AppError(404, 'Customer not found');
     }
-    
+
     res.json({ message: 'Customer deleted successfully' });
   } catch (error) {
     next(error);
   }
 });
+
+// Get customer payment methods
+router.get(
+  '/:id/payment-methods',
+  authenticate,
+  authorize('staff', 'admin'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const customer = await CustomerModel.findById(id);
+      if (!customer) {
+        throw new AppError(404, 'Customer not found');
+      }
+
+      // Get current payment method details if token exists
+      let paymentMethods = [];
+      if (customer.paypalPaymentTokenId) {
+        try {
+          const paymentMethod = await paypalService.getPaymentMethodDetails(
+            customer.paypalPaymentTokenId
+          );
+          if (paymentMethod) {
+            paymentMethods.push({
+              ...paymentMethod,
+              isDefault: true,
+            });
+          }
+        } catch (error) {
+          console.error('Error getting payment method details:', error);
+          // Continue without payment method details - PayPal might not be configured
+        }
+      }
+
+      res.json({
+        paymentMethods,
+        customerId: id,
+        hasPayPalSetup: !!customer.paypalCustomerId,
+        hasPaymentToken: !!customer.paypalPaymentTokenId,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Replace customer payment method
+router.post('/:id/payment-methods/replace', authorize('staff', 'admin'), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const customer = await CustomerModel.findById(id);
+    if (!customer) {
+      throw new AppError(404, 'Customer not found');
+    }
+
+    // Create new setup token for payment method replacement
+    const setupToken = await paypalService.createCustomerSetupToken({
+      email: customer.email,
+      name: `${customer.firstName} ${customer.lastName}`,
+      phone: customer.phone,
+    });
+
+    res.json({
+      setupTokenId: setupToken.setupTokenId,
+      approveUrl: setupToken.approveUrl,
+      message: 'Payment method replacement initiated',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Complete payment method replacement
+router.post(
+  '/:id/payment-methods/complete-replacement',
+  authorize('staff', 'admin'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { setupTokenId } = req.body;
+
+      const customer = await CustomerModel.findById(id);
+      if (!customer) {
+        throw new AppError(404, 'Customer not found');
+      }
+
+      // Delete old payment method if exists
+      if (customer.paypalPaymentTokenId) {
+        try {
+          await paypalService.deletePaymentToken(customer.paypalPaymentTokenId);
+        } catch (error) {
+          console.error('Failed to delete old payment method:', error);
+          // Continue with new payment method creation
+        }
+      }
+
+      // Create new payment token
+      const paymentToken = await paypalService.createPaymentToken(setupTokenId);
+
+      if (!paymentToken.paymentTokenId) {
+        throw new AppError(400, 'Payment method replacement failed');
+      }
+
+      // Update customer record
+      await CustomerModel.update(id, {
+        paypalPaymentTokenId: paymentToken.paymentTokenId,
+      });
+
+      res.json({
+        message: 'Payment method replaced successfully',
+        customer: await CustomerModel.findById(id),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Customer self-service payment method endpoints
+router.get(
+  '/me/payment-methods',
+  authenticate,
+  authorize('customer'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      let customerId = req.user?.customerId;
+
+      // If customerId not in token, find customer by user ID
+      if (!customerId) {
+        const customerByUserId = await CustomerModel.findByEmail(req.user!.email);
+        if (!customerByUserId) {
+          throw new AppError(404, 'Customer record not found');
+        }
+        customerId = customerByUserId.id;
+      }
+
+      const customer = await CustomerModel.findById(customerId);
+      if (!customer) {
+        throw new AppError(404, 'Customer not found');
+      }
+
+      // Get current payment method details if token exists
+      let paymentMethods = [];
+      if (customer.paypalPaymentTokenId) {
+        try {
+          const paymentMethod = await paypalService.getPaymentMethodDetails(
+            customer.paypalPaymentTokenId
+          );
+          if (paymentMethod) {
+            paymentMethods.push({
+              ...paymentMethod,
+              isDefault: true,
+            });
+          }
+        } catch (error) {
+          console.error('PayPal error for customer payment methods:', error);
+          // Continue without payment method details
+        }
+      }
+
+      res.json({
+        paymentMethods,
+        customerId,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Customer replace their own payment method
+router.post(
+  '/me/payment-methods/replace',
+  authorize('customer'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const customerId = req.user?.customerId;
+      if (!customerId) {
+        throw new AppError(400, 'Customer ID not found in token');
+      }
+
+      const customer = await CustomerModel.findById(customerId);
+      if (!customer) {
+        throw new AppError(404, 'Customer not found');
+      }
+
+      // Create new setup token for payment method replacement
+      const setupToken = await paypalService.createCustomerSetupToken({
+        email: customer.email,
+        name: `${customer.firstName} ${customer.lastName}`,
+        phone: customer.phone,
+      });
+
+      res.json({
+        setupTokenId: setupToken.setupTokenId,
+        approveUrl: setupToken.approveUrl,
+        message: 'Payment method replacement initiated',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Customer complete payment method replacement
+router.post(
+  '/me/payment-methods/complete-replacement',
+  authorize('customer'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const customerId = req.user?.customerId;
+      const { setupTokenId } = req.body;
+
+      if (!customerId) {
+        throw new AppError(400, 'Customer ID not found in token');
+      }
+
+      const customer = await CustomerModel.findById(customerId);
+      if (!customer) {
+        throw new AppError(404, 'Customer not found');
+      }
+
+      // Delete old payment method if exists
+      if (customer.paypalPaymentTokenId) {
+        try {
+          await paypalService.deletePaymentToken(customer.paypalPaymentTokenId);
+        } catch (error) {
+          console.error('Failed to delete old payment method:', error);
+          // Continue with new payment method creation
+        }
+      }
+
+      // Create new payment token
+      const paymentToken = await paypalService.createPaymentToken(setupTokenId);
+
+      if (!paymentToken.paymentTokenId) {
+        throw new AppError(400, 'Payment method replacement failed');
+      }
+
+      // Update customer record
+      await CustomerModel.update(customerId, {
+        paypalPaymentTokenId: paymentToken.paymentTokenId,
+      });
+
+      res.json({
+        message: 'Payment method replaced successfully',
+        customer: await CustomerModel.findById(customerId),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

@@ -2,11 +2,11 @@ import { UserModel } from './models/user';
 
 const checkUsers = async () => {
   console.log('🔍 Checking users in database...\n');
-  
+
   try {
     const users = await UserModel.list();
     console.log(`Found ${users.length} users:\n`);
-    
+
     for (const user of users) {
       console.log(`📧 ${user.email}`);
       console.log(`  - Role: ${user.role}`);
@@ -15,7 +15,7 @@ const checkUsers = async () => {
       console.log(`  - ID: ${user.id}`);
       console.log();
     }
-    
+
     // Test authentication
     console.log('🔐 Testing authentication...\n');
     const testUsers = [
@@ -24,7 +24,7 @@ const checkUsers = async () => {
       { email: 'driver@shipnorth.com', password: 'driver123' },
       { email: 'john.doe@example.com', password: 'customer123' },
     ];
-    
+
     for (const test of testUsers) {
       try {
         const result = await UserModel.validatePassword(test.email, test.password);
@@ -37,7 +37,6 @@ const checkUsers = async () => {
         console.log(`❌ ${test.email} - Error: ${error}`);
       }
     }
-    
   } catch (error) {
     console.error('Error checking users:', error);
   }

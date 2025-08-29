@@ -1,0 +1,147 @@
+{
+  "hooks": {
+    "pre-edit": [
+      {
+        "description": "Protect Tailwind CSS theme from destruction",
+        "command": "node .claude/hooks/protect-tailwind.js",
+        "enabled": true,
+        "files": [
+          "apps/web/app/globals.css",
+          "apps/web/tailwind.config.js",
+          "apps/web/postcss.config.js"
+        ]
+      },
+      {
+        "description": "Detect secrets and sensitive data",
+        "command": "node .claude/hooks/detect-secrets.js",
+        "enabled": true,
+        "files": ["**/*"]
+      },
+      {
+        "description": "Validate environment file security",
+        "command": "node .claude/hooks/protect-env.js",
+        "enabled": true,
+        "files": [".env*"]
+      },
+      {
+        "description": "Validate API contract compliance",
+        "command": "node .claude/hooks/api-contract-validation.js",
+        "enabled": true,
+        "files": [
+          "apps/api/src/routes/*.ts",
+          "apps/api/src/models/*.ts",
+          "apps/web/lib/api*.ts"
+        ]
+      },
+      {
+        "description": "Validate database schema changes",
+        "command": "node .claude/hooks/validate-db-schema.js",
+        "enabled": true,
+        "files": [
+          "apps/api/src/models/*.ts",
+          "apps/api/src/database/*.ts",
+          "apps/api/src/schemas/*.ts"
+        ]
+      },
+      {
+        "description": "Check React code for error patterns",
+        "command": "node .claude/hooks/react-error-monitor.js",
+        "enabled": true,
+        "files": [
+          "apps/web/app/**/*.tsx",
+          "apps/web/components/**/*.tsx",
+          "apps/web/lib/*.ts"
+        ]
+      },
+      {
+        "description": "Validate UI/UX changes (pre-check)",
+        "command": "node .claude/hooks/ui-validation.js",
+        "enabled": true,
+        "files": [
+          "apps/web/app/**/*.tsx",
+          "apps/web/components/**/*.tsx"
+        ]
+      }
+    ],
+    "post-edit": [
+      {
+        "description": "Verify Tailwind CSS integrity after changes",
+        "command": "node .claude/hooks/protect-tailwind.js",
+        "enabled": true,
+        "files": [
+          "apps/web/app/globals.css",
+          "apps/web/tailwind.config.js",
+          "apps/web/postcss.config.js"
+        ]
+      },
+      {
+        "description": "Comprehensive UI/UX validation with Playwright",
+        "command": "node .claude/hooks/ui-validation.js",
+        "enabled": true,
+        "files": [
+          "apps/web/app/**/*.tsx",
+          "apps/web/components/**/*.tsx"
+        ]
+      },
+      {
+        "description": "Accessibility compliance validation",
+        "command": "node .claude/hooks/accessibility-check.js",
+        "enabled": true,
+        "files": [
+          "apps/web/app/**/*.tsx",
+          "apps/web/components/**/*.tsx"
+        ]
+      },
+      {
+        "description": "React runtime error monitoring",
+        "command": "node .claude/hooks/react-error-monitor.js",
+        "enabled": true,
+        "files": [
+          "apps/web/app/**/*.tsx",
+          "apps/web/components/**/*.tsx"
+        ]
+      },
+      {
+        "description": "Performance budget validation",
+        "command": "node .claude/hooks/performance-budget.js",
+        "enabled": true,
+        "files": [
+          "apps/web/package.json",
+          "apps/web/next.config.ts",
+          "apps/web/tailwind.config.js",
+          "apps/web/app/globals.css"
+        ]
+      },
+      {
+        "description": "API contract integration tests",
+        "command": "node .claude/hooks/api-contract-validation.js",
+        "enabled": true,
+        "files": [
+          "apps/api/src/routes/*.ts",
+          "apps/api/src/models/*.ts"
+        ]
+      },
+      {
+        "description": "Database schema validation tests",
+        "command": "node .claude/hooks/validate-db-schema.js",
+        "enabled": true,
+        "files": [
+          "apps/api/src/models/*.ts",
+          "apps/api/src/database/*.ts"
+        ]
+      }
+    ],
+    "post-dev-start": [
+      {
+        "description": "Comprehensive localhost health verification",
+        "command": "node .claude/hooks/verify-localhost.js",
+        "enabled": true
+      },
+      {
+        "description": "Continuous React error monitoring",
+        "command": "REACT_MONITOR_CONTINUOUS=true node .claude/hooks/react-error-monitor.js",
+        "enabled": true
+      }
+    ]
+  }
+}

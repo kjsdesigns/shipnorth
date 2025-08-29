@@ -1,11 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI, invoiceAPI } from '@/lib/api';
-import { 
-  Package, User, CreditCard, MapPin, Clock, 
-  CheckCircle, AlertCircle, LogOut, Search, Eye
+import {
+  Package,
+  User,
+  CreditCard,
+  MapPin,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  LogOut,
+  Search,
+  Eye,
+  Truck,
+  Calendar,
+  Bell,
+  Filter,
+  MoreVertical,
+  ArrowRight,
+  Package2,
+  Zap,
+  Star,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function CustomerPortal() {
@@ -14,94 +32,93 @@ export default function CustomerPortal() {
   const [packages, setPackages] = useState<any[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('packages');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const loadData = useCallback(
+    async (isRefresh = false) => {
+      try {
+        const [packagesRes, invoicesRes] = await Promise.all([
+          packageAPI.list(),
+          invoiceAPI.list(),
+        ]);
+
+        // Filter packages for this customer
+        const customerPackages =
+          packagesRes.data.packages?.filter((pkg: any) => pkg.customerId === user?.customerId) ||
+          [];
+
+        // Filter invoices for this customer
+        const customerInvoices =
+          invoicesRes.data.invoices?.filter((inv: any) => inv.customerId === user?.customerId) ||
+          [];
+
+        setPackages(customerPackages);
+        setInvoices(customerInvoices);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user?.customerId]
+  );
 
   useEffect(() => {
     const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || currentUser.role !== 'customer') {
+    if (
+      !currentUser ||
+      (!currentUser.roles?.includes('customer') && currentUser.role !== 'customer')
+    ) {
       router.push('/login');
       return;
     }
     setUser(currentUser);
-    loadData();
   }, []);
 
-  const loadData = async () => {
-    try {
-      const [packagesRes, invoicesRes] = await Promise.all([
-        packageAPI.list(),
-        invoiceAPI.list(),
-      ]);
+  useEffect(() => {
+    if (user) {
+      loadData();
 
-      // Filter packages for this customer
-      const customerPackages = packagesRes.data.packages?.filter(
-        (pkg: any) => pkg.customerId === user?.customerId
-      ) || [];
-      
-      // Filter invoices for this customer
-      const customerInvoices = invoicesRes.data.invoices?.filter(
-        (inv: any) => inv.customerId === user?.customerId
-      ) || [];
-
-      setPackages(customerPackages);
-      setInvoices(customerInvoices);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
+      // Auto-refresh every 30 seconds
+      const interval = setInterval(() => loadData(true), 30000);
+      return () => clearInterval(interval);
     }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
-      case 'in_transit':
-        return 'bg-blue-100 text-blue-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'failed':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const filteredPackages = packages.filter(pkg => 
-    pkg.barcode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    pkg.trackingNumber?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  }, [user, loadData]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-lg text-gray-600 dark:text-gray-300">Loading...</div>
+        </div>
       </div>
     );
   }
 
+  const filteredPackages = packages.filter((pkg) => {
+    if (searchQuery) {
+      return (
+        pkg.trackingNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pkg.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    return true;
+  });
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Package className="h-8 w-8 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">Shipnorth</h1>
+              <Package className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Portal</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 flex items-center">
-                <User className="h-4 w-4 mr-2" />
-                {user?.firstName} {user?.lastName}
-              </span>
               <button
-                onClick={() => {
-                  authAPI.logout();
-                  router.push('/');
-                }}
-                className="flex items-center text-gray-600 hover:text-gray-900"
+                onClick={() => authAPI.logout()}
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
                 <LogOut className="h-5 w-5" />
               </button>
@@ -110,275 +127,163 @@ export default function CustomerPortal() {
         </div>
       </header>
 
-      {/* Navigation */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab('packages')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'packages'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              My Packages
-            </button>
-            <button
-              onClick={() => setActiveTab('invoices')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'invoices'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Invoices
-            </button>
-            <button
-              onClick={() => setActiveTab('account')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'account'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Account
-            </button>
-          </nav>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Packages Tab */}
-        {activeTab === 'packages' && (
-          <div>
-            {/* Search Bar */}
-            <div className="mb-6">
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search by tracking number or barcode..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
+        <div className="space-y-6">
+          {/* Welcome Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Welcome, {user?.firstName}!
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Track your packages and manage your account
+            </p>
+          </div>
 
-            {/* Packages List */}
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <div className="px-6 py-4 border-b">
-                <h2 className="text-lg font-semibold">Your Packages</h2>
-              </div>
-              
-              {filteredPackages.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
-                  <Package className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>No packages found</p>
+          {/* Package Tracking Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Track Package
+            </h3>
+            <div className="flex space-x-4">
+              <input
+                type="text"
+                placeholder="Enter tracking number"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+              <button
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                onClick={() => {
+                  if (searchQuery) {
+                    router.push(`/track/${searchQuery}`);
+                  }
+                }}
+              >
+                Track
+              </button>
+            </div>
+          </div>
+
+          {/* Your Packages Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Your Packages
+              </h3>
+
+              {filteredPackages.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200 dark:border-gray-700">
+                        <th className="text-left py-3 px-4 text-gray-900 dark:text-white">
+                          Tracking
+                        </th>
+                        <th className="text-left py-3 px-4 text-gray-900 dark:text-white">
+                          Description
+                        </th>
+                        <th className="text-left py-3 px-4 text-gray-900 dark:text-white">
+                          Status
+                        </th>
+                        <th className="text-left py-3 px-4 text-gray-900 dark:text-white">
+                          Location
+                        </th>
+                        <th className="text-left py-3 px-4 text-gray-900 dark:text-white">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredPackages.map((pkg) => (
+                        <tr key={pkg.id} className="border-b border-gray-100 dark:border-gray-700">
+                          <td className="py-3 px-4 text-gray-900 dark:text-gray-100 font-mono">
+                            {pkg.trackingNumber}
+                          </td>
+                          <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                            {pkg.description || 'Package'}
+                          </td>
+                          <td className="py-3 px-4">
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                                pkg.status === 'delivered'
+                                  ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                                  : pkg.status === 'in_transit'
+                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                              }`}
+                            >
+                              {pkg.status}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                            {pkg.currentLocation || 'In transit'}
+                          </td>
+                          <td className="py-3 px-4">
+                            <button
+                              className="text-blue-600 hover:text-blue-800"
+                              onClick={() => router.push(`/track/${pkg.trackingNumber}`)}
+                            >
+                              Track
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-200">
-                  {filteredPackages.map((pkg) => (
-                    <div key={pkg.id} className="p-6 hover:bg-gray-50">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center mb-2">
-                            <h3 className="text-lg font-semibold mr-3">
-                              {pkg.trackingNumber || 'Awaiting Label'}
-                            </h3>
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(pkg.shipmentStatus)}`}>
-                              {pkg.shipmentStatus?.replace('_', ' ').toUpperCase()}
-                            </span>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                            <div>
-                              <span className="font-medium">Barcode:</span> {pkg.barcode}
-                            </div>
-                            <div>
-                              <span className="font-medium">Weight:</span> {pkg.weight} kg
-                            </div>
-                            <div>
-                              <span className="font-medium">Dimensions:</span> {pkg.length}x{pkg.width}x{pkg.height} cm
-                            </div>
-                          </div>
-                          
-                          <div className="mt-3 flex items-center text-sm text-gray-600">
-                            <MapPin className="h-4 w-4 mr-1" />
-                            <span className="font-medium">Destination:</span>
-                            <span className="ml-2">
-                              {pkg.shipTo?.city}, {pkg.shipTo?.province} {pkg.shipTo?.postalCode}
-                            </span>
-                          </div>
-                          
-                          {pkg.estimatedDelivery && (
-                            <div className="mt-2 flex items-center text-sm text-gray-600">
-                              <Clock className="h-4 w-4 mr-1" />
-                              <span className="font-medium">Est. Delivery:</span>
-                              <span className="ml-2">
-                                {new Date(pkg.estimatedDelivery).toLocaleDateString()}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <button 
-                          className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
-                          onClick={() => router.push(`/track/${pkg.trackingNumber}`)}
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          Track
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                <div className="text-center py-8">
+                  <Package className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-500 dark:text-gray-400">No packages found</p>
                 </div>
               )}
             </div>
           </div>
-        )}
 
-        {/* Invoices Tab */}
-        {activeTab === 'invoices' && (
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b">
-              <h2 className="text-lg font-semibold">Invoices</h2>
-            </div>
-            
-            {invoices.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                <CreditCard className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>No invoices yet</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Invoice #</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {invoices.map((invoice) => (
-                      <tr key={invoice.id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          #{invoice.invoiceNumber}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {new Date(invoice.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          ${(invoice.amount / 100).toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                            invoice.status === 'failed' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {invoice.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm">
-                          <button className="text-blue-600 hover:text-blue-900">
-                            View
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Account Tab */}
-        {activeTab === 'account' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Account Information */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">Account Information</h2>
-              <div className="space-y-3">
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Name</label>
-                  <p className="text-gray-900">{user?.firstName} {user?.lastName}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Email</label>
-                  <p className="text-gray-900">{user?.email}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Phone</label>
-                  <p className="text-gray-900">{user?.phone || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Customer ID</label>
-                  <p className="text-gray-900 font-mono text-sm">{user?.customerId}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Payment Method */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
-              <div className="flex items-center p-4 border border-gray-200 rounded-lg">
-                <CreditCard className="h-8 w-8 text-gray-400 mr-3" />
-                <div className="flex-1">
-                  <p className="font-medium">•••• •••• •••• 4242</p>
-                  <p className="text-sm text-gray-600">Expires 12/25</p>
-                </div>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  Update
-                </button>
-              </div>
-              <button className="mt-4 w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                Add Payment Method
-              </button>
-            </div>
-
-            {/* Shipping Address */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">Default Shipping Address</h2>
-              <div className="space-y-2">
-                <p className="text-gray-900">{user?.firstName} {user?.lastName}</p>
-                <p className="text-gray-600">123 Main Street</p>
-                <p className="text-gray-600">Toronto, ON M5V 3A8</p>
-                <p className="text-gray-600">Canada</p>
-              </div>
-              <button className="mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium">
-                Edit Address
-              </button>
-            </div>
-
-            {/* Notifications */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">Notification Preferences</h2>
-              <div className="space-y-3">
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-3" defaultChecked />
-                  <span className="text-gray-700">Email notifications</span>
+          {/* Account Information */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Account Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Profile
                 </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-3" defaultChecked />
-                  <span className="text-gray-700">SMS notifications</span>
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-3" />
-                  <span className="text-gray-700">Marketing communications</span>
-                </label>
+                <div className="space-y-2">
+                  <p className="text-gray-900 dark:text-gray-100">
+                    <strong>Name:</strong> {user?.firstName} {user?.lastName}
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100">
+                    <strong>Email:</strong> {user?.email}
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100">
+                    <strong>Phone:</strong> {user?.phone || 'Not provided'}
+                  </p>
+                </div>
               </div>
-              <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Save Preferences
-              </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Account Summary
+                </label>
+                <div className="space-y-2">
+                  <p className="text-gray-900 dark:text-gray-100">
+                    <strong>Total Packages:</strong> {packages.length}
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100">
+                    <strong>Active Shipments:</strong>{' '}
+                    {packages.filter((p) => p.status === 'in_transit').length}
+                  </p>
+                  <p className="text-gray-900 dark:text-gray-100">
+                    <strong>Delivered:</strong>{' '}
+                    {packages.filter((p) => p.status === 'delivered').length}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

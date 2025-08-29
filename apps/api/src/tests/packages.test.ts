@@ -11,23 +11,19 @@ describe('Packages API', () => {
 
   beforeAll(async () => {
     server = app.listen(4002);
-    
+
     // Login as staff
-    const staffLogin = await request(app)
-      .post('/auth/login')
-      .send({
-        email: 'staff@shipnorth.com',
-        password: 'staff123',
-      });
+    const staffLogin = await request(app).post('/auth/login').send({
+      email: 'staff@shipnorth.com',
+      password: 'staff123',
+    });
     staffToken = staffLogin.body.accessToken;
 
     // Login as customer
-    const customerLogin = await request(app)
-      .post('/auth/login')
-      .send({
-        email: 'john.doe@example.com',
-        password: 'customer123',
-      });
+    const customerLogin = await request(app).post('/auth/login').send({
+      email: 'john.doe@example.com',
+      password: 'customer123',
+    });
     customerToken = customerLogin.body.accessToken;
   });
 
@@ -69,7 +65,7 @@ describe('Packages API', () => {
       expect(response.status).toBe(200);
       expect(response.body.package).toHaveProperty('id');
       expect(response.body.package.barcode).toBe(packageData.barcode);
-      
+
       testPackageId = response.body.package.id;
     });
 
@@ -168,7 +164,7 @@ describe('Package Business Logic', () => {
         height: 10,
         serviceType: 'standard',
       });
-      
+
       expect(cost).toBeGreaterThan(0);
       expect(cost).toBeLessThan(100);
     });
@@ -181,7 +177,7 @@ describe('Package Business Logic', () => {
         height: 10,
         serviceType: 'standard',
       });
-      
+
       const expressCost = calculateShippingCost({
         weight: 5,
         length: 30,
@@ -189,7 +185,7 @@ describe('Package Business Logic', () => {
         height: 10,
         serviceType: 'express',
       });
-      
+
       expect(expressCost).toBeGreaterThan(standardCost);
     });
 
@@ -201,7 +197,7 @@ describe('Package Business Logic', () => {
         height: 10,
         serviceType: 'standard',
       });
-      
+
       const oversizeCost = calculateShippingCost({
         weight: 5,
         length: 100,
@@ -209,7 +205,7 @@ describe('Package Business Logic', () => {
         height: 100,
         serviceType: 'standard',
       });
-      
+
       expect(oversizeCost).toBeGreaterThan(normalCost);
     });
   });
@@ -217,17 +213,17 @@ describe('Package Business Logic', () => {
 
 // Helper function (should match the one in PayPal service)
 function calculateShippingCost(packageData: any): number {
-  let cost = 15.00;
-  cost += packageData.weight * 2.50;
-  
+  let cost = 15.0;
+  cost += packageData.weight * 2.5;
+
   const volume = packageData.length * packageData.width * packageData.height;
   if (volume > 100000) {
-    cost += 10.00;
+    cost += 10.0;
   }
-  
+
   if (packageData.serviceType === 'express') {
     cost *= 1.5;
   }
-  
+
   return Math.round(cost * 100) / 100;
 }

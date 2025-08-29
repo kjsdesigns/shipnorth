@@ -5,16 +5,38 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '@/lib/api';
 import ThemeToggle from '@/components/ThemeToggle';
+import GlobalSearch from '@/components/GlobalSearch';
+import PortalSwitcher from '@/components/PortalSwitcher';
+// SearchModal completely removed due to infinite render issues
 import {
-  Package, Users, Truck, FileText, BarChart3, Settings,
-  LogOut, Menu, X, Home, Bell, Search, ChevronDown,
-  User, CreditCard, Map, DollarSign,
-  Package2, UserCheck, TrendingUp, Activity, Layers
+  Package,
+  Users,
+  Truck,
+  FileText,
+  BarChart3,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Home,
+  Bell,
+  Search,
+  ChevronDown,
+  User,
+  CreditCard,
+  Map,
+  DollarSign,
+  Package2,
+  UserCheck,
+  TrendingUp,
+  Activity,
+  Layers,
+  MapPin,
 } from 'lucide-react';
 
 interface ModernLayoutProps {
   children: React.ReactNode;
-  role: 'admin' | 'staff' | 'driver' | 'customer';
+  role: 'staff' | 'driver' | 'customer'; // Removed separate admin role
 }
 
 export default function ModernLayout({ children, role }: ModernLayoutProps) {
@@ -24,6 +46,7 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
   const [user, setUser] = useState<any>(null);
   const [notifications] = useState(3);
   const [profileDropdown, setProfileDropdown] = useState(false);
+  // const [searchModalOpen, setSearchModalOpen] = useState(false); // Removed with SearchModal
 
   useEffect(() => {
     const currentUser = authAPI.getCurrentUser();
@@ -32,7 +55,7 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
       return;
     }
     setUser(currentUser);
-  }, [router]);
+  }, []); // Remove router dependency - it's stable in Next.js
 
   const handleLogout = () => {
     authAPI.logout();
@@ -40,31 +63,33 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
 
   // Navigation items based on role
   const getNavItems = () => {
-    const baseItems = [
-      { name: 'Dashboard', href: `/${role}`, icon: Home },
-    ];
+    const baseItems = [{ name: 'Dashboard', href: `/${role}`, icon: Home }];
 
+    // Consolidated admin into staff portal
     switch (role) {
-      case 'admin':
-        return [
-          ...baseItems,
-          { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-          { name: 'Customers', href: '/admin/customers', icon: Users },
-          { name: 'Packages', href: '/admin/packages', icon: Package },
-          { name: 'Loads', href: '/admin/loads', icon: Truck },
-          { name: 'Invoices', href: '/admin/invoices', icon: FileText },
-          { name: 'Staff', href: '/admin/staff', icon: UserCheck },
-          { name: 'Settings', href: '/admin/settings', icon: Settings },
-        ];
       case 'staff':
-        return [
+        const staffItems = [
           ...baseItems,
-          { name: 'Customers', href: '/staff?tab=customers', icon: Users },
-          { name: 'Packages', href: '/staff?tab=packages', icon: Package },
-          { name: 'Loads', href: '/staff?tab=loads', icon: Truck },
+          { name: 'Customers', href: '/staff/customers', icon: Users },
+          { name: 'Packages', href: '/staff/packages', icon: Package },
+          { name: 'Loads', href: '/staff/loads', icon: Truck },
           { name: 'Invoices', href: '/staff?tab=invoices', icon: FileText },
           { name: 'Reports', href: '/staff/reports', icon: BarChart3 },
         ];
+
+        // Add admin-only features if user has admin access
+        const hasAdminAccess =
+          user?.hasAdminAccess || user?.role === 'admin' || user?.roles?.includes('admin');
+        if (hasAdminAccess) {
+          staffItems.push(
+            { name: 'Admin Dashboard', href: '/staff/admin', icon: UserCheck },
+            { name: 'User Management', href: '/staff/admin/users', icon: Users },
+            { name: 'System Settings', href: '/staff/admin/settings', icon: Settings },
+            { name: 'Analytics', href: '/staff/admin/analytics', icon: BarChart3 }
+          );
+        }
+
+        return staffItems;
       case 'driver':
         return [
           ...baseItems,
@@ -91,9 +116,11 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 flex">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out lg:translate-x-0 lg:relative lg:z-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out lg:translate-x-0 lg:relative lg:z-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
@@ -117,7 +144,8 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
               <div className="flex-shrink-0">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                   <span className="text-sm font-medium text-white">
-                    {user?.firstName?.[0]}{user?.lastName?.[0]}
+                    {user?.firstName?.[0]}
+                    {user?.lastName?.[0]}
                   </span>
                 </div>
               </div>
@@ -130,15 +158,42 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
                 </p>
               </div>
             </div>
+
+            {/* Portal Switcher in sidebar */}
+            {user && (
+              <div className="mt-4">
+                <PortalSwitcher
+                  currentPortal={role}
+                  availablePortals={user.availablePortals || [role]}
+                  hasAdminAccess={
+                    user.hasAdminAccess || user.role === 'admin' || user.roles?.includes('admin')
+                  }
+                  className="w-full"
+                />
+              </div>
+            )}
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
+              // Handle admin feature dividers
+              if ((item as any).isDivider) {
+                return (
+                  <div key={item.name} className="px-3 py-2">
+                    <hr className="border-gray-300 dark:border-gray-600" />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 px-2 font-medium">
+                      {item.name.replace(/---/g, '').trim()}
+                    </p>
+                  </div>
+                );
+              }
+
               const Icon = item.icon;
-              const isActive = pathname === item.href || 
+              const isActive =
+                pathname === item.href ||
                 (item.href !== `/${role}` && pathname.startsWith(item.href));
-              
+
               return (
                 <Link
                   key={item.name}
@@ -149,11 +204,15 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
-                  <Icon className={`mr-3 h-5 w-5 ${
-                    isActive 
-                      ? 'text-blue-600 dark:text-blue-400' 
-                      : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
-                  }`} />
+                  {Icon && (
+                    <Icon
+                      className={`mr-3 h-5 w-5 ${
+                        isActive
+                          ? 'text-blue-600 dark:text-blue-400'
+                          : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                      }`}
+                    />
+                  )}
                   {item.name}
                 </Link>
               );
@@ -186,17 +245,10 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
                 >
                   <Menu className="h-6 w-6" />
                 </button>
-                
+
                 {/* Search */}
                 <div className="ml-4 lg:ml-0 max-w-md flex-1">
-                  <div className="relative">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="search"
-                      placeholder="Search..."
-                      className="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 pl-10 pr-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
+                  {user && <GlobalSearch userRole={user.role} className="w-full" />}
                 </div>
               </div>
 
@@ -216,18 +268,19 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
 
                 {/* Profile dropdown */}
                 <div className="relative">
-                  <button 
+                  <button
                     onClick={() => setProfileDropdown(!profileDropdown)}
                     className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                       <span className="text-xs font-medium text-white">
-                        {user?.firstName?.[0]}{user?.lastName?.[0]}
+                        {user?.firstName?.[0]}
+                        {user?.lastName?.[0]}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4" />
                   </button>
-                  
+
                   {profileDropdown && (
                     <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 py-1">
                       <button
@@ -247,9 +300,7 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
         {/* Page content */}
         <main className="flex-1 overflow-auto">
           <div className="py-6">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {children}
-            </div>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
           </div>
         </main>
       </div>
@@ -261,6 +312,8 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+
+      {/* Search Modal - Removed to eliminate infinite render source */}
     </div>
   );
 }

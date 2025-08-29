@@ -1,0 +1,453 @@
+{
+  "config": {
+    "configFile": "/Users/keith/claude/shipnorth/playwright.config.ts",
+    "rootDir": "/Users/keith/claude/shipnorth/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 2700000,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "testSuite": "Shipnorth E2E Tests",
+      "version": "2.0.0",
+      "modular": true,
+      "totalTests": 9
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        {
+          "printSteps": true
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-reports/results.json",
+          "includeProjectInTestName": true
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "test-reports/html-report",
+          "open": "never",
+          "host": "localhost",
+          "port": 9323
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-reports/junit-results.xml"
+        }
+      ],
+      [
+        "github",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "smoke",
+        "name": "smoke",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "auth.spec.ts",
+          "staff-interface.spec.ts",
+          "customer-portal.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "desktop-core",
+        "name": "desktop-core",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "auth.spec.ts",
+          "staff-interface.spec.ts",
+          "customer-portal.spec.ts",
+          "admin-panel.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "api-integration",
+        "name": "api-integration",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "api-integration.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "documentation",
+        "name": "documentation",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "documentation.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "mobile-core",
+        "name": "mobile-core",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "customer-portal.spec.ts",
+          "driver-mobile.spec.ts",
+          "ui-ux.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "safari-desktop",
+        "name": "safari-desktop",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "auth.spec.ts",
+          "customer-portal.spec.ts",
+          "ui-ux.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "safari-mobile",
+        "name": "safari-mobile",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "customer-portal.spec.ts",
+          "driver-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "tablet",
+        "name": "tablet",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "staff-interface.spec.ts",
+          "admin-panel.spec.ts",
+          "ui-ux.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "testSuite": "Shipnorth E2E Tests",
+          "version": "2.0.0",
+          "modular": true,
+          "totalTests": 9
+        },
+        "id": "end-to-end",
+        "name": "end-to-end",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/comprehensive-*.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/global-search.spec.ts",
+          "**/theme-toggle.spec.ts",
+          "**/ui-theme.spec.ts",
+          "**/user-management.spec.ts",
+          "**/web-interface.spec.ts",
+          "**/MODULAR_*.md"
+        ],
+        "testMatch": [
+          "end-to-end.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.2",
+    "workers": 6,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:3001",
+      "reuseExistingServer": true,
+      "timeout": 120000,
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+    }
+  ],
+  "stats": {
+    "startTime": "2025-08-26T19:51:53.879Z",
+    "duration": 214.37900000000002,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

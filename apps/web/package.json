@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^5.2.1",
     "@serverless-stack/node": "^1.18.4",
     "@types/js-cookie": "^3.0.6",
@@ -17,10 +18,10 @@
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.539.0",
-    "next": "15.4.6",
+    "next": "^15.5.0",
     "postcss": "^8.5.6",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.4.17",

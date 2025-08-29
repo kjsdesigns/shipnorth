@@ -4,19 +4,19 @@ import { DatabaseService } from './services/database';
 
 const cleanAndSeed = async () => {
   console.log('🧹 Cleaning up duplicate users...\n');
-  
+
   try {
     // Get all users
     const users = await UserModel.list();
     console.log(`Found ${users.length} users. Removing duplicates...\n`);
-    
+
     // Delete all users except the most recent ones
     const uniqueEmails = new Set<string>();
     const toDelete: string[] = [];
-    
+
     // Sort by ID to keep the most recent ones
     const sortedUsers = [...users].reverse();
-    
+
     for (const user of sortedUsers) {
       if (uniqueEmails.has(user.email)) {
         toDelete.push(user.id);
@@ -26,18 +26,23 @@ const cleanAndSeed = async () => {
         console.log(`✅ Keeping: ${user.email} (ID: ${user.id})`);
       }
     }
-    
+
     // Delete duplicates
     for (const id of toDelete) {
       await UserModel.delete(id);
       console.log(`❌ Deleted user with ID: ${id}`);
     }
-    
+
     console.log('\n🌱 Re-seeding demo users with correct passwords...\n');
-    
+
     // Delete and recreate all demo users to ensure correct passwords
-    const demoEmails = ['admin@shipnorth.com', 'staff@shipnorth.com', 'driver@shipnorth.com', 'john.doe@example.com'];
-    
+    const demoEmails = [
+      'admin@shipnorth.com',
+      'staff@shipnorth.com',
+      'driver@shipnorth.com',
+      'john.doe@example.com',
+    ];
+
     for (const email of demoEmails) {
       const existing = await UserModel.findByEmail(email);
       if (existing) {
@@ -45,7 +50,7 @@ const cleanAndSeed = async () => {
         console.log(`🗑️  Deleted existing ${email}`);
       }
     }
-    
+
     // Now create fresh users
     const freshUsers = [
       {
@@ -82,12 +87,12 @@ const cleanAndSeed = async () => {
         status: 'active' as const,
       },
     ];
-    
+
     for (const user of freshUsers) {
       await UserModel.create(user);
       console.log(`✅ Created ${user.role}: ${user.email}`);
     }
-    
+
     // Also create customer record for John Doe
     const existing = await CustomerModel.findByEmail('john.doe@example.com');
     if (!existing) {
@@ -105,7 +110,7 @@ const cleanAndSeed = async () => {
       });
       console.log(`✅ Created customer record: john.doe@example.com`);
     }
-    
+
     console.log('\n🔐 Testing authentication...\n');
     const testUsers = [
       { email: 'admin@shipnorth.com', password: 'admin123' },
@@ -113,7 +118,7 @@ const cleanAndSeed = async () => {
       { email: 'driver@shipnorth.com', password: 'driver123' },
       { email: 'john.doe@example.com', password: 'customer123' },
     ];
-    
+
     for (const test of testUsers) {
       const result = await UserModel.validatePassword(test.email, test.password);
       if (result) {
@@ -122,9 +127,8 @@ const cleanAndSeed = async () => {
         console.log(`❌ ${test.email} - Authentication failed`);
       }
     }
-    
+
     console.log('\n✨ Clean and seed complete!');
-    
   } catch (error) {
     console.error('Error during clean and seed:', error);
   }

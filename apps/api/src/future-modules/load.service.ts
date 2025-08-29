@@ -21,8 +21,8 @@ export class LoadService {
           loadData.originAddress || 'Toronto, ON, Canada',
           loadData.cities
         );
-        
-        deliveryCities = optimization.waypoints.map(wp => ({
+
+        deliveryCities = optimization.waypoints.map((wp) => ({
           city: wp.city,
           province: wp.province,
           country: wp.country,
@@ -91,9 +91,9 @@ export class LoadService {
           originAddress || load.originAddress || 'Toronto, ON, Canada',
           cities
         );
-        
+
         updatedCities = optimization.waypoints.map((wp, index) => {
-          const originalCity = cities.find(c => c.city === wp.city) || cities[index];
+          const originalCity = cities.find((c) => c.city === wp.city) || cities[index];
           return {
             ...originalCity,
             distance: wp.distance,
@@ -157,7 +157,7 @@ export class LoadService {
 
   static async getLoadStats(): Promise<LoadStats> {
     const loads = await LoadModel.list(1000);
-    
+
     const stats = loads.reduce(
       (acc, load) => {
         acc[load.status as keyof LoadStats]++;
@@ -170,14 +170,14 @@ export class LoadService {
     return stats;
   }
 
-  static async getLoadWithDetails(loadId: string): Promise<Load & { packages: Package[] } | null> {
+  static async getLoadWithDetails(
+    loadId: string
+  ): Promise<(Load & { packages: Package[] }) | null> {
     const load = await LoadModel.findById(loadId);
     if (!load) return null;
 
     const packageIds = await LoadModel.getPackages(loadId);
-    const packages = await Promise.all(
-      packageIds.map(id => PackageModel.findById(id))
-    );
+    const packages = await Promise.all(packageIds.map((id) => PackageModel.findById(id)));
 
     return {
       ...load,
@@ -211,19 +211,14 @@ export class LoadService {
         const pkg = await PackageModel.findById(packageId);
         if (pkg) {
           await PackageModel.update(packageId, { shipmentStatus: 'in_transit' });
-          
+
           const customer = await CustomerModel.findById(pkg.customerId);
           if (customer) {
             const expectedDeliveryDate = await PackageModel.getExpectedDeliveryDate(packageId);
-            await NotificationService.notifyPackageStatusChange(
-              packageId,
-              'in_transit',
-              customer,
-              {
-                trackingNumber: pkg.trackingNumber,
-                expectedDeliveryDate,
-              }
-            );
+            await NotificationService.notifyPackageStatusChange(packageId, 'in_transit', customer, {
+              trackingNumber: pkg.trackingNumber,
+              expectedDeliveryDate,
+            });
           }
         }
       }
@@ -257,15 +252,11 @@ export class LoadService {
 
   static async getDriverLoads(driverId: string): Promise<Load[]> {
     const allLoads = await LoadModel.list();
-    return allLoads.filter(load => 
-      !load.driverId || load.driverId === driverId
-    );
+    return allLoads.filter((load) => !load.driverId || load.driverId === driverId);
   }
 
   static async getActiveLoadForDriver(driverId: string): Promise<Load | null> {
     const loads = await this.getDriverLoads(driverId);
-    return loads.find(load => 
-      load.status === 'in_transit' && load.driverId === driverId
-    ) || null;
+    return loads.find((load) => load.status === 'in_transit' && load.driverId === driverId) || null;
   }
 }

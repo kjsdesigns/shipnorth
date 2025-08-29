@@ -4,8 +4,8 @@
 
 const environments = {
   local: {
-    apiUrl: 'http://localhost:4000',
-    webUrl: 'http://localhost:3001',
+    apiUrl: 'http://snapi.local.com',
+    webUrl: 'http://sn.local.com',
   },
   dev: {
     apiUrl: 'https://rv6q5b27n2.execute-api.ca-central-1.amazonaws.com',
@@ -18,42 +18,44 @@ const environments = {
   prod: {
     apiUrl: process.env.PROD_API_URL || 'https://api.shipnorth.com',
     webUrl: process.env.PROD_WEB_URL || 'https://shipnorth.com',
-  }
+  },
 };
 
 const testEnv = (process.env.TEST_ENV as keyof typeof environments) || 'local';
 
 if (!environments[testEnv]) {
-  throw new Error(`Invalid TEST_ENV: ${testEnv}. Supported environments: ${Object.keys(environments).join(', ')}`);
+  throw new Error(
+    `Invalid TEST_ENV: ${testEnv}. Supported environments: ${Object.keys(environments).join(', ')}`
+  );
 }
 
 export const config = {
   // Current environment
   environment: testEnv,
-  
+
   // URLs for current environment
   ...environments[testEnv],
-  
+
   // Test user credentials (same across environments)
   testUsers: {
     admin: {
       email: 'admin@shipnorth.com',
-      password: 'admin123'
+      password: 'admin123',
     },
     staff: {
-      email: 'staff@shipnorth.com', 
-      password: 'staff123'
+      email: 'staff@shipnorth.com',
+      password: 'staff123',
     },
     customer: {
-      email: 'john.doe@example.com',
-      password: 'customer123'
+      email: 'test@test.com', // Use existing test customer
+      password: 'test123',
     },
     driver: {
       email: 'driver@shipnorth.com',
-      password: 'driver123'
-    }
+      password: 'driver123',
+    },
   },
-  
+
   // Environment-specific settings
   timeout: testEnv === 'local' ? 10000 : 30000,
   retries: testEnv === 'prod' ? 3 : 1,

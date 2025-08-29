@@ -19,7 +19,7 @@ export interface NotificationData {
 export class NotificationService {
   static async sendPackageStatusNotification(data: NotificationData): Promise<void> {
     const settings = await SettingsModel.get();
-    
+
     const promises = [];
 
     // Send email notification
@@ -126,7 +126,7 @@ export class NotificationService {
         return `Shipnorth: Your package ${data.packageTrackingNumber} is ready for pickup.`;
       case 'in_transit':
         return `Shipnorth: Your package ${data.packageTrackingNumber} is in transit${
-          data.expectedDeliveryDate 
+          data.expectedDeliveryDate
             ? ` and expected to deliver on ${new Date(data.expectedDeliveryDate).toLocaleDateString()}`
             : ''
         }.`;
@@ -178,22 +178,32 @@ export class NotificationService {
                     <td style="padding: 8px 0; font-weight: bold; color: #666;">Status:</td>
                     <td style="padding: 8px 0;">${statusMessage}</td>
                 </tr>
-                ${data.expectedDeliveryDate ? `
+                ${
+                  data.expectedDeliveryDate
+                    ? `
                 <tr>
                     <td style="padding: 8px 0; font-weight: bold; color: #666;">Expected Delivery:</td>
                     <td style="padding: 8px 0;">${new Date(data.expectedDeliveryDate).toLocaleDateString()}</td>
                 </tr>
-                ` : ''}
-                ${data.currentLocation ? `
+                `
+                    : ''
+                }
+                ${
+                  data.currentLocation
+                    ? `
                 <tr>
                     <td style="padding: 8px 0; font-weight: bold; color: #666;">Current Location:</td>
                     <td style="padding: 8px 0;">${data.currentLocation}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
             </table>
         </div>
         
-        ${data.deliveryConfirmation ? `
+        ${
+          data.deliveryConfirmation
+            ? `
         <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
             <h3 style="color: #155724; margin: 0 0 10px 0;">Delivery Confirmed</h3>
             <p style="margin: 0; color: #155724;">
@@ -201,7 +211,9 @@ export class NotificationService {
                 ${data.deliveryConfirmation.recipientName ? ` to ${data.deliveryConfirmation.recipientName}` : ''}
             </p>
         </div>
-        ` : ''}
+        `
+            : ''
+        }
         
         <div style="text-align: center; margin: 30px 0;">
             <a href="${process.env.FRONTEND_URL}/customer" 
@@ -235,11 +247,15 @@ Status: ${this.getStatusMessage(data.status)}
 ${data.expectedDeliveryDate ? `Expected Delivery: ${new Date(data.expectedDeliveryDate).toLocaleDateString()}` : ''}
 ${data.currentLocation ? `Current Location: ${data.currentLocation}` : ''}
 
-${data.deliveryConfirmation ? `
+${
+  data.deliveryConfirmation
+    ? `
 Delivery Confirmed:
 Delivered on ${new Date(data.deliveryConfirmation.deliveredAt).toLocaleDateString()}
 ${data.deliveryConfirmation.recipientName ? `Received by: ${data.deliveryConfirmation.recipientName}` : ''}
-` : ''}
+`
+    : ''
+}
 
 View your package details at: ${process.env.FRONTEND_URL}/customer
 
@@ -308,28 +324,28 @@ Questions? Contact us at support@shipnorth.com
   // Send bulk notifications
   static async sendBulkNotifications(notifications: NotificationData[]): Promise<void> {
     const batchSize = 10;
-    
+
     for (let i = 0; i < notifications.length; i += batchSize) {
       const batch = notifications.slice(i, i + batchSize);
-      const promises = batch.map(notification => 
-        this.sendPackageStatusNotification(notification).catch(error => {
+      const promises = batch.map((notification) =>
+        this.sendPackageStatusNotification(notification).catch((error) => {
           console.error('Batch notification error:', error);
           return null;
         })
       );
-      
+
       await Promise.allSettled(promises);
-      
+
       // Rate limiting - wait between batches
       if (i + batchSize < notifications.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
   }
 
   // Test notification endpoints
   static async sendTestNotification(
-    email: string, 
+    email: string,
     phone?: string
   ): Promise<{ email: boolean; sms: boolean }> {
     const testData: NotificationData = {
