@@ -1,26 +1,37 @@
+# Node modules (will be installed in container)
 node_modules
-npm-debug.log
-.git
-.gitignore
-README.md
-.env
-.nyc_output
-coverage
-.vscode
-.DS_Store
-assets
-documentation
-test-artifacts
-test-results
-test-reports
-*.md
-*.png
-*.html
-*.log
-.claude
-scripts
-infrastructure/cdk.out
-infrastructure/node_modules
-apps/api/node_modules
+apps/api/node_modules  
 apps/web/node_modules
 apps/web/.next
+
+# Test artifacts and reports
+test-artifacts*
+test-results
+test-reports
+coverage
+*.log
+
+# Git and documentation
+.git
+.gitignore
+*.md
+README.md
+documentation
+assets
+.claude
+
+# IDE and OS files
+.vscode
+.DS_Store
+
+# Build artifacts
+.nyc_output
+infrastructure/cdk.out
+infrastructure/node_modules
+
+# Generated files
+*.png
+*.html
+
+# Keep scripts - we need them in container
+# scripts
