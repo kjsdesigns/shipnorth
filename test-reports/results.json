@@ -95,7 +95,7 @@
           "infrastructure-check.spec.ts",
           "config-enforcement.spec.ts"
         ],
-        "timeout": 60000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -178,7 +178,7 @@
           "customer-portal.spec.ts",
           "admin-panel.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -217,7 +217,7 @@
         "testMatch": [
           "api-integration.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -256,7 +256,7 @@
         "testMatch": [
           "documentation.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -297,7 +297,7 @@
           "driver-mobile.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -338,7 +338,7 @@
           "customer-portal.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -378,7 +378,7 @@
           "customer-portal.spec.ts",
           "driver-mobile.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -419,7 +419,7 @@
           "admin-panel.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 30000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -458,7 +458,7 @@
         "testMatch": [
           "end-to-end.spec.ts"
         ],
-        "timeout": 120000
+        "timeout": 30000
       }
     ],
     "shard": null,
@@ -478,13 +478,13 @@
   "suites": [],
   "errors": [
     {
-      "message": "Error: Timed out waiting 120000ms from config.webServer.",
-      "stack": "Error: Timed out waiting 120000ms from config.webServer."
+      "message": "Error: Process from config.webServer was not able to start. Exit code: 1",
+      "stack": "Error: Process from config.webServer was not able to start. Exit code: 1"
     }
   ],
   "stats": {
-    "startTime": "2025-08-30T12:21:31.025Z",
-    "duration": 120329.65699999999,
+    "startTime": "2025-08-30T12:35:41.550Z",
+    "duration": 62090.876,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

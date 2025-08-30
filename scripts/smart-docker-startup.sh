@@ -52,8 +52,14 @@ log_success "Docker Engine is running"
 # Step 2: Clean up potential conflicts
 log_info "Cleaning up potential conflicts..."
 
+# Get ports from environment variables
+WEB_PORT=${WEB_PORT:-8849}
+API_PORT=${API_PORT:-8850}
+POSTGRES_PORT=${POSTGRES_PORT:-5432}
+NGINX_PORT=${NGINX_PORT:-80}
+
 # Kill any processes on our ports that aren't Docker
-PORTS=(80 8849 8850 5432)
+PORTS=($NGINX_PORT $WEB_PORT $API_PORT $POSTGRES_PORT)
 for PORT in "${PORTS[@]}"; do
     PIDS=$(lsof -ti:$PORT 2>/dev/null || true)
     if [ ! -z "$PIDS" ]; then
@@ -67,25 +73,9 @@ for PORT in "${PORTS[@]}"; do
     fi
 done
 
-# Step 3: Ensure /etc/hosts has domain mappings
-log_info "Verifying domain mappings..."
-
-HOSTS_FILE="/etc/hosts"
-REQUIRED_DOMAINS="127.0.0.1 sn.local.com snapi.local.com"
-
-if ! grep -q "sn.local.com" "$HOSTS_FILE" 2>/dev/null; then
-    log_warning "Domain mappings missing from /etc/hosts"
-    log_fix "Adding domain mappings (requires sudo)..."
-    
-    # Backup hosts file
-    sudo cp "$HOSTS_FILE" "$HOSTS_FILE.backup.$(date +%s)" 2>/dev/null || true
-    
-    # Add domains
-    echo "$REQUIRED_DOMAINS" | sudo tee -a "$HOSTS_FILE" >/dev/null
-    log_success "Added domain mappings to /etc/hosts"
-else
-    log_success "Domain mappings already present"
-fi
+# Step 3: Skip domain mapping (using direct localhost ports)
+log_info "Using direct localhost ports (simplified approach)"
+log_success "No domain mapping required"
 
 # Step 4: Clean Docker state if needed
 log_info "Checking Docker state..."
@@ -112,8 +102,8 @@ log_info "Verifying service startup..."
 # Wait for containers to start
 sleep 5
 
-# Check container status
-CONTAINERS=("shipnorth-app" "shipnorth-nginx" "shipnorth-postgres")
+# Check container status (simplified - no nginx)
+CONTAINERS=("shipnorth-app" "shipnorth-postgres")
 for CONTAINER in "${CONTAINERS[@]}"; do
     if docker ps --format "{{.Names}}" | grep -q "^$CONTAINER$"; then
         STATUS=$(docker inspect --format="{{.State.Status}}" "$CONTAINER" 2>/dev/null || echo "unknown")
@@ -157,21 +147,22 @@ test_endpoint() {
     log_fix "Troubleshooting $name..."
     
     # Service-specific troubleshooting
-    if [[ "$url" =~ "sn.local.com" ]]; then
+    if [[ "$url" =~ "$WEB_PORT" ]]; then
         echo "Frontend troubleshooting:"
         docker exec shipnorth-app ps aux | grep node || true
-        docker exec shipnorth-app curl -s http://localhost:8849 | head -5 || echo "Direct port test failed"
-    elif [[ "$url" =~ "snapi.local.com" ]]; then
+        docker logs shipnorth-app --tail=20 | grep -i error || true
+    elif [[ "$url" =~ "$API_PORT" ]]; then
         echo "API troubleshooting:"  
-        docker exec shipnorth-app curl -s http://localhost:8850/health || echo "Direct API test failed"
+        docker exec shipnorth-app curl -s http://localhost:$API_PORT/health || echo "Direct API test failed"
+        docker logs shipnorth-app --tail=20 | grep -i api || true
     fi
     
     return 1
 }
 
-# Test all endpoints
-test_endpoint "http://sn.local.com" "Frontend (Next.js)"
-test_endpoint "http://snapi.local.com/health" "API (Express)"
+# Test direct endpoints (using environment variables)
+test_endpoint "http://localhost:$WEB_PORT" "Frontend (Next.js)"
+test_endpoint "http://localhost:$API_PORT/health" "API (Express)"
 
 # Test database connectivity
 if docker exec shipnorth-postgres pg_isready -U shipnorth >/dev/null 2>&1; then
@@ -186,8 +177,8 @@ fi
 log_info "Running connectivity performance tests..."
 
 # Test response times
-WEB_TIME=$(curl -o /dev/null -s -w "%{time_total}" "http://sn.local.com" || echo "0")
-API_TIME=$(curl -o /dev/null -s -w "%{time_total}" "http://snapi.local.com/health" || echo "0")
+WEB_TIME=$(curl -o /dev/null -s -w "%{time_total}" "http://localhost:$WEB_PORT" || echo "0")
+API_TIME=$(curl -o /dev/null -s -w "%{time_total}" "http://localhost:$API_PORT/health" || echo "0")
 
 if (( $(echo "$WEB_TIME > 0" | bc -l) )); then
     log_success "Frontend response time: ${WEB_TIME}s"
@@ -205,7 +196,7 @@ echo ""
 echo "🎉 SMART STARTUP COMPLETE!"
 echo "✅ All services verified and ready for testing"
 echo "📊 Service URLs:"
-echo "   • Frontend: http://sn.local.com"
-echo "   • API: http://snapi.local.com"  
-echo "   • Database: localhost:5432"
+echo "   • Frontend: http://localhost:$WEB_PORT"
+echo "   • API: http://localhost:$API_PORT"  
+echo "   • Database: localhost:$POSTGRES_PORT"
 echo ""

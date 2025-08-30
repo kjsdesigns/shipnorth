@@ -10,6 +10,8 @@
     "dev": "./scripts/smart-docker-startup.sh",
     "dev:logs": "docker-compose logs -f",
     "dev:stop": "docker-compose down",
+    "dev:health": "./scripts/docker-health-monitor.sh",
+    "dev:monitor": "./scripts/docker-health-monitor.sh --monitor",
     "docker:dev": "concurrently \"npm run api:dev\" \"npm run web:dev\"",
     "api:dev": "cd apps/api && npm run dev",
     "web:dev": "cd apps/web && npm run dev",
