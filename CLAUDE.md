@@ -172,36 +172,32 @@ shipnorth/
 
 ## Commands to Remember
 ```bash
-# Docker development (primary)
-npm run dev               # Start all services via Docker
+# 🐳 Docker Development (PRIMARY - STABLE SETUP)
+npm run dev               # Start all services via optimized Docker
 npm run dev:logs          # View Docker logs
 npm run dev:stop          # Stop Docker services
+npm run dev:health        # Check Docker service health
+npm run dev:monitor       # Continuous health monitoring
 
-# Enhanced Testing (with live scoreboard and datetime tracking)
-npm run test              # Full suite with scoreboard (runs in Docker)
+# 🧪 Testing (Enhanced with live scoreboard)
+npm run test              # Full suite with scoreboard
 npm run test:full         # Complete suite (critical + extended)
 npm run test:critical     # Critical path tests only
 npm run test:analyze      # Run tests + generate stability analysis
 
-# Legacy Testing
-npm run test:e2e          # Basic Playwright tests
-npm run test:smoke        # Smoke tests only
-
-# Development utilities
+# 🔧 Development Utilities
 npm run build             # Build for production
 npm run typecheck         # TypeScript checking
 npm run lint              # Code quality checks
 
-# Docker management
-docker-compose up -d      # Start services
+# 🐳 Direct Docker Management
+docker-compose up -d      # Start services (if npm run dev fails)
 docker-compose ps         # Check service status
-docker-compose logs       # View all logs
+docker-compose logs -f    # Follow logs in real-time
 docker-compose down       # Stop and remove containers
+docker-compose build     # Rebuild containers
 
-# Health checks
-node .claude/hooks/verify-localhost.js   # Verify Docker services
-
-# Deploy to dev (automatic on push)
+# 🚀 Deploy to Dev (automatic on push)
 git push origin main
 ```
 
@@ -238,21 +234,22 @@ When you want Claude to run tests, use these phrases:
 - **ALWAYS include datetime breadcrumbs** in format "Aug 27 8:47am"  
 - **AUTOMATICALLY show live progress** x/y tests with pass rates
 - **NEVER use basic `playwright test`** - always use enhanced infrastructure
-- **USE clean domains** (sn.local.com, snapi.local.com) when configured
-- **AUTOMATICALLY manage servers** with `npm run servers:smart` when needed
+- **USE Docker URLs** (http://localhost:8849, http://localhost:8850) exclusively
+- **AUTOMATICALLY manage Docker** with `npm run dev` and health monitoring
 
-### **Server Management for Claude:**
-- **Start servers**: `npm run servers:smart` (ensures clean domains working)
-- **Check status**: `npm run servers:status` (verifies clean domain health)
-- **Restart if needed**: `npm run servers:restart` (resolves domain issues)
-- **Ensure domains**: `npm run servers:ensure` (fixes domain problems)
-- **URLs to use**: ALWAYS http://sn.local.com and http://snapi.local.com (no ports, no fallbacks)
+### **Docker Management for Claude:**
+- **Primary Start**: `npm run dev` (smart Docker startup with health verification)
+- **Health Check**: `npm run dev:health` (one-time comprehensive check)
+- **Continuous Monitor**: `npm run dev:monitor` (live health monitoring)
+- **View Logs**: `npm run dev:logs` (follow Docker container logs)
+- **Stop Services**: `npm run dev:stop` (clean shutdown)
+- **URLs to use**: ALWAYS http://localhost:8849 and http://localhost:8850
 
-### **Domain Issue Resolution Process:**
-1. **Automatic Detection**: Tests if clean domains respond correctly
-2. **Systematic Fixing**: Kills conflicts, restarts routing, verifies servers  
-3. **Escalation**: Reports to user with specific recommendations if unfixable
-4. **No Fallbacks**: Never switches to different URLs - fixes the problem instead
+### **Docker Issue Resolution Process:**
+1. **Automatic Detection**: Health monitor detects service failures
+2. **Colima Recovery**: Auto-restart Colima if Docker daemon fails
+3. **Service Health**: Endpoint monitoring with troubleshooting
+4. **Manual Override**: Direct docker-compose commands if needed
 
 ### **Generated Artifacts:**
 - `live-scoreboard.html` - Browser-based live dashboard
@@ -266,12 +263,46 @@ Store in AWS Parameter Store and Secrets Manager:
 - Config (URLs, flags): Parameter Store
 
 ## Current Development URLs (Docker-based)
-- **Frontend (Local)**: http://sn.local.com - Clean domain mapping to port 8849
-- **Backend API**: http://snapi.local.com - Clean domain mapping to port 8850
+- **Frontend**: http://localhost:8849 (Next.js)
+- **Backend API**: http://localhost:8850 (Express)
+- **Database**: localhost:5432 (PostgreSQL)
 - **Dev Environment**: https://d3i19husj7b5d7.cloudfront.net - CloudFront deployment
-- **Direct Access**: Frontend localhost:8849, API localhost:8850 (fallback only)
 
-**Note**: Docker containers run services on 8849/8850, nginx proxy provides clean domains. If domains don't respond, check Docker services with `docker-compose ps` and `docker-compose logs`.
+## 🐳 Docker Architecture (STABLE PRODUCTION SETUP)
+
+### **Current Status**: ✅ FULLY WORKING
+- **Multi-stage Dockerfile**: Optimized for speed and browser caching
+- **Build Performance**: First build ~2.5min, subsequent builds ~30sec
+- **Playwright Support**: Full browser testing with cached downloads
+- **Health Monitoring**: Automated health checks and monitoring
+- **Environment Driven**: All configuration from `.env` file
+
+### **Key Components**:
+```
+docker/
+├── Dockerfile              # Multi-stage optimized build
+└── init-db.sql            # PostgreSQL initialization
+
+docker-compose.yml          # Production service configuration
+.dockerignore              # Optimized build context
+```
+
+### **Multi-Stage Build Architecture**:
+1. **Base**: Alpine Linux + Node.js + system dependencies
+2. **Playwright Cache**: Browser downloads (cached in Docker layer)
+3. **Dependencies**: npm packages (cached until package.json changes)
+4. **Final**: Application code + cached browsers + dependencies
+
+### **Health Monitoring System**:
+- `scripts/docker-health-monitor.sh`: Comprehensive health checks
+- Automatic Colima restart and recovery
+- Real-time service endpoint monitoring
+- Continuous monitoring mode available
+
+### **NEVER CREATE ALTERNATIVE DOCKER SETUPS**
+- This is the ONLY Docker configuration
+- No "stable", "simple", or "alternative" builds
+- Multi-stage build handles all use cases optimally
 
 ## Critical Environment Configuration Rules
 
