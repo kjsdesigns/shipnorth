@@ -115,7 +115,18 @@ export default defineConfig({
   },
 
   projects: [
-    // Smoke Tests - Critical path verification (runs first)
+    // Infrastructure Check - MANDATORY first step before any tests
+    {
+      name: 'infrastructure',
+      use: { ...devices['Desktop Chrome'] },
+      testDir: './tests/e2e',
+      testMatch: ['infrastructure-check.spec.ts', 'config-enforcement.spec.ts'],
+      retries: 0, // No retries - if infrastructure fails, fix it
+      timeout: 60000,
+      fullyParallel: false,
+    },
+
+    // Smoke Tests - Critical path verification (runs after infrastructure)
     {
       name: 'smoke',
       use: { ...devices['Desktop Chrome'] },
@@ -124,6 +135,7 @@ export default defineConfig({
       grep: /@smoke/,
       retries: 1,
       timeout: 30000,
+      dependencies: ['infrastructure'],
     },
 
     // Core Desktop Tests - Main functionality
@@ -137,7 +149,7 @@ export default defineConfig({
         'customer-portal.spec.ts',
         'admin-panel.spec.ts',
       ],
-      dependencies: ['smoke'],
+      dependencies: ['infrastructure', 'smoke'],
     },
 
     // API and Integration Tests - Backend verification
@@ -146,7 +158,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testDir: './tests/e2e',
       testMatch: ['api-integration.spec.ts'],
-      dependencies: ['smoke'],
+      dependencies: ['infrastructure', 'smoke'],
     },
 
     // Documentation Tests - Content and search
@@ -155,7 +167,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testDir: './tests/e2e',
       testMatch: ['documentation.spec.ts'],
-      dependencies: ['smoke'],
+      dependencies: ['infrastructure', 'smoke'],
     },
 
     // Mobile Tests - Touch interfaces and responsive design
@@ -164,7 +176,7 @@ export default defineConfig({
       use: { ...devices['Pixel 5'] },
       testDir: './tests/e2e',
       testMatch: ['customer-portal.spec.ts', 'driver-mobile.spec.ts', 'ui-ux.spec.ts'],
-      dependencies: ['smoke'],
+      dependencies: ['infrastructure', 'smoke'],
     },
 
     // Cross-browser Tests - Safari compatibility
@@ -214,7 +226,7 @@ export default defineConfig({
   ...(process.env.TEST_ENV !== 'dev' && {
     webServer: {
       command: 'npm run dev',
-      url: 'http://sn.local.com',
+      url: 'http://localhost:8849',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
       stdout: 'ignore',

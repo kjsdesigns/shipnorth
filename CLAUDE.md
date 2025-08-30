@@ -273,6 +273,35 @@ Store in AWS Parameter Store and Secrets Manager:
 
 **Note**: Docker containers run services on 8849/8850, nginx proxy provides clean domains. If domains don't respond, check Docker services with `docker-compose ps` and `docker-compose logs`.
 
+## Critical Environment Configuration Rules
+
+### **MANDATORY: Centralized Environment Management**
+- **SINGLE SOURCE OF TRUTH**: All environment variables MUST be defined in `.env` file ONLY
+- **NO HARDCODED VALUES**: Never hardcode ports, URLs, or configuration in any file
+- **REFERENCE PATTERN**: Always use `process.env.VARIABLE_NAME` with fallback to environment
+- **CENTRALIZED PORTS**: 
+  - Web: `process.env.WEB_PORT` (8849)
+  - API: `process.env.API_PORT` (8850) 
+  - PostgreSQL: `process.env.POSTGRES_PORT` (5432)
+
+### **ANTI-PATTERNS (FORBIDDEN)**
+```javascript
+// ❌ NEVER DO THIS
+const PORT = 8850;  // Hardcoded port
+const API_URL = 'http://localhost:8850';  // Hardcoded URL
+const CORS_ORIGIN = 'http://localhost:8849';  // Hardcoded origin
+
+// ✅ ALWAYS DO THIS  
+const PORT = process.env.API_PORT || 8850;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const CORS_ORIGIN = `http://localhost:${process.env.WEB_PORT}`;
+```
+
+### **ENFORCEMENT**
+- Any PR with hardcoded ports/URLs will be rejected
+- All configuration must reference `.env` variables
+- Use fallbacks only for environment variable references, not hardcoded values
+
 ## Future Session Context
 When resuming work on this project:
 1. Check current git branch and status
@@ -282,6 +311,7 @@ When resuming work on this project:
 5. Verify AWS credentials still valid
 6. EC2 SSH key available at: ~/.ssh/shipnorth-dev.pem (created 2025-08-13)
 7. Staff interface fully functional with sidebar navigation and action buttons
+8. **ALWAYS verify .env centralization before making any network/config changes**
 
 ## TypeScript Code Quality Best Practices
 

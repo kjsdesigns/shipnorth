@@ -1,0 +1,81 @@
+networks:
+  shipnorth:
+    driver: bridge
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: shipnorth-postgres
+    environment:
+      - POSTGRES_DB=shipnorth
+      - POSTGRES_USER=shipnorth
+      - POSTGRES_PASSWORD=shipnorth_dev
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - shipnorth
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shipnorth"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Simple nginx proxy for clean domains
+  nginx:
+    image: nginx:alpine
+    container_name: shipnorth-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - shipnorth
+    networks:
+      - shipnorth
+
+  # Stable application stack (Fastify + Vite + PostgreSQL)
+  shipnorth:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.stable
+    container_name: shipnorth-app
+    ports:
+      - "8849:8849"  # Vite frontend
+      - "8850:8850"  # Fastify backend
+    volumes:
+      # Bind mount the entire project for development
+      - .:/app
+      # Persist node_modules to avoid reinstalling on every container start
+      - node_modules:/app/node_modules
+      - api_node_modules:/app/apps/api-fastify/node_modules
+      - web_node_modules:/app/apps/web-vite/node_modules
+    environment:
+      - NODE_ENV=development
+      - API_PORT=8850
+      - WEB_PORT=8849
+      - NEXT_PUBLIC_API_URL=http://localhost:8850
+      - VITE_API_URL=http://localhost:8850
+      - DATABASE_URL=postgres://shipnorth:shipnorth_dev@shipnorth-postgres:5432/shipnorth
+    command: /app/scripts/stable-startup.sh
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Ensure the container has access to file system events for hot reload
+    stdin_open: true
+    tty: true
+    networks:
+      - shipnorth
+
+volumes:
+  node_modules:
+  api_node_modules:
+  web_node_modules:
+  postgres_data:

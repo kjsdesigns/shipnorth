@@ -15,7 +15,7 @@ class ApiClient {
 
   constructor(config: ApiClientConfig = {}) {
     this.config = {
-      baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000',
+      baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850',
       timeout: 10000,
       retries: 2,
       retryDelay: 1000,

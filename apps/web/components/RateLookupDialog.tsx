@@ -54,7 +54,7 @@ export default function RateLookupDialog({
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:4000/packages/${packageId}/rates`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850'}/packages/${packageId}/rates`, {
         headers: {
           Authorization: `Bearer ${document.cookie.split('accessToken=')[1]?.split(';')[0]}`,
         },
@@ -94,7 +94,7 @@ export default function RateLookupDialog({
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:4000/packages/${packageId}/rates/save`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850'}/packages/${packageId}/rates/save`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

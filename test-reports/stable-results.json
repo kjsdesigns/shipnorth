@@ -1,0 +1,169 @@
+{
+  "config": {
+    "configFile": "/app/playwright-stable.config.ts",
+    "rootDir": "/app/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 300000,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "testSuite": "Shipnorth Stable Stack Tests",
+      "architecture": "Fastify + Vite + PostgreSQL + localhost",
+      "optimizations": [
+        "System Chromium for Alpine Linux compatibility",
+        "Reduced timeouts for faster stable services",
+        "Docker-optimized configuration",
+        "PostgreSQL backend integration"
+      ],
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        {
+          "printSteps": true
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-reports/stable-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "test-reports/stable-html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/app/test-artifacts-stable",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "testSuite": "Shipnorth Stable Stack Tests",
+          "architecture": "Fastify + Vite + PostgreSQL + localhost",
+          "optimizations": [
+            "System Chromium for Alpine Linux compatibility",
+            "Reduced timeouts for faster stable services",
+            "Docker-optimized configuration",
+            "PostgreSQL backend integration"
+          ],
+          "actualWorkers": 1
+        },
+        "id": "stable-chrome",
+        "name": "stable-chrome",
+        "testDir": "/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "debug-login-flow.spec.ts",
+          "comprehensive-status.spec.ts",
+          "debug-staff-page.spec.ts",
+          "debug-login-buttons.spec.ts",
+          "debug-runtime-errors.spec.ts",
+          "docker-verification.spec.ts",
+          "auth.spec.ts",
+          "staff-interface.spec.ts",
+          "customer-portal.spec.ts",
+          "driver-mobile.spec.ts",
+          "admin-panel.spec.ts",
+          "api-integration.spec.ts",
+          "documentation.spec.ts",
+          "ui-ux.spec.ts",
+          "end-to-end.spec.ts"
+        ],
+        "timeout": 10000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication",
+          "file": "auth.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Quick Login Authentication",
+              "file": "auth.spec.ts",
+              "line": 186,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "staff quick login works",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 10000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "stable-chrome",
+                      "projectName": "stable-chrome",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 3930,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-29T21:10:47.763Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d748ac400d08b85935ef-c9c19fe61902b2c7a145",
+                  "file": "auth.spec.ts",
+                  "line": 193,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-29T21:10:47.223Z",
+    "duration": 4836.878,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

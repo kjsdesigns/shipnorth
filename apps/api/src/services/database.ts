@@ -1,25 +1,23 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import {
-  DynamoDBDocumentClient,
-  PutCommand,
-  GetCommand,
-  QueryCommand,
-  UpdateCommand,
-  DeleteCommand,
-  ScanCommand,
-  BatchWriteCommand,
-} from '@aws-sdk/lib-dynamodb';
+// PostgreSQL Database Service (replaces DynamoDB)
+import { Pool } from 'pg';
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcryptjs';
 
-// Initialize DynamoDB client
-// Use default credentials from AWS CLI/SDK
-const client = new DynamoDBClient({
-  region: process.env.AWS_REGION || 'ca-central-1',
-  // Don't specify credentials - use default chain
+// PostgreSQL connection pool
+const pool = new Pool({
+  host: process.env.POSTGRES_HOST || 'shipnorth-postgres',
+  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  database: process.env.POSTGRES_DB || 'shipnorth',
+  user: process.env.POSTGRES_USER || 'shipnorth',
+  password: process.env.POSTGRES_PASSWORD || 'shipnorth_dev',
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
 
-export const dynamodb = DynamoDBDocumentClient.from(client);
-export const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME || 'shipnorth-dev-main';
+// Legacy exports for compatibility
+export const dynamodb = null;
+export const TABLE_NAME = 'users'; // Main table for PostgreSQL
 
 // Helper function to generate IDs
 export const generateId = () => uuidv4();

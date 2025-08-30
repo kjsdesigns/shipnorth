@@ -1,0 +1,63 @@
+FROM node:18-alpine
+
+# Install required system dependencies for Playwright + PostgreSQL client
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git \
+    curl \
+    bash \
+    chromium \
+    nss \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    postgresql-client
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files from Fastify API
+COPY apps/api-fastify/package*.json ./apps/api-fastify/
+
+# Install Fastify API dependencies
+WORKDIR /app/apps/api-fastify
+RUN npm install
+
+# Copy package files from Vite Web
+WORKDIR /app
+COPY apps/web-vite/package*.json ./apps/web-vite/
+
+# Install Vite Web dependencies
+WORKDIR /app/apps/web-vite
+RUN npm install
+
+# Copy root package files
+WORKDIR /app
+COPY package*.json ./
+
+# Install root dependencies (includes playwright and testing)  
+RUN npm install
+
+# Set Playwright environment variables for Alpine with system Chromium
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+ENV PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Install only Playwright browsers (skip system deps since we have them)
+RUN npx playwright install chromium webkit firefox
+
+# Copy the entire application
+COPY . .
+
+# Set working directory back to root
+WORKDIR /app
+
+# Expose ports
+EXPOSE 8849 8850
+
+# Use new stable startup script
+CMD ["/app/scripts/stable-startup.sh"]

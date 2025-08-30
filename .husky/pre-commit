@@ -1,0 +1,37 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔒 Running configuration enforcement checks..."
+
+# Run config enforcement test
+npx playwright test tests/e2e/config-enforcement.spec.ts --timeout=30000
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ COMMIT REJECTED: Configuration violations detected!"
+    echo ""
+    echo "🚨 HARDCODED PORTS/URLS FOUND IN YOUR CHANGES"
+    echo ""
+    echo "MANDATORY FIXES REQUIRED:"
+    echo "1. Move ALL configuration to .env file"
+    echo "2. Replace hardcoded values with process.env.VARIABLE_NAME"
+    echo "3. Follow centralized configuration patterns in CLAUDE.md"
+    echo ""
+    echo "EXAMPLES:"
+    echo "❌ const PORT = 8850;"
+    echo "✅ const PORT = process.env.API_PORT;"
+    echo ""
+    echo "❌ 'http://localhost:8849'"
+    echo "✅ \`http://localhost:\${process.env.WEB_PORT}\`"
+    echo ""
+    echo "Run: npm run test:config-enforcement"
+    echo "Fix all violations, then commit again."
+    echo ""
+    exit 1
+fi
+
+echo "✅ Configuration enforcement passed - no hardcoded values detected"
+
+# Run other pre-commit checks
+npm run lint --silent
+npm run typecheck --silent

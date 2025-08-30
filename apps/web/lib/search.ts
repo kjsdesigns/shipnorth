@@ -36,7 +36,7 @@ export interface SearchOptions {
 
 export class SearchAPI {
   private static baseURL =
-    process.env.NODE_ENV === 'production' ? 'https://api.shipnorth.com' : 'http://localhost:4000';
+    process.env.NODE_ENV === 'production' ? 'https://api.shipnorth.com' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850');
 
   /**
    * Perform global search across all entities

@@ -58,10 +58,34 @@ export class AuthHelpers {
       throw new Error(`Login failed: ${await errorMessage.textContent()}`);
     }
 
+    // Wait for navigation with better error handling
     const expectedUrl = role === 'customer' ? '/portal' : role === 'admin' ? '/staff' : `/${role}`;
-    await this.page.waitForURL(new RegExp(expectedUrl.replace('/', '\\/') + '\\/?'), {
-      timeout: 15000, // Increased timeout
-    });
+    
+    try {
+      await this.page.waitForURL(new RegExp(expectedUrl.replace('/', '\\/') + '\\/?'), {
+        timeout: 20000, // Increased timeout
+      });
+    } catch (urlError) {
+      // Debug current URL and page state
+      const currentUrl = this.page.url();
+      const pageTitle = await this.page.title();
+      
+      console.log(`❌ Login redirect failed for ${role}`);
+      console.log(`   Expected URL pattern: ${expectedUrl}`);
+      console.log(`   Current URL: ${currentUrl}`);
+      console.log(`   Page title: ${pageTitle}`);
+      
+      // Check for error messages on page
+      const errorText = await this.page.locator('text=/error|failed|invalid/i').textContent().catch(() => 'none');
+      if (errorText !== 'none') {
+        console.log(`   Error on page: ${errorText}`);
+      }
+      
+      // Take screenshot for debugging
+      await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });
+      
+      throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);
+    }
 
     const expectedHeading = this.getExpectedHeading(role);
     await expect(this.page.locator(expectedHeading)).toBeVisible({ timeout: 10000 });

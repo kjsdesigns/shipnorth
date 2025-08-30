@@ -1,0 +1,258 @@
+{
+  "config": {
+    "configFile": "/app/playwright-docker.config.ts",
+    "rootDir": "/app/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 600000,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        {
+          "printSteps": true
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-reports/docker-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "test-reports/docker-html",
+          "open": "never"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-reports/docker-junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/app/test-artifacts-docker",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "docker-chromium",
+        "name": "docker-chromium",
+        "testDir": "/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "auth.spec.ts",
+          "staff-interface.spec.ts",
+          "customer-portal.spec.ts",
+          "driver-mobile.spec.ts",
+          "admin-panel.spec.ts",
+          "documentation.spec.ts",
+          "api-integration.spec.ts",
+          "ui-ux.spec.ts",
+          "end-to-end.spec.ts"
+        ],
+        "timeout": 15000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication",
+          "file": "auth.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Homepage and Navigation @smoke",
+              "file": "auth.spec.ts",
+              "line": 25,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "homepage loads correctly with all elements",
+                  "ok": false,
+                  "tags": [
+                    "smoke"
+                  ],
+                  "tests": [
+                    {
+                      "timeout": 15000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "docker-chromium",
+                      "projectName": "docker-chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 336,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://172.18.0.2:8849/\nCall log:\n\u001b[2m  - navigating to \"http://172.18.0.2:8849/\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://172.18.0.2:8849/\nCall log:\n\u001b[2m  - navigating to \"http://172.18.0.2:8849/\", waiting until \"load\"\u001b[22m\n\n    at /app/tests/e2e/auth.spec.ts:27:18",
+                            "location": {
+                              "file": "/app/tests/e2e/auth.spec.ts",
+                              "column": 18,
+                              "line": 27
+                            },
+                            "snippet": "  25 |   test.describe('Homepage and Navigation @smoke', () => {\n  26 |     test('homepage loads correctly with all elements', async ({ page }) => {\n> 27 |       await page.goto('/');\n     |                  ^\n  28 |\n  29 |       // Check title and main content\n  30 |       await expect(page).toHaveTitle(/Shipnorth/);"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/app/tests/e2e/auth.spec.ts",
+                                "column": 18,
+                                "line": 27
+                              },
+                              "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://172.18.0.2:8849/\nCall log:\n\u001b[2m  - navigating to \"http://172.18.0.2:8849/\", waiting until \"load\"\u001b[22m\n\n\n  25 |   test.describe('Homepage and Navigation @smoke', () => {\n  26 |     test('homepage loads correctly with all elements', async ({ page }) => {\n> 27 |       await page.goto('/');\n     |                  ^\n  28 |\n  29 |       // Check title and main content\n  30 |       await expect(page).toHaveTitle(/Shipnorth/);\n    at /app/tests/e2e/auth.spec.ts:27:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-30T00:12:39.749Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium/error-context.md"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium/trace.zip"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/app/tests/e2e/auth.spec.ts",
+                            "column": 18,
+                            "line": 27
+                          }
+                        },
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 329,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://172.18.0.2:8849/\nCall log:\n\u001b[2m  - navigating to \"http://172.18.0.2:8849/\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://172.18.0.2:8849/\nCall log:\n\u001b[2m  - navigating to \"http://172.18.0.2:8849/\", waiting until \"load\"\u001b[22m\n\n    at /app/tests/e2e/auth.spec.ts:27:18",
+                            "location": {
+                              "file": "/app/tests/e2e/auth.spec.ts",
+                              "column": 18,
+                              "line": 27
+                            },
+                            "snippet": "  25 |   test.describe('Homepage and Navigation @smoke', () => {\n  26 |     test('homepage loads correctly with all elements', async ({ page }) => {\n> 27 |       await page.goto('/');\n     |                  ^\n  28 |\n  29 |       // Check title and main content\n  30 |       await expect(page).toHaveTitle(/Shipnorth/);"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/app/tests/e2e/auth.spec.ts",
+                                "column": 18,
+                                "line": 27
+                              },
+                              "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://172.18.0.2:8849/\nCall log:\n\u001b[2m  - navigating to \"http://172.18.0.2:8849/\", waiting until \"load\"\u001b[22m\n\n\n  25 |   test.describe('Homepage and Navigation @smoke', () => {\n  26 |     test('homepage loads correctly with all elements', async ({ page }) => {\n> 27 |       await page.goto('/');\n     |                  ^\n  28 |\n  29 |       // Check title and main content\n  30 |       await expect(page).toHaveTitle(/Shipnorth/);\n    at /app/tests/e2e/auth.spec.ts:27:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 1,
+                          "startTime": "2025-08-30T00:12:40.887Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium-retry1/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium-retry1/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium-retry1/error-context.md"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "/app/test-artifacts-docker/auth-Authentication-Homepa-fd72d-correctly-with-all-elements-docker-chromium-retry1/trace.zip"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/app/tests/e2e/auth.spec.ts",
+                            "column": 18,
+                            "line": 27
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "d748ac400d08b85935ef-9fea2384a224292ca2d9",
+                  "file": "auth.spec.ts",
+                  "line": 26,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-30T00:12:39.195Z",
+    "duration": 2340.0609999999997,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

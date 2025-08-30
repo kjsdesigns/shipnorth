@@ -36,7 +36,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { authenticate, authorize } from './middleware/auth';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.API_PORT || process.env.PORT || 8850;
 
 // Global rate limiter - 200 req/min per IP
 const limiter = rateLimit({
@@ -61,8 +61,13 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || [
+      `http://localhost:${process.env.WEB_PORT || 8849}`,
+      `http://localhost:${process.env.API_PORT || 8850}`
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 app.use(compression());
