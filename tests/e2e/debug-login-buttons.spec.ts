@@ -3,7 +3,8 @@ import { test } from '@playwright/test';
 test('Debug login button structure', async ({ page }) => {
   console.log('🔍 Analyzing login page button structure...');
   
-  await page.goto('http://localhost:8849/login');
+  const webUrl = `http://localhost:${process.env.WEB_PORT || 8849}`;
+  await page.goto(`${webUrl}/login`);
   await page.waitForTimeout(3000);
   
   // Check if page loaded

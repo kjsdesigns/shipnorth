@@ -23,7 +23,8 @@ test('Debug runtime errors', async ({ page }) => {
   
   // Test homepage
   console.log('Testing homepage...');
-  await page.goto('http://localhost:8849');
+  const webUrl = `http://localhost:${process.env.WEB_PORT || 8849}`;
+  await page.goto(webUrl);
   await page.waitForTimeout(5000); // Wait for React to mount
   
   const rootHtml = await page.locator('#root').innerHTML();
@@ -32,7 +33,7 @@ test('Debug runtime errors', async ({ page }) => {
   
   // Test login page  
   console.log('Testing login page...');
-  await page.goto('http://localhost:8849/login');
+  await page.goto(`${webUrl}/login`);
   await page.waitForTimeout(3000);
   
   const loginRootHtml = await page.locator('#root').innerHTML();

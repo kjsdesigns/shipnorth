@@ -17,7 +17,8 @@ test('Comprehensive functionality status check', async ({ page }) => {
   // Test 1: API Health
   console.log('1. Testing API health...');
   try {
-    const response = await page.request.get('http://localhost:8850/health');
+    const apiUrl = `http://localhost:${process.env.API_PORT || 8850}`;
+    const response = await page.request.get(`${apiUrl}/health`);
     status.api = response.ok();
     console.log(`   API Health: ${status.api ? '✅ PASS' : '❌ FAIL'}`);
   } catch (e) {
@@ -27,7 +28,8 @@ test('Comprehensive functionality status check', async ({ page }) => {
   // Test 2: Homepage
   console.log('2. Testing homepage...');
   try {
-    await page.goto('http://localhost:8849');
+    const webUrl = `http://localhost:${process.env.WEB_PORT || 8849}`;
+    await page.goto(webUrl);
     await page.waitForTimeout(2000);
     const title = await page.title();
     const hasContent = title.includes('Shipnorth');
@@ -40,7 +42,7 @@ test('Comprehensive functionality status check', async ({ page }) => {
   // Test 3: Login page  
   console.log('3. Testing login page...');
   try {
-    await page.goto('http://localhost:8849/login');
+    await page.goto(`${webUrl}/login`);
     await page.waitForTimeout(2000);
     const welcomeVisible = await page.locator('h2:has-text("Welcome back")').isVisible();
     const staffButton = await page.locator('button:has-text("Staff")').first().isVisible();
@@ -53,7 +55,7 @@ test('Comprehensive functionality status check', async ({ page }) => {
   // Test 4: Staff Login Flow
   console.log('4. Testing staff login flow...');
   try {
-    await page.goto('http://localhost:8849/login');
+    await page.goto(`${webUrl}/login`);
     await page.waitForTimeout(1000);
     
     const staffButton = page.getByRole('button', { name: 'Staff', exact: true });
@@ -74,7 +76,7 @@ test('Comprehensive functionality status check', async ({ page }) => {
   // Test 5: Staff Portal Content
   console.log('5. Testing staff portal content...');
   try {
-    await page.goto('http://localhost:8849/staff');
+    await page.goto(`${webUrl}/staff`);
     await page.waitForTimeout(3000);
     
     const currentUrl = page.url();
@@ -88,7 +90,7 @@ test('Comprehensive functionality status check', async ({ page }) => {
   // Test 6: Customer Portal
   console.log('6. Testing customer portal...');
   try {
-    await page.goto('http://localhost:8849/portal');
+    await page.goto(`${webUrl}/portal`);
     await page.waitForTimeout(2000);
     const hasPortalContent = await page.locator('h1:has-text("Customer Portal")').isVisible();
     status.customerPortal = hasPortalContent;
@@ -100,7 +102,7 @@ test('Comprehensive functionality status check', async ({ page }) => {
   // Test 7: Driver Portal  
   console.log('7. Testing driver portal...');
   try {
-    await page.goto('http://localhost:8849/driver');
+    await page.goto(`${webUrl}/driver`);
     await page.waitForTimeout(2000);
     const hasDriverContent = await page.locator('h1:has-text("Driver Dashboard")').isVisible();
     status.driverPortal = hasDriverContent;

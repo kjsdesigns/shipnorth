@@ -14,7 +14,8 @@
       "testSuite": "Shipnorth E2E Tests",
       "version": "2.0.0",
       "modular": true,
-      "totalTests": 9
+      "totalTests": 9,
+      "actualWorkers": 1
     },
     "preserveOutput": "always",
     "reporter": [
@@ -65,7 +66,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "infrastructure",
         "name": "infrastructure",
@@ -95,7 +97,7 @@
           "infrastructure-check.spec.ts",
           "config-enforcement.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 60000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -105,7 +107,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "smoke",
         "name": "smoke",
@@ -146,7 +149,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "desktop-core",
         "name": "desktop-core",
@@ -178,7 +182,7 @@
           "customer-portal.spec.ts",
           "admin-panel.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 90000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -188,7 +192,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "api-integration",
         "name": "api-integration",
@@ -217,7 +222,7 @@
         "testMatch": [
           "api-integration.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 90000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -227,7 +232,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "documentation",
         "name": "documentation",
@@ -256,7 +262,7 @@
         "testMatch": [
           "documentation.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 90000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -266,7 +272,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "mobile-core",
         "name": "mobile-core",
@@ -297,7 +304,7 @@
           "driver-mobile.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 90000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -307,7 +314,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "safari-desktop",
         "name": "safari-desktop",
@@ -338,7 +346,7 @@
           "customer-portal.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 90000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -348,7 +356,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "safari-mobile",
         "name": "safari-mobile",
@@ -378,7 +387,7 @@
           "customer-portal.spec.ts",
           "driver-mobile.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 90000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -388,7 +397,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "tablet",
         "name": "tablet",
@@ -419,7 +429,7 @@
           "admin-panel.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 90000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -429,7 +439,8 @@
           "testSuite": "Shipnorth E2E Tests",
           "version": "2.0.0",
           "modular": true,
-          "totalTests": 9
+          "totalTests": 9,
+          "actualWorkers": 1
         },
         "id": "end-to-end",
         "name": "end-to-end",
@@ -458,7 +469,7 @@
         "testMatch": [
           "end-to-end.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 120000
       }
     ],
     "shard": null,
@@ -475,17 +486,283 @@
       "stderr": "pipe"
     }
   },
-  "suites": [],
-  "errors": [
+  "suites": [
     {
-      "message": "Error: Process from config.webServer was not able to start. Exit code: 1",
-      "stack": "Error: Process from config.webServer was not able to start. Exit code: 1"
+      "title": "infrastructure-check.spec.ts",
+      "file": "infrastructure-check.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "🏥 Infrastructure Health Check",
+          "file": "infrastructure-check.spec.ts",
+          "line": 17,
+          "column": 15,
+          "specs": [
+            {
+              "title": "Docker containers are running and healthy @infrastructure @critical",
+              "ok": true,
+              "tags": [
+                "infrastructure",
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "infrastructure",
+                  "projectName": "infrastructure",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 996,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "\n🔍 INFRASTRUCTURE PRE-FLIGHT CHECK STARTING...\n\n"
+                        },
+                        {
+                          "text": "✅ Docker Engine: v28.3.3\n"
+                        },
+                        {
+                          "text": "✅ Container: shipnorth-app\n"
+                        },
+                        {
+                          "text": "✅ Container: shipnorth-postgres\n"
+                        },
+                        {
+                          "text": "✅ All Docker containers are healthy\n\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:30:01.058Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "54885e6b96b97e17eb29-f46749affe27767463df",
+              "file": "infrastructure-check.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "Web frontend is accessible and responding @infrastructure @critical",
+              "ok": true,
+              "tags": [
+                "infrastructure",
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "infrastructure",
+                  "projectName": "infrastructure",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1176,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🌐 Testing frontend accessibility...\n"
+                        },
+                        {
+                          "text": "✅ Frontend: http://localhost:8849\n"
+                        },
+                        {
+                          "text": "✅ Frontend page loads correctly with content\n\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:30:02.863Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "54885e6b96b97e17eb29-5b58f5a02848994bb6d5",
+              "file": "infrastructure-check.spec.ts",
+              "line": 81,
+              "column": 7
+            },
+            {
+              "title": "API backend is accessible and responding @infrastructure @critical",
+              "ok": true,
+              "tags": [
+                "infrastructure",
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "infrastructure",
+                  "projectName": "infrastructure",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 293,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔗 Testing API accessibility...\n"
+                        },
+                        {
+                          "text": "✅ API: http://localhost:8850 - {\"status\":\"healthy\",\"timestamp\":\"2025-08-30T13:30:04.405Z\"}\n"
+                        },
+                        {
+                          "text": "✅ API backend is healthy\n\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:30:04.042Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "54885e6b96b97e17eb29-067c2cc09c390c6e4997",
+              "file": "infrastructure-check.spec.ts",
+              "line": 123,
+              "column": 7
+            },
+            {
+              "title": "PostgreSQL database is accessible @infrastructure @critical",
+              "ok": true,
+              "tags": [
+                "infrastructure",
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "infrastructure",
+                  "projectName": "infrastructure",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 301,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🗄️ Testing database connectivity...\n"
+                        },
+                        {
+                          "text": "✅ Database accessible via API health check\n"
+                        },
+                        {
+                          "text": "✅ PostgreSQL database is healthy\n\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:30:04.337Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "54885e6b96b97e17eb29-f55c5375da7f2af77b52",
+              "file": "infrastructure-check.spec.ts",
+              "line": 154,
+              "column": 7
+            },
+            {
+              "title": "Direct port connectivity works @infrastructure @critical",
+              "ok": true,
+              "tags": [
+                "infrastructure",
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "infrastructure",
+                  "projectName": "infrastructure",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 388,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🌍 Testing direct port connectivity...\n"
+                        },
+                        {
+                          "text": "✅ Frontend Direct Port: http://localhost:8849\n"
+                        },
+                        {
+                          "text": "✅ API Direct Port: http://localhost:8850/health\n"
+                        },
+                        {
+                          "text": "✅ Direct port connectivity is working correctly\n\n"
+                        },
+                        {
+                          "text": "🎯 INFRASTRUCTURE CHECK COMPLETE\n"
+                        },
+                        {
+                          "text": "✅ System ready for comprehensive testing\n\n"
+                        },
+                        {
+                          "text": "================================================================================\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:30:04.639Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "54885e6b96b97e17eb29-a0c560132740c84b14d4",
+              "file": "infrastructure-check.spec.ts",
+              "line": 180,
+              "column": 7
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2025-08-30T12:35:41.550Z",
-    "duration": 62090.876,
-    "expected": 0,
+    "startTime": "2025-08-30T13:30:00.463Z",
+    "duration": 5029.872,
+    "expected": 5,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

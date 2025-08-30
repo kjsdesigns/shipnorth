@@ -9,7 +9,8 @@ test('Debug complete login flow step by step', async ({ page }) => {
   page.on('response', resp => console.log(`← ${resp.status()} ${resp.url()}`));
   
   console.log('Step 1: Going to login page...');
-  await page.goto('http://localhost:8849/login');
+  const webUrl = `http://localhost:${process.env.WEB_PORT || 8849}`;
+  await page.goto(`${webUrl}/login`);
   await page.waitForTimeout(2000);
   
   const loginUrl = page.url();

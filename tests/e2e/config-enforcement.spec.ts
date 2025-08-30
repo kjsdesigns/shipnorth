@@ -86,7 +86,7 @@ test.describe.serial('🔒 Configuration Enforcement', () => {
       console.log('   ✅ const PORT = process.env.API_PORT;');
       console.log('   ✅ const URL = `http://localhost:${process.env.WEB_PORT}`;');
       console.log('   ❌ const PORT = 8850;');
-      console.log('   ❌ const URL = "http://localhost:8849";');
+      console.log('   ❌ const URL = "http://localhost:8849"; // Should be process.env.WEB_PORT');
       console.log('\n📋 REQUIRED ACTIONS:');
       console.log('- Update each file listed above');
       console.log('- Replace hardcoded values with environment variable references');

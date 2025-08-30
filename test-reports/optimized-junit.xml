@@ -1,0 +1,491 @@
+<testsuites id="" name="" tests="16" failures="8" skipped="0" errors="0" time="59.964394">
+<testsuite name="optimized-test-suite.spec.ts" timestamp="2025-08-30T13:39:29.820Z" hostname="critical-path" tests="16" failures="8" skipped="0" time="251.893" errors="0">
+<testcase name="🔥 Root Cause Detection › infrastructure health check @critical" classname="optimized-test-suite.spec.ts" time="5.972">
+<system-out>
+<![CDATA[✅ Infrastructure health check passed
+]]>
+</system-out>
+</testcase>
+<testcase name="🔥 Root Cause Detection › database and authentication foundation @critical" classname="optimized-test-suite.spec.ts" time="1.492">
+<system-out>
+<![CDATA[✅ Authentication foundation verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🔥 Root Cause Detection › portal accessibility matrix @critical" classname="optimized-test-suite.spec.ts" time="17.406">
+<system-out>
+<![CDATA[✅ All portals accessible
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Customer Portal Journey › complete customer workflow @core" classname="optimized-test-suite.spec.ts" time="29.554">
+<failure message="optimized-test-suite.spec.ts:106:7 complete customer workflow @core" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:106:7 › 🎯 Customer Portal Journey › complete customer workflow @core 
+
+    Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/
+
+       at utils/auth-helpers.ts:87
+
+      85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });
+      86 |       
+    > 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);
+         |             ^
+      88 |     }
+      89 |
+      90 |     const expectedHeading = this.getExpectedHeading(role);
+        at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:103:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[❌ Login redirect failed for customer
+   Expected URL pattern: /portal
+   Current URL: http://localhost:8849/login/
+   Page title: Shipnorth - Modern Logistics Platform
+   Error on page: Network error. Please check your connection and try again.
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Staff Portal Journey › complete staff workflow @core" classname="optimized-test-suite.spec.ts" time="29.611">
+<failure message="optimized-test-suite.spec.ts:166:7 complete staff workflow @core" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:166:7 › 🎯 Staff Portal Journey › complete staff workflow @core 
+
+    Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/
+
+       at utils/auth-helpers.ts:87
+
+      85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });
+      86 |       
+    > 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);
+         |             ^
+      88 |     }
+      89 |
+      90 |     const expectedHeading = this.getExpectedHeading(role);
+        at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[❌ Login redirect failed for staff
+   Expected URL pattern: /staff
+   Current URL: http://localhost:8849/login/
+   Page title: Shipnorth - Modern Logistics Platform
+   Error on page: Network error. Please check your connection and try again.
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Staff Portal Journey › admin features visibility @admin" classname="optimized-test-suite.spec.ts" time="29.543">
+<failure message="optimized-test-suite.spec.ts:210:7 admin features visibility @admin" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:210:7 › 🎯 Staff Portal Journey › admin features visibility @admin 
+
+    Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/
+
+       at utils/auth-helpers.ts:87
+
+      85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });
+      86 |       
+    > 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);
+         |             ^
+      88 |     }
+      89 |
+      90 |     const expectedHeading = this.getExpectedHeading(role);
+        at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[❌ Login redirect failed for staff
+   Expected URL pattern: /staff
+   Current URL: http://localhost:8849/login/
+   Page title: Shipnorth - Modern Logistics Platform
+   Error on page: Network error. Please check your connection and try again.
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Driver Portal Journey › complete driver workflow @core" classname="optimized-test-suite.spec.ts" time="28.107">
+<failure message="optimized-test-suite.spec.ts:239:7 complete driver workflow @core" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:239:7 › 🎯 Driver Portal Journey › complete driver workflow @core 
+
+    Error: Login redirect timeout: expected /driver, got http://localhost:8849/login/
+
+       at utils/auth-helpers.ts:87
+
+      85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });
+      86 |       
+    > 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);
+         |             ^
+      88 |     }
+      89 |
+      90 |     const expectedHeading = this.getExpectedHeading(role);
+        at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:236:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[❌ Login redirect failed for driver
+   Expected URL pattern: /driver
+   Current URL: http://localhost:8849/login/
+   Page title: Shipnorth - Modern Logistics Platform
+   Error on page: Network error. Please check your connection and try again.
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔄 Unified Authentication System › unified login redirects to correct portal @auth" classname="optimized-test-suite.spec.ts" time="16.964">
+<failure message="optimized-test-suite.spec.ts:280:7 unified login redirects to correct portal @auth" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:280:7 › 🔄 Unified Authentication System › unified login redirects to correct portal @auth 
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      309 |
+      310 |       // Should redirect to correct portal (handle trailing slash)
+    > 311 |       await page.waitForURL(new RegExp(expectedPath.replace('/', '\\/') + '\\/?$'), {
+          |                  ^
+      312 |         timeout: 15000,
+      313 |       });
+      314 |
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:311:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔄 Unified Authentication System › portal switching functionality @auth" classname="optimized-test-suite.spec.ts" time="16.125">
+<failure message="optimized-test-suite.spec.ts:322:7 portal switching functionality @auth" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:322:7 › 🔄 Unified Authentication System › portal switching functionality @auth 
+
+    TimeoutError: page.waitForURL: Timeout 15000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      329 |     await adminButton.click();
+      330 |
+    > 331 |     await page.waitForURL(/\/staff\/?$/, { timeout: 15000 });
+          |                ^
+      332 |
+      333 |     // Look for portal switcher (if implemented)
+      334 |     const portalSwitcher = page
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:331:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="📄 Page Load Verification › all pages load without 500/404 errors @pages" classname="optimized-test-suite.spec.ts" time="33.544">
+<failure message="optimized-test-suite.spec.ts:365:7 all pages load without 500/404 errors @pages" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:365:7 › 📄 Page Load Verification › all pages load without 500/404 errors @pages 
+
+    Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/
+
+       at utils/auth-helpers.ts:87
+
+      85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });
+      86 |       
+    > 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);
+         |             ^
+      88 |     }
+      89 |
+      90 |     const expectedHeading = this.getExpectedHeading(role);
+        at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:374:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[✅ Homepage loads successfully
+✅ Login loads successfully
+✅ Register loads successfully
+❌ Login redirect failed for customer
+   Expected URL pattern: /portal
+   Current URL: http://localhost:8849/login/
+   Page title: Shipnorth - Modern Logistics Platform
+   Error on page: Network error. Please check your connection and try again.
+❌ Customer Portal failed: Login redirect timeout: expected /portal, got http://localhost:8849/login/
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="⚡ Performance &amp; Stability › page load performance within limits @performance" classname="optimized-test-suite.spec.ts" time="4.518">
+<system-out>
+<![CDATA[✅ Homepage: 1222ms (target: 3000ms)
+✅ Login: 1277ms (target: 2000ms)
+✅ Customer Portal: 1396ms (target: 5000ms)
+]]>
+</system-out>
+</testcase>
+<testcase name="⚡ Performance &amp; Stability › error boundary and crash detection @stability" classname="optimized-test-suite.spec.ts" time="9.559">
+<system-out>
+<![CDATA[⚠️ Critical console errors found: [
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m
+]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔧 Core Feature Integration › authentication and session management @integration" classname="optimized-test-suite.spec.ts" time="25.243">
+<failure message="optimized-test-suite.spec.ts:471:7 authentication and session management @integration" type="FAILURE">
+<![CDATA[  [critical-path] › optimized-test-suite.spec.ts:471:7 › 🔧 Core Feature Integration › authentication and session management @integration 
+
+    Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/
+
+       at utils/auth-helpers.ts:87
+
+      85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });
+      86 |       
+    > 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);
+         |             ^
+      88 |     }
+      89 |
+      90 |     const expectedHeading = this.getExpectedHeading(role);
+        at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)
+        at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:475:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[❌ Login redirect failed for customer
+   Expected URL pattern: /portal
+   Current URL: http://localhost:8849/login/
+   Page title: Shipnorth - Modern Logistics Platform
+   Error on page: Network error. Please check your connection and try again.
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/test-failed-1.png]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/video.webm]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/error-context.md]]
+
+[[ATTACHMENT|../test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔧 Core Feature Integration › theme system and UI consistency @ui" classname="optimized-test-suite.spec.ts" time="1.779">
+<system-out>
+<![CDATA[⚠️ Theme toggle not found
+]]>
+</system-out>
+</testcase>
+<testcase name="♿ Essential Accessibility › keyboard navigation basics @accessibility" classname="optimized-test-suite.spec.ts" time="1.411">
+<system-out>
+<![CDATA[✅ Keyboard navigation working, focused: 
+]]>
+</system-out>
+</testcase>
+<testcase name="♿ Essential Accessibility › mobile viewport adaptation @mobile" classname="optimized-test-suite.spec.ts" time="1.065">
+<system-out>
+<![CDATA[✅ Mobile viewport: no horizontal scroll (375px vs 375px)
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

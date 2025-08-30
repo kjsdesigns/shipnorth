@@ -34,7 +34,7 @@ export class User {
   static async findByEmail(email: string): Promise<User | null> {
     try {
       const result = await this.query(
-        'SELECT id, email, password, first_name as "firstName", last_name as "lastName", role, status, created_at as "createdAt" FROM users WHERE email = $1',
+        'SELECT id, email, password_hash as password, first_name as "firstName", last_name as "lastName", role, created_at as "createdAt" FROM users WHERE email = $1',
         [email]
       );
       

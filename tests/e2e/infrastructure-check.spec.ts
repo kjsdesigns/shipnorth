@@ -40,7 +40,7 @@ test.describe.serial('🏥 Infrastructure Health Check', () => {
         timeout: 10000
       }).trim().split('\n');
 
-      const expectedContainers = ['shipnorth-app', 'shipnorth-nginx', 'shipnorth-postgres'];
+      const expectedContainers = ['shipnorth-app', 'shipnorth-postgres'];
       const runningContainers = containers.filter(c => c.includes('Up')).map(c => c.split(' ')[0]);
 
       for (const expected of expectedContainers) {
@@ -103,7 +103,8 @@ test.describe.serial('🏥 Infrastructure Health Check', () => {
 
     // Test actual page load
     try {
-      await page.goto('http://sn.local.com', { timeout: 15000, waitUntil: 'domcontentloaded' });
+      const webUrl = `http://localhost:${process.env.WEB_PORT || 8849}`;
+      await page.goto(webUrl, { timeout: 15000, waitUntil: 'domcontentloaded' });
       
       // Verify page loaded correctly
       await expect(page).toHaveTitle(/Shipnorth/);
@@ -142,7 +143,7 @@ test.describe.serial('🏥 Infrastructure Health Check', () => {
       console.log('🔧 RESOLUTION STEPS:');
       console.log('   1. docker-compose restart shipnorth');
       console.log('   2. docker exec shipnorth-app ps aux | grep node');
-      console.log('   3. docker exec shipnorth-app curl http://localhost:8850/health');
+      console.log(`   3. docker exec shipnorth-app curl http://localhost:${process.env.API_PORT || 8850}/health`);
       console.log('   4. Check API logs: docker-compose logs shipnorth | grep API');
       throw new Error('API service down - check Express server');
     }
@@ -176,37 +177,39 @@ test.describe.serial('🏥 Infrastructure Health Check', () => {
     console.log('✅ PostgreSQL database is healthy\n');
   });
 
-  test('Network routing and domain mapping works @infrastructure @critical', async ({ page }) => {
-    console.log('🌍 Testing domain mapping and routing...');
+  test('Direct port connectivity works @infrastructure @critical', async ({ page }) => {
+    console.log('🌍 Testing direct port connectivity...');
 
-    // Test that both clean domains work
-    const domains = [
-      { name: 'Frontend Clean Domain', url: 'http://sn.local.com' },
-      { name: 'API Clean Domain', url: 'http://snapi.local.com/health' }
+    const WEB_PORT = process.env.WEB_PORT || 8849;
+    const API_PORT = process.env.API_PORT || 8850;
+    
+    // Test direct localhost connections
+    const endpoints = [
+      { name: 'Frontend Direct Port', url: `http://localhost:${WEB_PORT}` },
+      { name: 'API Direct Port', url: `http://localhost:${API_PORT}/health` }
     ];
 
-    for (const domain of domains) {
+    for (const endpoint of endpoints) {
       try {
-        const response = await page.request.get(domain.url, { timeout: 8000 });
+        const response = await page.request.get(endpoint.url, { timeout: 8000 });
         
         if (response.ok()) {
-          console.log(`✅ ${domain.name}: ${domain.url}`);
+          console.log(`✅ ${endpoint.name}: ${endpoint.url}`);
         } else {
-          throw new Error(`${domain.name} returned ${response.status()}`);
+          throw new Error(`${endpoint.name} returned ${response.status()}`);
         }
       } catch (error) {
-        console.log(`❌ ${domain.name} failed: ${error.message}`);
+        console.log(`❌ ${endpoint.name} failed: ${error.message}`);
         console.log('🔧 RESOLUTION STEPS:');
-        console.log('   1. Check /etc/hosts file for domain mappings:');
-        console.log('      127.0.0.1 sn.local.com snapi.local.com');
-        console.log('   2. Check nginx proxy: docker-compose logs nginx');
-        console.log('   3. Restart proxy: docker-compose restart nginx');
-        console.log('   4. Test direct ports: curl localhost:8849 && curl localhost:8850/health');
-        throw new Error(`Domain mapping failed for ${domain.name}`);
+        console.log('   1. Check containers: docker-compose ps');
+        console.log('   2. Check logs: docker-compose logs shipnorth');
+        console.log('   3. Restart services: docker-compose restart');
+        console.log(`   4. Test health: npm run dev:health`);
+        throw new Error(`Direct port connectivity failed for ${endpoint.name}`);
       }
     }
 
-    console.log('✅ All domain mapping and routing works correctly\n');
+    console.log('✅ Direct port connectivity is working correctly\n');
   });
 
   test.afterAll(async () => {

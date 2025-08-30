@@ -4,8 +4,8 @@
 
 const environments = {
   local: {
-    apiUrl: 'http://localhost:8850',
-    webUrl: 'http://localhost:8849',
+    apiUrl: `http://localhost:${process.env.API_PORT || 8850}`,
+    webUrl: `http://localhost:${process.env.WEB_PORT || 8849}`,
   },
   dev: {
     apiUrl: 'https://rv6q5b27n2.execute-api.ca-central-1.amazonaws.com',
@@ -21,7 +21,7 @@ const environments = {
   },
 };
 
-const testEnv = (process.env.TEST_ENV as keyof typeof environments) || 'local';
+const testEnv = process.env.TEST_ENV || 'local';
 
 if (!environments[testEnv]) {
   throw new Error(

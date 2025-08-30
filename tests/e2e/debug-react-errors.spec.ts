@@ -13,7 +13,8 @@ test('Debug React rendering errors', async ({ page }) => {
   });
   
   // Go to homepage
-  await page.goto('http://localhost:8849');
+  const webUrl = `http://localhost:${process.env.WEB_PORT || 8849}`;
+  await page.goto(webUrl);
   await page.waitForTimeout(3000);
   
   // Check if React mounted

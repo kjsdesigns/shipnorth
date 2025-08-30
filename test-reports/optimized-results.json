@@ -1,0 +1,1418 @@
+{
+  "config": {
+    "configFile": "/Users/keith/claude/shipnorth/playwright-optimized.config.ts",
+    "rootDir": "/Users/keith/claude/shipnorth/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 600000,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "testSuite": "Shipnorth Optimized E2E Tests",
+      "strategy": "Priority-based execution with consolidated test sequences",
+      "improvements": [
+        "Reduced redundant authentication steps",
+        "Consolidated portal journeys into single browser sessions",
+        "Priority-based test ordering for faster root cause detection",
+        "Increased parallelism",
+        "Comprehensive page load verification",
+        "Focused failure detection"
+      ],
+      "actualWorkers": 6
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        {
+          "printSteps": true
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-reports/optimized-results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "test-reports/optimized-html",
+          "open": "never"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-reports/optimized-junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "critical-path",
+        "name": "critical-path",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "optimized-test-suite.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "core-functionality",
+        "name": "core-functionality",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "auth.spec.ts",
+          "customer-portal.spec.ts",
+          "staff-interface.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "extended-features",
+        "name": "extended-features",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "driver-mobile.spec.ts",
+          "ui-ux.spec.ts",
+          "api-integration.spec.ts"
+        ],
+        "timeout": 25000
+      },
+      {
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "testSuite": "Shipnorth Optimized E2E Tests",
+          "strategy": "Priority-based execution with consolidated test sequences",
+          "improvements": [
+            "Reduced redundant authentication steps",
+            "Consolidated portal journeys into single browser sessions",
+            "Priority-based test ordering for faster root cause detection",
+            "Increased parallelism",
+            "Comprehensive page load verification",
+            "Focused failure detection"
+          ],
+          "actualWorkers": 6
+        },
+        "id": "mobile-verification",
+        "name": "mobile-verification",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/apps/api/src/tests/**",
+          "**/src/tests/**",
+          "**/backup-original/**",
+          "**/backup-corrupted/**",
+          "**/backup-legacy/**",
+          "**/*-old.spec.ts",
+          "**/*-debug.spec.ts",
+          "**/*-comprehensive*.spec.ts",
+          "**/*-consolidated*.spec.ts",
+          "**/basic-*.spec.ts",
+          "**/complete-workflow-test.spec.ts",
+          "**/fixed-workflow-test.spec.ts",
+          "**/final-verification.spec.ts",
+          "**/manual-check.spec.ts",
+          "**/simple-verification.spec.ts"
+        ],
+        "testMatch": [
+          "optimized-test-suite.spec.ts"
+        ],
+        "timeout": 20000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.2",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "optimized-test-suite.spec.ts",
+      "file": "optimized-test-suite.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "🔥 Root Cause Detection",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "infrastructure health check @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5972,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Infrastructure health check passed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:30.220Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-65f37cfe715b4658e167",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 37,
+              "column": 7
+            },
+            {
+              "title": "database and authentication foundation @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1492,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Authentication foundation verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:30.229Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-3f751e2218785f9ac432",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "portal accessibility matrix @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 17406,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ All portals accessible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:30.229Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-ea281a429c2a5f38547f",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 72,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Customer Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 98,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete customer workflow @core",
+              "ok": false,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 29554,
+                      "error": {
+                        "message": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/",
+                        "stack": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:103:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 13,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 13,
+                            "line": 87
+                          },
+                          "message": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/\n\n   at utils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:103:5"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "❌ Login redirect failed for customer\n"
+                        },
+                        {
+                          "text": "   Expected URL pattern: /portal\n"
+                        },
+                        {
+                          "text": "   Current URL: http://localhost:8849/login/\n"
+                        },
+                        {
+                          "text": "   Page title: Shipnorth - Modern Logistics Platform\n"
+                        },
+                        {
+                          "text": "   Error on page: Network error. Please check your connection and try again.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:30.248Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 13,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-9637dcf2425899ce0ea0",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 106,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Staff Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 158,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete staff workflow @core",
+              "ok": false,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 29611,
+                      "error": {
+                        "message": "Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/",
+                        "stack": "Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 13,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 13,
+                            "line": 87
+                          },
+                          "message": "Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/\n\n   at utils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "❌ Login redirect failed for staff\n"
+                        },
+                        {
+                          "text": "   Expected URL pattern: /staff\n"
+                        },
+                        {
+                          "text": "   Current URL: http://localhost:8849/login/\n"
+                        },
+                        {
+                          "text": "   Page title: Shipnorth - Modern Logistics Platform\n"
+                        },
+                        {
+                          "text": "   Error on page: Network error. Please check your connection and try again.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:30.239Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 13,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-ca957f7728b7acbf0ee5",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 166,
+              "column": 7
+            },
+            {
+              "title": "admin features visibility @admin",
+              "ok": false,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 29543,
+                      "error": {
+                        "message": "Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/",
+                        "stack": "Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 13,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 13,
+                            "line": 87
+                          },
+                          "message": "Error: Login redirect timeout: expected /staff, got http://localhost:8849/login/\n\n   at utils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "❌ Login redirect failed for staff\n"
+                        },
+                        {
+                          "text": "   Expected URL pattern: /staff\n"
+                        },
+                        {
+                          "text": "   Current URL: http://localhost:8849/login/\n"
+                        },
+                        {
+                          "text": "   Page title: Shipnorth - Modern Logistics Platform\n"
+                        },
+                        {
+                          "text": "   Error on page: Network error. Please check your connection and try again.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:30.240Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 13,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-e8a822ebb18020bee312",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 210,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Driver Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 231,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete driver workflow @core",
+              "ok": false,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 28107,
+                      "error": {
+                        "message": "Error: Login redirect timeout: expected /driver, got http://localhost:8849/login/",
+                        "stack": "Error: Login redirect timeout: expected /driver, got http://localhost:8849/login/\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:236:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 13,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 13,
+                            "line": 87
+                          },
+                          "message": "Error: Login redirect timeout: expected /driver, got http://localhost:8849/login/\n\n   at utils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:236:5"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "❌ Login redirect failed for driver\n"
+                        },
+                        {
+                          "text": "   Expected URL pattern: /driver\n"
+                        },
+                        {
+                          "text": "   Current URL: http://localhost:8849/login/\n"
+                        },
+                        {
+                          "text": "   Page title: Shipnorth - Modern Logistics Platform\n"
+                        },
+                        {
+                          "text": "   Error on page: Network error. Please check your connection and try again.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:33.416Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 13,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-118367569cf30a30a0dc",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 239,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🔄 Unified Authentication System",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 279,
+          "column": 6,
+          "specs": [
+            {
+              "title": "unified login redirects to correct portal @auth",
+              "ok": false,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 16964,
+                      "error": {
+                        "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+                        "stack": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:311:18",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 18,
+                          "line": 311
+                        },
+                        "snippet": "  309 |\n  310 |       // Should redirect to correct portal (handle trailing slash)\n> 311 |       await page.waitForURL(new RegExp(expectedPath.replace('/', '\\\\/') + '\\\\/?$'), {\n      |                  ^\n  312 |         timeout: 15000,\n  313 |       });\n  314 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 18,
+                            "line": 311
+                          },
+                          "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n\n  309 |\n  310 |       // Should redirect to correct portal (handle trailing slash)\n> 311 |       await page.waitForURL(new RegExp(expectedPath.replace('/', '\\\\/') + '\\\\/?$'), {\n      |                  ^\n  312 |         timeout: 15000,\n  313 |       });\n  314 |\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:311:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:37.880Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 18,
+                        "line": 311
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-1b216b04a6e15bfbbbf8",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 280,
+              "column": 7
+            },
+            {
+              "title": "portal switching functionality @auth",
+              "ok": false,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 16125,
+                      "error": {
+                        "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+                        "stack": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:331:16",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 16,
+                          "line": 331
+                        },
+                        "snippet": "  329 |     await adminButton.click();\n  330 |\n> 331 |     await page.waitForURL(/\\/staff\\/?$/, { timeout: 15000 });\n      |                ^\n  332 |\n  333 |     // Look for portal switcher (if implemented)\n  334 |     const portalSwitcher = page"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 16,
+                            "line": 331
+                          },
+                          "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n\n  329 |     await adminButton.click();\n  330 |\n> 331 |     await page.waitForURL(/\\/staff\\/?$/, { timeout: 15000 });\n      |                ^\n  332 |\n  333 |     // Look for portal switcher (if implemented)\n  334 |     const portalSwitcher = page\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:331:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:49.330Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 16,
+                        "line": 331
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-cac28d6901255199af22",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 322,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "📄 Page Load Verification",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 352,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all pages load without 500/404 errors @pages",
+              "ok": false,
+              "tags": [
+                "pages"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 33544,
+                      "error": {
+                        "message": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/",
+                        "stack": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:374:11",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 13,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 13,
+                            "line": 87
+                          },
+                          "message": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/\n\n   at utils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:374:11"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "✅ Homepage loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Login loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Register loads successfully\n"
+                        },
+                        {
+                          "text": "❌ Login redirect failed for customer\n"
+                        },
+                        {
+                          "text": "   Expected URL pattern: /portal\n"
+                        },
+                        {
+                          "text": "   Current URL: http://localhost:8849/login/\n"
+                        },
+                        {
+                          "text": "   Page title: Shipnorth - Modern Logistics Platform\n"
+                        },
+                        {
+                          "text": "   Error on page: Network error. Please check your connection and try again.\n"
+                        },
+                        {
+                          "text": "❌ Customer Portal failed: Login redirect timeout: expected /portal, got http://localhost:8849/login/\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:39:55.446Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 13,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-49a5e40fea0a33fb9a88",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 365,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "⚡ Performance & Stability",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 414,
+          "column": 6,
+          "specs": [
+            {
+              "title": "page load performance within limits @performance",
+              "ok": true,
+              "tags": [
+                "performance"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4518,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Homepage: 1222ms (target: 3000ms)\n"
+                        },
+                        {
+                          "text": "✅ Login: 1277ms (target: 2000ms)\n"
+                        },
+                        {
+                          "text": "✅ Customer Portal: 1396ms (target: 5000ms)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:40:02.532Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-d4898d0dc57ccc2c344e",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 415,
+              "column": 7
+            },
+            {
+              "title": "error boundary and crash detection @stability",
+              "ok": true,
+              "tags": [
+                "stability"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 9559,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Critical console errors found: [\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m\n]\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:40:02.531Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-a53c6b86581417ef4b68",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 433,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🔧 Core Feature Integration",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 470,
+          "column": 6,
+          "specs": [
+            {
+              "title": "authentication and session management @integration",
+              "ok": false,
+              "tags": [
+                "integration"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 25243,
+                      "error": {
+                        "message": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/",
+                        "stack": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:475:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 13,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 13,
+                            "line": 87
+                          },
+                          "message": "Error: Login redirect timeout: expected /portal, got http://localhost:8849/login/\n\n   at utils/auth-helpers.ts:87\n\n  85 |       await this.page.screenshot({ path: `test-artifacts/login-debug-${role}-${Date.now()}.png` });\n  86 |       \n> 87 |       throw new Error(`Login redirect timeout: expected ${expectedUrl}, got ${currentUrl}`);\n     |             ^\n  88 |     }\n  89 |\n  90 |     const expectedHeading = this.getExpectedHeading(role);\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:87:13)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:475:5"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "❌ Login redirect failed for customer\n"
+                        },
+                        {
+                          "text": "   Expected URL pattern: /portal\n"
+                        },
+                        {
+                          "text": "   Current URL: http://localhost:8849/login/\n"
+                        },
+                        {
+                          "text": "   Page title: Shipnorth - Modern Logistics Platform\n"
+                        },
+                        {
+                          "text": "   Error on page: Network error. Please check your connection and try again.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:40:02.534Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 13,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-3ca9c9770983db6af68a",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 471,
+              "column": 7
+            },
+            {
+              "title": "theme system and UI consistency @ui",
+              "ok": true,
+              "tags": [
+                "ui"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1779,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Theme toggle not found\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:40:02.681Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-005fdf3bd663c62df4c9",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 498,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "♿ Essential Accessibility",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 526,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard navigation basics @accessibility",
+              "ok": true,
+              "tags": [
+                "accessibility"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1411,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Keyboard navigation working, focused: \n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:40:05.114Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-825f5cbc315f811fc0a6",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 527,
+              "column": 7
+            },
+            {
+              "title": "mobile viewport adaptation @mobile",
+              "ok": true,
+              "tags": [
+                "mobile"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1065,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Mobile viewport: no horizontal scroll (375px vs 375px)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T13:40:06.529Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-98e5a155c9b76806c07a",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 540,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-30T13:39:29.796Z",
+    "duration": 59964.394,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 8,
+    "flaky": 0
+  }
+}

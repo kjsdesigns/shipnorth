@@ -13,7 +13,8 @@ test('Debug staff page loading', async ({ page }) => {
   
   // Test direct navigation to staff
   console.log('Navigating to /staff...');
-  await page.goto('http://localhost:8849/staff');
+  const webUrl = `http://localhost:${process.env.WEB_PORT || 8849}`;
+  await page.goto(`${webUrl}/staff`);
   await page.waitForTimeout(3000);
   
   // Check what's rendered

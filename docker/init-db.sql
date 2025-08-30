@@ -126,12 +126,12 @@ CREATE INDEX idx_load_packages_load_id ON load_packages(load_id);
 CREATE INDEX idx_invoices_customer_id ON invoices(customer_id);
 CREATE INDEX idx_settings_category_key ON settings(category, key);
 
--- Insert demo users
+-- Insert demo users (for development, use plain text passwords)
 INSERT INTO users (email, password_hash, first_name, last_name, role) VALUES
-('admin@shipnorth.com', '$2b$10$dummy_hash_admin', 'Admin', 'User', 'admin'),
-('staff@shipnorth.com', '$2b$10$dummy_hash_staff', 'Staff', 'User', 'staff'), 
-('driver@shipnorth.com', '$2b$10$dummy_hash_driver', 'Driver', 'User', 'driver'),
-('test@test.com', '$2b$10$dummy_hash_customer', 'Test', 'Customer', 'customer');
+('admin@shipnorth.com', 'admin123', 'Admin', 'User', 'admin'),
+('staff@shipnorth.com', 'staff123', 'Staff', 'User', 'staff'), 
+('driver@shipnorth.com', 'driver123', 'Driver', 'User', 'driver'),
+('test@test.com', 'test123', 'Test', 'Customer', 'customer');
 
 -- Insert demo customer
 INSERT INTO customers (id, name, email, phone, business_name) VALUES
