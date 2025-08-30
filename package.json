@@ -12,6 +12,7 @@
     "dev:stop": "docker-compose down",
     "dev:health": "./scripts/docker-health-monitor.sh",
     "dev:monitor": "./scripts/docker-health-monitor.sh --monitor",
+    "dev:diagnose": "./scripts/frontend-api-diagnostics.sh",
     "docker:dev": "./scripts/docker-startup.sh",
     "api:dev": "cd apps/api && npm run dev",
     "web:dev": "cd apps/web && npm run dev",

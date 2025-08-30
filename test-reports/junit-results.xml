@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="0" time="5.029872">
-<testsuite name="infrastructure-check.spec.ts" timestamp="2025-08-30T13:30:00.703Z" hostname="infrastructure" tests="5" failures="0" skipped="0" time="3.154" errors="0">
-<testcase name="🏥 Infrastructure Health Check › Docker containers are running and healthy @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.996">
+<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="0" time="4.544854999999999">
+<testsuite name="infrastructure-check.spec.ts" timestamp="2025-08-30T14:36:10.593Z" hostname="infrastructure" tests="5" failures="0" skipped="0" time="2.839" errors="0">
+<testcase name="🏥 Infrastructure Health Check › Docker containers are running and healthy @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.917">
 <system-out>
 <![CDATA[
 🔍 INFRASTRUCTURE PRE-FLIGHT CHECK STARTING...
@@ -13,7 +13,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="🏥 Infrastructure Health Check › Web frontend is accessible and responding @infrastructure @critical" classname="infrastructure-check.spec.ts" time="1.176">
+<testcase name="🏥 Infrastructure Health Check › Web frontend is accessible and responding @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.988">
 <system-out>
 <![CDATA[🌐 Testing frontend accessibility...
 ✅ Frontend: http://localhost:8849
@@ -22,16 +22,16 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="🏥 Infrastructure Health Check › API backend is accessible and responding @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.293">
+<testcase name="🏥 Infrastructure Health Check › API backend is accessible and responding @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.284">
 <system-out>
 <![CDATA[🔗 Testing API accessibility...
-✅ API: http://localhost:8850 - {"status":"healthy","timestamp":"2025-08-30T13:30:04.405Z"}
+✅ API: http://localhost:8850 - {"status":"healthy","timestamp":"2025-08-30T14:36:14.153Z"}
 ✅ API backend is healthy
 
 ]]>
 </system-out>
 </testcase>
-<testcase name="🏥 Infrastructure Health Check › PostgreSQL database is accessible @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.301">
+<testcase name="🏥 Infrastructure Health Check › PostgreSQL database is accessible @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.258">
 <system-out>
 <![CDATA[🗄️ Testing database connectivity...
 ✅ Database accessible via API health check
@@ -40,7 +40,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="🏥 Infrastructure Health Check › Direct port connectivity works @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.388">
+<testcase name="🏥 Infrastructure Health Check › Direct port connectivity works @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.392">
 <system-out>
 <![CDATA[🌍 Testing direct port connectivity...
 ✅ Frontend Direct Port: http://localhost:8849

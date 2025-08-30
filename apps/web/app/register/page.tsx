@@ -382,7 +382,7 @@ function RegistrationForm() {
       <PayPalCardForm
         customerId={customerId}
         onSuccess={() => setCurrentStep(5)}
-        onError={(errorMsg) => setError(errorMsg)}
+        onError={(errorMsg) => setError(typeof errorMsg === 'string' ? errorMsg : errorMsg.message)}
         onBack={() => setCurrentStep(3)}
       />
     );

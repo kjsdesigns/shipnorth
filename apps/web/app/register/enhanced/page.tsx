@@ -8,7 +8,7 @@ import ModernLayout from '@/components/ModernLayout';
 import PayPalCardForm from '@/components/PayPalCardForm';
 import { 
   User, MapPin, CreditCard, Building2, CheckCircle, AlertCircle, 
-  Phone, Mail, Home, Globe, Eye, ChevronDown
+  Phone, Mail, Home, Globe, Eye, ChevronDown, Shield
 } from 'lucide-react';
 
 // Google Places autocomplete interface
@@ -43,7 +43,7 @@ interface RegistrationData {
   formattedAddress?: string;
 }
 
-export default function EnhancedRegistration() {
+function EnhancedRegistration() {
   const router = useRouter();
   const addressRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -207,12 +207,18 @@ export default function EnhancedRegistration() {
     if (formData.accountType === 'business') {
       required.push('businessName', 'primaryContactName');
     }
-    return required.every((field) => formData[field as keyof RegistrationData]?.trim() !== '');
+    return required.every((field) => {
+      const value = formData[field as keyof RegistrationData];
+      return typeof value === 'string' ? value.trim() !== '' : value !== undefined;
+    });
   };
 
   const validateStep2 = () => {
     const required = ['addressLine1', 'city', 'province', 'postalCode'];
-    return required.every((field) => formData[field as keyof RegistrationData]?.trim() !== '');
+    return required.every((field) => {
+      const value = formData[field as keyof RegistrationData];
+      return typeof value === 'string' ? value.trim() !== '' : value !== undefined;
+    });
   };
 
   // Step 1: Personal/Business Information + Address (Combined)
@@ -707,7 +713,7 @@ export default function EnhancedRegistration() {
   ];
 
   return (
-    <ModernLayout role="guest">
+    <ModernLayout role="customer">
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
         <div className="max-w-4xl mx-auto px-6">
           {/* Progress Steps */}
