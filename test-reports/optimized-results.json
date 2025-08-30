@@ -21,7 +21,7 @@
         "Comprehensive page load verification",
         "Focused failure detection"
       ],
-      "actualWorkers": 4
+      "actualWorkers": 6
     },
     "preserveOutput": "always",
     "reporter": [
@@ -72,7 +72,7 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 4
+          "actualWorkers": 6
         },
         "id": "critical-path",
         "name": "critical-path",
@@ -96,6 +96,7 @@
           "**/simple-verification.spec.ts"
         ],
         "testMatch": [
+          "00-connectivity-diagnostic.spec.ts",
           "optimized-test-suite.spec.ts"
         ],
         "timeout": 45000
@@ -115,7 +116,7 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 4
+          "actualWorkers": 6
         },
         "id": "core-functionality",
         "name": "core-functionality",
@@ -160,7 +161,7 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 4
+          "actualWorkers": 6
         },
         "id": "extended-features",
         "name": "extended-features",
@@ -205,7 +206,7 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 4
+          "actualWorkers": 6
         },
         "id": "mobile-verification",
         "name": "mobile-verification",
@@ -243,6 +244,144 @@
   },
   "suites": [
     {
+      "title": "00-connectivity-diagnostic.spec.ts",
+      "file": "00-connectivity-diagnostic.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "🔬 Connectivity Diagnostic (Pre-flight)",
+          "file": "00-connectivity-diagnostic.spec.ts",
+          "line": 13,
+          "column": 15,
+          "specs": [
+            {
+              "title": "Frontend-API connectivity health check @connectivity @critical",
+              "ok": true,
+              "tags": [
+                "connectivity",
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10399,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔬 CONNECTIVITY DIAGNOSTIC - Preventing recurring frontend-API issues\n"
+                        },
+                        {
+                          "text": "========================================================================\n"
+                        },
+                        {
+                          "text": "✅ API directly accessible from browser\n"
+                        },
+                        {
+                          "text": "📋 Testing quick login functionality...\n"
+                        },
+                        {
+                          "text": "✅ Login triggered API requests successfully\n"
+                        },
+                        {
+                          "text": "📊 Requests: POST http://localhost:8850/auth/login, GET http://localhost:8850/packages?_cb=1756570671512&limit=50, GET http://localhost:8850/customers?_cb=1756570671512, GET http://localhost:8850/loads?_cb=1756570671512\n"
+                        },
+                        {
+                          "text": "✅ Database authentication working through API\n"
+                        },
+                        {
+                          "text": "\n🎯 CONNECTIVITY DIAGNOSTIC RESULTS:\n"
+                        },
+                        {
+                          "text": "===================================\n"
+                        },
+                        {
+                          "text": "⚠️ Warnings (2):\n"
+                        },
+                        {
+                          "text": "  1. Minor fetch issue (non-CORS): Failed to fetch\n"
+                        },
+                        {
+                          "text": "  2. Next.js environment data not properly loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:45.257Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5cdc8dd6af4f0fd049c0-662ae5cc651868d15abf",
+              "file": "00-connectivity-diagnostic.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "Environment configuration verification @config @critical",
+              "ok": true,
+              "tags": [
+                "config",
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 425,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🔧 Verifying centralized environment configuration...\n"
+                        },
+                        {
+                          "text": "📊 Configuration check: {\n  \"apiUrl\": \"http://localhost:8850\",\n  \"webUrl\": \"http://localhost:8849\",\n  \"portsFromEnv\": {\n    \"api\": \"default\",\n    \"web\": \"default\"\n  }\n}\n"
+                        },
+                        {
+                          "text": "✅ Both services responding on environment-configured ports\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:56.945Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5cdc8dd6af4f0fd049c0-8c7f23e86f7fd1777df5",
+              "file": "00-connectivity-diagnostic.spec.ts",
+              "line": 188,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "optimized-test-suite.spec.ts",
       "file": "optimized-test-suite.spec.ts",
       "column": 0,
@@ -255,6 +394,46 @@
           "line": 36,
           "column": 6,
           "specs": [
+            {
+              "title": "infrastructure health check @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3533,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Infrastructure health check passed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:45.248Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-65f37cfe715b4658e167",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 37,
+              "column": 7
+            },
             {
               "title": "database and authentication foundation @critical",
               "ok": true,
@@ -270,10 +449,10 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 782,
+                      "duration": 1223,
                       "errors": [],
                       "stdout": [
                         {
@@ -282,7 +461,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-30T14:57:04.863Z",
+                      "startTime": "2025-08-30T16:17:45.260Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -293,6 +472,245 @@
               "id": "17e7f8c5616d93753744-3f751e2218785f9ac432",
               "file": "optimized-test-suite.spec.ts",
               "line": 55,
+              "column": 7
+            },
+            {
+              "title": "portal accessibility matrix @critical",
+              "ok": true,
+              "tags": [
+                "critical"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 11077,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ All portals accessible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:45.250Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-ea281a429c2a5f38547f",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 72,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Customer Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 98,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete customer workflow @core",
+              "ok": true,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 10792,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Complete customer workflow verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:45.253Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-9637dcf2425899ce0ea0",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 106,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Staff Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 158,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete staff workflow @core",
+              "ok": true,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 12995,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Complete staff workflow verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:45.253Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-ca957f7728b7acbf0ee5",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 166,
+              "column": 7
+            },
+            {
+              "title": "admin features visibility @admin",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 10124,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Admin features visible in staff portal\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:47.771Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-e8a822ebb18020bee312",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 210,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "🎯 Driver Portal Journey",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 231,
+          "column": 6,
+          "specs": [
+            {
+              "title": "complete driver workflow @core",
+              "ok": true,
+              "tags": [
+                "core"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5126,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Driver nav item found: Dashboard\n"
+                        },
+                        {
+                          "text": "✅ Driver nav item found: My Loads\n"
+                        },
+                        {
+                          "text": "✅ Driver nav item found: Routes\n"
+                        },
+                        {
+                          "text": "✅ Driver nav item found: Deliveries\n"
+                        },
+                        {
+                          "text": "✅ Driver nav item found: Earnings\n"
+                        },
+                        {
+                          "text": "✅ Driver portal accessibility verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:50.055Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-118367569cf30a30a0dc",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 239,
               "column": 7
             }
           ]
@@ -321,7 +739,7 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 4412,
+                      "duration": 6660,
                       "errors": [],
                       "stdout": [
                         {
@@ -339,7 +757,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-30T14:57:04.861Z",
+                      "startTime": "2025-08-30T16:17:55.191Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -367,10 +785,10 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 2,
-                      "parallelIndex": 2,
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
                       "status": "passed",
-                      "duration": 2236,
+                      "duration": 2645,
                       "errors": [],
                       "stdout": [
                         {
@@ -379,7 +797,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-30T14:57:04.862Z",
+                      "startTime": "2025-08-30T16:17:57.318Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -390,6 +808,172 @@
               "id": "17e7f8c5616d93753744-cac28d6901255199af22",
               "file": "optimized-test-suite.spec.ts",
               "line": 322,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "📄 Page Load Verification",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 352,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all pages load without 500/404 errors @pages",
+              "ok": true,
+              "tags": [
+                "pages"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 40367,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Homepage loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Login loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Register loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Customer Portal loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Portal loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Driver Portal loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Customers loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Packages loads successfully\n"
+                        },
+                        {
+                          "text": "✅ Staff Loads loads successfully\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:57.386Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-49a5e40fea0a33fb9a88",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 365,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "⚡ Performance & Stability",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 414,
+          "column": 6,
+          "specs": [
+            {
+              "title": "page load performance within limits @performance",
+              "ok": true,
+              "tags": [
+                "performance"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 6029,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Homepage: 1275ms (target: 3000ms)\n"
+                        },
+                        {
+                          "text": "✅ Login: 1553ms (target: 2000ms)\n"
+                        },
+                        {
+                          "text": "✅ Customer Portal: 2784ms (target: 5000ms)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:57.623Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-d4898d0dc57ccc2c344e",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 415,
+              "column": 7
+            },
+            {
+              "title": "error boundary and crash detection @stability",
+              "ok": true,
+              "tags": [
+                "stability"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 10426,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Critical console errors found: [\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m\n]\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:57.900Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-a53c6b86581417ef4b68",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 433,
               "column": 7
             }
           ]
@@ -415,10 +999,10 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 3,
-                      "parallelIndex": 3,
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 6076,
+                      "duration": 6522,
                       "errors": [],
                       "stdout": [
                         {
@@ -427,7 +1011,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-30T14:57:04.864Z",
+                      "startTime": "2025-08-30T16:17:59.541Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -439,6 +1023,134 @@
               "file": "optimized-test-suite.spec.ts",
               "line": 471,
               "column": 7
+            },
+            {
+              "title": "theme system and UI consistency @ui",
+              "ok": true,
+              "tags": [
+                "ui"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1417,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⚠️ Theme toggle not found\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:17:59.967Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-005fdf3bd663c62df4c9",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 498,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "♿ Essential Accessibility",
+          "file": "optimized-test-suite.spec.ts",
+          "line": 526,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard navigation basics @accessibility",
+              "ok": true,
+              "tags": [
+                "accessibility"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1694,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Keyboard navigation working, focused: \n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:18:01.387Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-825f5cbc315f811fc0a6",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 527,
+              "column": 7
+            },
+            {
+              "title": "mobile viewport adaptation @mobile",
+              "ok": true,
+              "tags": [
+                "mobile"
+              ],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "critical-path",
+                  "projectName": "critical-path",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1136,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Mobile viewport: no horizontal scroll (375px vs 375px)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-30T16:18:01.882Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "17e7f8c5616d93753744-98e5a155c9b76806c07a",
+              "file": "optimized-test-suite.spec.ts",
+              "line": 540,
+              "column": 7
             }
           ]
         }
@@ -447,9 +1159,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-30T14:57:04.454Z",
-    "duration": 7636.952,
-    "expected": 4,
+    "startTime": "2025-08-30T16:17:44.782Z",
+    "duration": 53114.625,
+    "expected": 18,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

@@ -1,12 +1,88 @@
-<testsuites id="" name="" tests="4" failures="0" skipped="0" errors="0" time="7.636952">
-<testsuite name="optimized-test-suite.spec.ts" timestamp="2025-08-30T14:57:04.494Z" hostname="critical-path" tests="4" failures="0" skipped="0" time="13.506" errors="0">
-<testcase name="🔥 Root Cause Detection › database and authentication foundation @critical" classname="optimized-test-suite.spec.ts" time="0.782">
+<testsuites id="" name="" tests="18" failures="0" skipped="0" errors="0" time="53.114625">
+<testsuite name="00-connectivity-diagnostic.spec.ts" timestamp="2025-08-30T16:17:44.809Z" hostname="critical-path" tests="2" failures="0" skipped="0" time="10.824" errors="0">
+<testcase name="🔬 Connectivity Diagnostic (Pre-flight) › Frontend-API connectivity health check @connectivity @critical" classname="00-connectivity-diagnostic.spec.ts" time="10.399">
+<system-out>
+<![CDATA[🔬 CONNECTIVITY DIAGNOSTIC - Preventing recurring frontend-API issues
+========================================================================
+✅ API directly accessible from browser
+📋 Testing quick login functionality...
+✅ Login triggered API requests successfully
+📊 Requests: POST http://localhost:8850/auth/login, GET http://localhost:8850/packages?_cb=1756570671512&limit=50, GET http://localhost:8850/customers?_cb=1756570671512, GET http://localhost:8850/loads?_cb=1756570671512
+✅ Database authentication working through API
+
+🎯 CONNECTIVITY DIAGNOSTIC RESULTS:
+===================================
+⚠️ Warnings (2):
+  1. Minor fetch issue (non-CORS): Failed to fetch
+  2. Next.js environment data not properly loaded
+]]>
+</system-out>
+</testcase>
+<testcase name="🔬 Connectivity Diagnostic (Pre-flight) › Environment configuration verification @config @critical" classname="00-connectivity-diagnostic.spec.ts" time="0.425">
+<system-out>
+<![CDATA[🔧 Verifying centralized environment configuration...
+📊 Configuration check: {
+  "apiUrl": "http://localhost:8850",
+  "webUrl": "http://localhost:8849",
+  "portsFromEnv": {
+    "api": "default",
+    "web": "default"
+  }
+}
+✅ Both services responding on environment-configured ports
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="optimized-test-suite.spec.ts" timestamp="2025-08-30T16:17:44.809Z" hostname="critical-path" tests="16" failures="0" skipped="0" time="131.766" errors="0">
+<testcase name="🔥 Root Cause Detection › infrastructure health check @critical" classname="optimized-test-suite.spec.ts" time="3.533">
+<system-out>
+<![CDATA[✅ Infrastructure health check passed
+]]>
+</system-out>
+</testcase>
+<testcase name="🔥 Root Cause Detection › database and authentication foundation @critical" classname="optimized-test-suite.spec.ts" time="1.223">
 <system-out>
 <![CDATA[✅ Authentication foundation verified
 ]]>
 </system-out>
 </testcase>
-<testcase name="🔄 Unified Authentication System › unified login redirects to correct portal @auth" classname="optimized-test-suite.spec.ts" time="4.412">
+<testcase name="🔥 Root Cause Detection › portal accessibility matrix @critical" classname="optimized-test-suite.spec.ts" time="11.077">
+<system-out>
+<![CDATA[✅ All portals accessible
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Customer Portal Journey › complete customer workflow @core" classname="optimized-test-suite.spec.ts" time="10.792">
+<system-out>
+<![CDATA[✅ Complete customer workflow verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Staff Portal Journey › complete staff workflow @core" classname="optimized-test-suite.spec.ts" time="12.995">
+<system-out>
+<![CDATA[✅ Complete staff workflow verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Staff Portal Journey › admin features visibility @admin" classname="optimized-test-suite.spec.ts" time="10.124">
+<system-out>
+<![CDATA[✅ Admin features visible in staff portal
+]]>
+</system-out>
+</testcase>
+<testcase name="🎯 Driver Portal Journey › complete driver workflow @core" classname="optimized-test-suite.spec.ts" time="5.126">
+<system-out>
+<![CDATA[✅ Driver nav item found: Dashboard
+✅ Driver nav item found: My Loads
+✅ Driver nav item found: Routes
+✅ Driver nav item found: Deliveries
+✅ Driver nav item found: Earnings
+✅ Driver portal accessibility verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🔄 Unified Authentication System › unified login redirects to correct portal @auth" classname="optimized-test-suite.spec.ts" time="6.66">
 <system-out>
 <![CDATA[✅ customer redirected to /portal
 ✅ staff redirected to /staff
@@ -15,15 +91,72 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="🔄 Unified Authentication System › portal switching functionality @auth" classname="optimized-test-suite.spec.ts" time="2.236">
+<testcase name="🔄 Unified Authentication System › portal switching functionality @auth" classname="optimized-test-suite.spec.ts" time="2.645">
 <system-out>
 <![CDATA[✅ Portal switcher found and accessible
 ]]>
 </system-out>
 </testcase>
-<testcase name="🔧 Core Feature Integration › authentication and session management @integration" classname="optimized-test-suite.spec.ts" time="6.076">
+<testcase name="📄 Page Load Verification › all pages load without 500/404 errors @pages" classname="optimized-test-suite.spec.ts" time="40.367">
+<system-out>
+<![CDATA[✅ Homepage loads successfully
+✅ Login loads successfully
+✅ Register loads successfully
+✅ Customer Portal loads successfully
+✅ Staff Portal loads successfully
+✅ Driver Portal loads successfully
+✅ Staff Customers loads successfully
+✅ Staff Packages loads successfully
+✅ Staff Loads loads successfully
+]]>
+</system-out>
+</testcase>
+<testcase name="⚡ Performance &amp; Stability › page load performance within limits @performance" classname="optimized-test-suite.spec.ts" time="6.029">
+<system-out>
+<![CDATA[✅ Homepage: 1275ms (target: 3000ms)
+✅ Login: 1553ms (target: 2000ms)
+✅ Customer Portal: 2784ms (target: 5000ms)
+]]>
+</system-out>
+</testcase>
+<testcase name="⚡ Performance &amp; Stability › error boundary and crash detection @stability" classname="optimized-test-suite.spec.ts" time="10.426">
+<system-out>
+<![CDATA[⚠️ Critical console errors found: [
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m,
+  [32m'A bad HTTP response code (404) was received when fetching the script.'[39m,
+  [32m'Failed to load resource: the server responded with a status of 400 ()'[39m
+]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔧 Core Feature Integration › authentication and session management @integration" classname="optimized-test-suite.spec.ts" time="6.522">
 <system-out>
 <![CDATA[✅ Authentication and session management verified
+]]>
+</system-out>
+</testcase>
+<testcase name="🔧 Core Feature Integration › theme system and UI consistency @ui" classname="optimized-test-suite.spec.ts" time="1.417">
+<system-out>
+<![CDATA[⚠️ Theme toggle not found
+]]>
+</system-out>
+</testcase>
+<testcase name="♿ Essential Accessibility › keyboard navigation basics @accessibility" classname="optimized-test-suite.spec.ts" time="1.694">
+<system-out>
+<![CDATA[✅ Keyboard navigation working, focused: 
+]]>
+</system-out>
+</testcase>
+<testcase name="♿ Essential Accessibility › mobile viewport adaptation @mobile" classname="optimized-test-suite.spec.ts" time="1.136">
+<system-out>
+<![CDATA[✅ Mobile viewport: no horizontal scroll (375px vs 375px)
 ]]>
 </system-out>
 </testcase>

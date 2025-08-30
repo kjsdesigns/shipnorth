@@ -1,56 +1,35 @@
-<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="0" time="4.544854999999999">
-<testsuite name="infrastructure-check.spec.ts" timestamp="2025-08-30T14:36:10.593Z" hostname="infrastructure" tests="5" failures="0" skipped="0" time="2.839" errors="0">
-<testcase name="🏥 Infrastructure Health Check › Docker containers are running and healthy @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.917">
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="10.518948">
+<testsuite name="00-connectivity-diagnostic.spec.ts" timestamp="2025-08-30T16:17:16.002Z" hostname="infrastructure" tests="2" failures="0" skipped="0" time="8.159" errors="0">
+<testcase name="🔬 Connectivity Diagnostic (Pre-flight) › Frontend-API connectivity health check @connectivity @critical" classname="00-connectivity-diagnostic.spec.ts" time="7.537">
 <system-out>
-<![CDATA[
-🔍 INFRASTRUCTURE PRE-FLIGHT CHECK STARTING...
+<![CDATA[🔬 CONNECTIVITY DIAGNOSTIC - Preventing recurring frontend-API issues
+========================================================================
+✅ API directly accessible from browser
+📋 Testing quick login functionality...
+✅ Login triggered API requests successfully
+📊 Requests: POST http://localhost:8850/auth/login, GET http://localhost:8850/packages?_cb=1756570639261&limit=50, GET http://localhost:8850/customers?_cb=1756570639261, GET http://localhost:8850/loads?_cb=1756570639261
+✅ Database authentication working through API
 
-✅ Docker Engine: v28.3.3
-✅ Container: shipnorth-app
-✅ Container: shipnorth-postgres
-✅ All Docker containers are healthy
-
+🎯 CONNECTIVITY DIAGNOSTIC RESULTS:
+===================================
+⚠️ Warnings (2):
+  1. Minor fetch issue (non-CORS): Failed to fetch
+  2. Next.js environment data not properly loaded
 ]]>
 </system-out>
 </testcase>
-<testcase name="🏥 Infrastructure Health Check › Web frontend is accessible and responding @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.988">
+<testcase name="🔬 Connectivity Diagnostic (Pre-flight) › Environment configuration verification @config @critical" classname="00-connectivity-diagnostic.spec.ts" time="0.622">
 <system-out>
-<![CDATA[🌐 Testing frontend accessibility...
-✅ Frontend: http://localhost:8849
-✅ Frontend page loads correctly with content
-
-]]>
-</system-out>
-</testcase>
-<testcase name="🏥 Infrastructure Health Check › API backend is accessible and responding @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.284">
-<system-out>
-<![CDATA[🔗 Testing API accessibility...
-✅ API: http://localhost:8850 - {"status":"healthy","timestamp":"2025-08-30T14:36:14.153Z"}
-✅ API backend is healthy
-
-]]>
-</system-out>
-</testcase>
-<testcase name="🏥 Infrastructure Health Check › PostgreSQL database is accessible @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.258">
-<system-out>
-<![CDATA[🗄️ Testing database connectivity...
-✅ Database accessible via API health check
-✅ PostgreSQL database is healthy
-
-]]>
-</system-out>
-</testcase>
-<testcase name="🏥 Infrastructure Health Check › Direct port connectivity works @infrastructure @critical" classname="infrastructure-check.spec.ts" time="0.392">
-<system-out>
-<![CDATA[🌍 Testing direct port connectivity...
-✅ Frontend Direct Port: http://localhost:8849
-✅ API Direct Port: http://localhost:8850/health
-✅ Direct port connectivity is working correctly
-
-🎯 INFRASTRUCTURE CHECK COMPLETE
-✅ System ready for comprehensive testing
-
-================================================================================
+<![CDATA[🔧 Verifying centralized environment configuration...
+📊 Configuration check: {
+  "apiUrl": "http://localhost:8850",
+  "webUrl": "http://localhost:8849",
+  "portsFromEnv": {
+    "api": "default",
+    "web": "default"
+  }
+}
+✅ Both services responding on environment-configured ports
 ]]>
 </system-out>
 </testcase>

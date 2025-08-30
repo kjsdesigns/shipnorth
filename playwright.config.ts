@@ -19,6 +19,10 @@ import { config as testConfig } from './tests/e2e/config';
 export default defineConfig({
   testDir: './tests/e2e',
   testMatch: [
+    // Priority 0: Connectivity diagnostic (runs first)
+    '00-connectivity-diagnostic.spec.ts',
+    
+    // Main test suite
     'auth.spec.ts',
     'staff-interface.spec.ts',
     'customer-portal.spec.ts',
@@ -120,7 +124,7 @@ export default defineConfig({
       name: 'infrastructure',
       use: { ...devices['Desktop Chrome'] },
       testDir: './tests/e2e',
-      testMatch: ['infrastructure-check.spec.ts', 'config-enforcement.spec.ts'],
+      testMatch: ['00-connectivity-diagnostic.spec.ts', 'infrastructure-check.spec.ts', 'config-enforcement.spec.ts'],
       retries: 0, // No retries - if infrastructure fails, fix it
       timeout: 60000,
       fullyParallel: false,

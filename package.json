@@ -38,7 +38,7 @@
     "test:api": "playwright test api-integration.spec.ts",
     "test:scoreboard": "node tests/run-with-scoreboard.js --config=playwright-optimized.config.ts",
     "test:critical": "node tests/run-with-scoreboard.js --config=playwright-optimized.config.ts --project=critical-path",
-    "test:full": "node tests/run-with-scoreboard.js --config=playwright-optimized.config.ts --timeout=300000",
+    "test:full": "npm run dev:diagnose && node tests/run-with-scoreboard.js --config=playwright-optimized.config.ts --timeout=300000",
     "test:analyze": "node tests/utils/test-stability-analyzer.js --analyze --optimize",
     "test:auth": "playwright test auth.spec.ts",
     "test:staff": "playwright test staff-interface.spec.ts",

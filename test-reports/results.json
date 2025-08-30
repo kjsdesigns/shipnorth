@@ -94,6 +94,7 @@
           "**/MODULAR_*.md"
         ],
         "testMatch": [
+          "00-connectivity-diagnostic.spec.ts",
           "infrastructure-check.spec.ts",
           "config-enforcement.spec.ts"
         ],
@@ -488,28 +489,28 @@
   },
   "suites": [
     {
-      "title": "infrastructure-check.spec.ts",
-      "file": "infrastructure-check.spec.ts",
+      "title": "00-connectivity-diagnostic.spec.ts",
+      "file": "00-connectivity-diagnostic.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "🏥 Infrastructure Health Check",
-          "file": "infrastructure-check.spec.ts",
-          "line": 17,
+          "title": "🔬 Connectivity Diagnostic (Pre-flight)",
+          "file": "00-connectivity-diagnostic.spec.ts",
+          "line": 13,
           "column": 15,
           "specs": [
             {
-              "title": "Docker containers are running and healthy @infrastructure @critical",
+              "title": "Frontend-API connectivity health check @connectivity @critical",
               "ok": true,
               "tags": [
-                "infrastructure",
+                "connectivity",
                 "critical"
               ],
               "tests": [
                 {
-                  "timeout": 60000,
+                  "timeout": 30000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "infrastructure",
@@ -519,28 +520,49 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 917,
+                      "duration": 7537,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "\n🔍 INFRASTRUCTURE PRE-FLIGHT CHECK STARTING...\n\n"
+                          "text": "🔬 CONNECTIVITY DIAGNOSTIC - Preventing recurring frontend-API issues\n"
                         },
                         {
-                          "text": "✅ Docker Engine: v28.3.3\n"
+                          "text": "========================================================================\n"
                         },
                         {
-                          "text": "✅ Container: shipnorth-app\n"
+                          "text": "✅ API directly accessible from browser\n"
                         },
                         {
-                          "text": "✅ Container: shipnorth-postgres\n"
+                          "text": "📋 Testing quick login functionality...\n"
                         },
                         {
-                          "text": "✅ All Docker containers are healthy\n\n"
+                          "text": "✅ Login triggered API requests successfully\n"
+                        },
+                        {
+                          "text": "📊 Requests: POST http://localhost:8850/auth/login, GET http://localhost:8850/packages?_cb=1756570639261&limit=50, GET http://localhost:8850/customers?_cb=1756570639261, GET http://localhost:8850/loads?_cb=1756570639261\n"
+                        },
+                        {
+                          "text": "✅ Database authentication working through API\n"
+                        },
+                        {
+                          "text": "\n🎯 CONNECTIVITY DIAGNOSTIC RESULTS:\n"
+                        },
+                        {
+                          "text": "===================================\n"
+                        },
+                        {
+                          "text": "⚠️ Warnings (2):\n"
+                        },
+                        {
+                          "text": "  1. Minor fetch issue (non-CORS): Failed to fetch\n"
+                        },
+                        {
+                          "text": "  2. Next.js environment data not properly loaded\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-30T14:36:10.951Z",
+                      "startTime": "2025-08-30T16:17:16.349Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -548,21 +570,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "54885e6b96b97e17eb29-f46749affe27767463df",
-              "file": "infrastructure-check.spec.ts",
-              "line": 20,
+              "id": "5cdc8dd6af4f0fd049c0-cd0a5377a00243494609",
+              "file": "00-connectivity-diagnostic.spec.ts",
+              "line": 21,
               "column": 7
             },
             {
-              "title": "Web frontend is accessible and responding @infrastructure @critical",
+              "title": "Environment configuration verification @config @critical",
               "ok": true,
               "tags": [
-                "infrastructure",
+                "config",
                 "critical"
               ],
               "tests": [
                 {
-                  "timeout": 60000,
+                  "timeout": 30000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "infrastructure",
@@ -572,22 +594,22 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 988,
+                      "duration": 622,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "🌐 Testing frontend accessibility...\n"
+                          "text": "🔧 Verifying centralized environment configuration...\n"
                         },
                         {
-                          "text": "✅ Frontend: http://localhost:8849\n"
+                          "text": "📊 Configuration check: {\n  \"apiUrl\": \"http://localhost:8850\",\n  \"webUrl\": \"http://localhost:8849\",\n  \"portsFromEnv\": {\n    \"api\": \"default\",\n    \"web\": \"default\"\n  }\n}\n"
                         },
                         {
-                          "text": "✅ Frontend page loads correctly with content\n\n"
+                          "text": "✅ Both services responding on environment-configured ports\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-30T14:36:12.879Z",
+                      "startTime": "2025-08-30T16:17:24.742Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -595,162 +617,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "54885e6b96b97e17eb29-5b58f5a02848994bb6d5",
-              "file": "infrastructure-check.spec.ts",
-              "line": 81,
-              "column": 7
-            },
-            {
-              "title": "API backend is accessible and responding @infrastructure @critical",
-              "ok": true,
-              "tags": [
-                "infrastructure",
-                "critical"
-              ],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "infrastructure",
-                  "projectName": "infrastructure",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 284,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "🔗 Testing API accessibility...\n"
-                        },
-                        {
-                          "text": "✅ API: http://localhost:8850 - {\"status\":\"healthy\",\"timestamp\":\"2025-08-30T14:36:14.153Z\"}\n"
-                        },
-                        {
-                          "text": "✅ API backend is healthy\n\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-30T14:36:13.869Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "54885e6b96b97e17eb29-067c2cc09c390c6e4997",
-              "file": "infrastructure-check.spec.ts",
-              "line": 123,
-              "column": 7
-            },
-            {
-              "title": "PostgreSQL database is accessible @infrastructure @critical",
-              "ok": true,
-              "tags": [
-                "infrastructure",
-                "critical"
-              ],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "infrastructure",
-                  "projectName": "infrastructure",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 258,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "🗄️ Testing database connectivity...\n"
-                        },
-                        {
-                          "text": "✅ Database accessible via API health check\n"
-                        },
-                        {
-                          "text": "✅ PostgreSQL database is healthy\n\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-30T14:36:14.156Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "54885e6b96b97e17eb29-f55c5375da7f2af77b52",
-              "file": "infrastructure-check.spec.ts",
-              "line": 154,
-              "column": 7
-            },
-            {
-              "title": "Direct port connectivity works @infrastructure @critical",
-              "ok": true,
-              "tags": [
-                "infrastructure",
-                "critical"
-              ],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "infrastructure",
-                  "projectName": "infrastructure",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 392,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "🌍 Testing direct port connectivity...\n"
-                        },
-                        {
-                          "text": "✅ Frontend Direct Port: http://localhost:8849\n"
-                        },
-                        {
-                          "text": "✅ API Direct Port: http://localhost:8850/health\n"
-                        },
-                        {
-                          "text": "✅ Direct port connectivity is working correctly\n\n"
-                        },
-                        {
-                          "text": "🎯 INFRASTRUCTURE CHECK COMPLETE\n"
-                        },
-                        {
-                          "text": "✅ System ready for comprehensive testing\n\n"
-                        },
-                        {
-                          "text": "================================================================================\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-30T14:36:14.416Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "54885e6b96b97e17eb29-a0c560132740c84b14d4",
-              "file": "infrastructure-check.spec.ts",
-              "line": 180,
+              "id": "5cdc8dd6af4f0fd049c0-cc9f7e51ce1eaa62cf5b",
+              "file": "00-connectivity-diagnostic.spec.ts",
+              "line": 188,
               "column": 7
             }
           ]
@@ -760,9 +629,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-30T14:36:10.389Z",
-    "duration": 4544.855,
-    "expected": 5,
+    "startTime": "2025-08-30T16:17:15.705Z",
+    "duration": 10518.948,
+    "expected": 2,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

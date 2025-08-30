@@ -17,7 +17,10 @@ export default defineConfig({
 
   // Prioritized test execution
   testMatch: [
-    // Priority 1: New optimized test suite (runs first)
+    // Priority 0: Connectivity diagnostic (MUST run first)
+    '00-connectivity-diagnostic.spec.ts',
+    
+    // Priority 1: Optimized test suite
     'optimized-test-suite.spec.ts',
 
     // Priority 2: Core functionality (if time allows)
@@ -88,7 +91,7 @@ export default defineConfig({
     {
       name: 'critical-path',
       use: { ...devices['Desktop Chrome'] },
-      testMatch: ['optimized-test-suite.spec.ts'],
+      testMatch: ['00-connectivity-diagnostic.spec.ts', 'optimized-test-suite.spec.ts'],
       retries: 0, // Fast failure for critical issues
       timeout: 45000,
     },
