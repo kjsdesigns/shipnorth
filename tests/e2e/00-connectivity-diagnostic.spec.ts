@@ -15,11 +15,21 @@ test.describe.serial('🔬 Connectivity Diagnostic (Pre-flight)', () => {
 
   const API_PORT = process.env.API_PORT || 8850;
   const WEB_PORT = process.env.WEB_PORT || 8849;
-  const API_URL = `http://localhost:${API_PORT}`;
-  const WEB_URL = `http://localhost:${WEB_PORT}`;
+  
+  // Use container networking when running in Docker, localhost when on host
+  const useContainerNetworking = process.env.TEST_WEB_URL || process.env.TEST_API_URL;
+  const API_URL = useContainerNetworking 
+    ? (process.env.TEST_API_URL || `http://shipnorth-app:${API_PORT}`)
+    : `http://localhost:${API_PORT}`;
+  const WEB_URL = useContainerNetworking
+    ? (process.env.TEST_WEB_URL || `http://shipnorth-app:${WEB_PORT}`)
+    : `http://localhost:${WEB_PORT}`;
 
   test('Frontend-API connectivity health check @connectivity @critical', async ({ page }) => {
     console.log('🔬 CONNECTIVITY DIAGNOSTIC - Preventing recurring frontend-API issues');
+    console.log('========================================================================');
+    console.log(`🌐 Test URLs: API=${API_URL}, WEB=${WEB_URL}`);
+    console.log(`🐳 Container networking: ${useContainerNetworking ? 'enabled' : 'disabled (using localhost)'}`);
     console.log('========================================================================');
 
     const issues: string[] = [];

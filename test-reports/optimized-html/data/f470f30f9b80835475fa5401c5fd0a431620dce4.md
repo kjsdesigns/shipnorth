@@ -1,0 +1,183 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "Shipnorth" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - img [ref=e8] [cursor=pointer]
+          - generic [ref=e12] [cursor=pointer]: Shipnorth
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - generic [ref=e17]: RD
+            - generic [ref=e18]:
+              - paragraph [ref=e19]: Road Driver
+              - paragraph [ref=e20]: driver
+          - generic [ref=e22]:
+            - img [ref=e23]
+            - generic [ref=e28]: Driver Portal
+        - navigation [ref=e29]:
+          - link "Dashboard" [ref=e30] [cursor=pointer]:
+            - /url: /driver/
+            - img [ref=e31] [cursor=pointer]
+            - text: Dashboard
+          - link "My Loads" [ref=e34] [cursor=pointer]:
+            - /url: /driver/loads/
+            - img [ref=e35] [cursor=pointer]
+            - text: My Loads
+          - link "Routes" [ref=e40] [cursor=pointer]:
+            - /url: /driver/routes/
+            - img [ref=e41] [cursor=pointer]
+            - text: Routes
+          - link "Deliveries" [ref=e43] [cursor=pointer]:
+            - /url: /driver/deliveries/
+            - img [ref=e44] [cursor=pointer]
+            - text: Deliveries
+          - link "Earnings" [ref=e46] [cursor=pointer]:
+            - /url: /driver/earnings/
+            - img [ref=e47] [cursor=pointer]
+            - text: Earnings
+        - button "Sign out" [ref=e50] [cursor=pointer]:
+          - img [ref=e51] [cursor=pointer]
+          - text: Sign out
+    - generic [ref=e54]:
+      - banner [ref=e55]:
+        - generic [ref=e57]:
+          - generic [ref=e61]:
+            - img
+            - searchbox "Search packages, customers, loads..." [ref=e62]
+            - generic [ref=e63]:
+              - img [ref=e65]
+              - generic [ref=e67]: K
+          - generic [ref=e68]:
+            - button "System" [ref=e69] [cursor=pointer]:
+              - img [ref=e70] [cursor=pointer]
+            - button "3" [ref=e72] [cursor=pointer]:
+              - img [ref=e73] [cursor=pointer]
+              - generic [ref=e76] [cursor=pointer]: "3"
+            - button "RD" [ref=e78] [cursor=pointer]:
+              - generic [ref=e80] [cursor=pointer]: RD
+              - img [ref=e81] [cursor=pointer]
+      - main [ref=e83]:
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - heading "Driver Portal" [level=1] [ref=e88]
+            - paragraph [ref=e89]: Welcome back, Road! Manage your deliveries and routes.
+          - navigation [ref=e91]:
+            - button "Dashboard" [ref=e92] [cursor=pointer]:
+              - img [ref=e93] [cursor=pointer]
+              - text: Dashboard
+            - button "My Loads" [ref=e98] [cursor=pointer]:
+              - img [ref=e99] [cursor=pointer]
+              - text: My Loads
+            - button "Routes" [ref=e103] [cursor=pointer]:
+              - img [ref=e104] [cursor=pointer]
+              - text: Routes
+            - button "Deliveries" [ref=e106] [cursor=pointer]:
+              - img [ref=e107] [cursor=pointer]
+              - text: Deliveries
+            - button "Earnings" [ref=e110] [cursor=pointer]:
+              - img [ref=e111] [cursor=pointer]
+              - text: Earnings
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - generic [ref=e117]:
+                - img [ref=e119]
+                - generic [ref=e124]:
+                  - paragraph [ref=e125]: Assigned Loads
+                  - paragraph [ref=e126]: "1"
+              - generic [ref=e128]:
+                - img [ref=e130]
+                - generic [ref=e134]:
+                  - paragraph [ref=e135]: Pending Deliveries
+                  - paragraph [ref=e136]: "2"
+              - generic [ref=e138]:
+                - img [ref=e140]
+                - generic [ref=e143]:
+                  - paragraph [ref=e144]: Completed Today
+                  - paragraph [ref=e145]: "1"
+              - generic [ref=e147]:
+                - img [ref=e149]
+                - generic [ref=e152]:
+                  - paragraph [ref=e153]: Distance Today
+                  - paragraph [ref=e154]: 127.5km
+            - generic [ref=e155]:
+              - generic [ref=e156]:
+                - generic [ref=e157]:
+                  - 'heading "Current Load: L-2024-001" [level=2] [ref=e158]'
+                  - paragraph [ref=e159]: "3 packages • Status: in transit"
+                - button [ref=e160] [cursor=pointer]:
+                  - img [ref=e161] [cursor=pointer]
+              - generic [ref=e166]:
+                - button "Scan Package" [ref=e167] [cursor=pointer]:
+                  - img [ref=e168] [cursor=pointer]
+                  - generic [ref=e171] [cursor=pointer]: Scan Package
+                - button "Mark Delivered" [ref=e172] [cursor=pointer]:
+                  - img [ref=e173] [cursor=pointer]
+                  - generic [ref=e176] [cursor=pointer]: Mark Delivered
+                - button "View Route" [ref=e177] [cursor=pointer]:
+                  - img [ref=e178] [cursor=pointer]
+                  - generic [ref=e180] [cursor=pointer]: View Route
+                - button "Manifest" [ref=e181] [cursor=pointer]:
+                  - img [ref=e182] [cursor=pointer]
+                  - generic [ref=e185] [cursor=pointer]: Manifest
+              - generic [ref=e186]:
+                - heading "Today's Packages" [level=3] [ref=e187]
+                - generic [ref=e188]:
+                  - generic [ref=e189]:
+                    - generic [ref=e190]:
+                      - generic [ref=e191]:
+                        - generic [ref=e192]: SN001234567
+                        - generic [ref=e193]: Pending
+                      - button "View Details" [ref=e194] [cursor=pointer]
+                    - generic [ref=e195]:
+                      - generic [ref=e196]:
+                        - paragraph [ref=e197]: John Smith
+                        - paragraph [ref=e198]: 123 Main St, Vancouver, BC
+                        - generic [ref=e199]:
+                          - img [ref=e200]
+                          - link "(604) 555-0123" [ref=e202] [cursor=pointer]:
+                            - /url: tel:(604) 555-0123
+                      - button "Mark Delivered" [ref=e204] [cursor=pointer]
+                    - paragraph [ref=e206]: 📝 Ring bell twice, leave at door if no answer
+                  - generic [ref=e207]:
+                    - generic [ref=e208]:
+                      - generic [ref=e209]:
+                        - generic [ref=e210]: SN001234568
+                        - generic [ref=e211]: Pending
+                      - button "View Details" [ref=e212] [cursor=pointer]
+                    - generic [ref=e213]:
+                      - generic [ref=e214]:
+                        - paragraph [ref=e215]: Sarah Johnson
+                        - paragraph [ref=e216]: 456 Oak Avenue, Richmond, BC
+                        - generic [ref=e217]:
+                          - img [ref=e218]
+                          - link "(604) 555-0456" [ref=e220] [cursor=pointer]:
+                            - /url: tel:(604) 555-0456
+                      - button "Mark Delivered" [ref=e222] [cursor=pointer]
+                  - generic [ref=e223]:
+                    - generic [ref=e224]:
+                      - generic [ref=e225]:
+                        - generic [ref=e226]: SN001234569
+                        - generic [ref=e227]: Delivered
+                      - button "View Details" [ref=e228] [cursor=pointer]
+                    - generic [ref=e229]:
+                      - generic [ref=e230]:
+                        - paragraph [ref=e231]: Mike Brown
+                        - paragraph [ref=e232]: 789 Pine Street, Burnaby, BC
+                      - generic [ref=e234]: ✓ Delivered 4:08:10 PM
+  - generic [ref=e239] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e240] [cursor=pointer]:
+      - img [ref=e241] [cursor=pointer]
+    - generic [ref=e244] [cursor=pointer]:
+      - button "Open issues overlay" [ref=e245] [cursor=pointer]:
+        - generic [ref=e246] [cursor=pointer]:
+          - generic [ref=e247] [cursor=pointer]: "0"
+          - generic [ref=e248] [cursor=pointer]: "1"
+        - generic [ref=e249] [cursor=pointer]: Issue
+      - button "Collapse issues badge" [ref=e250] [cursor=pointer]:
+        - img [ref=e251] [cursor=pointer]
+  - alert [ref=e253]
+```

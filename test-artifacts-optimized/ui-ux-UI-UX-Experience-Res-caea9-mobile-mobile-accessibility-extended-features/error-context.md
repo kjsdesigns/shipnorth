@@ -1,0 +1,153 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - heading "Shipnorth" [level=1] [ref=e11]
+    - generic [ref=e14]:
+      - heading "Autonomous Shipping & Billing" [level=2] [ref=e15]
+      - paragraph [ref=e16]: Streamline your shipping operations with AI-powered load optimization, real-time tracking, and automated billing. Ship smarter, not harder.
+      - generic [ref=e18]:
+        - textbox "Enter tracking number..." [ref=e19]
+        - button "Track Package" [ref=e20] [cursor=pointer]:
+          - img [ref=e21] [cursor=pointer]
+          - text: Track Package
+      - generic [ref=e24]:
+        - link "Get Started" [ref=e25] [cursor=pointer]:
+          - /url: /register/
+          - text: Get Started
+          - img [ref=e26] [cursor=pointer]
+        - link "Sign In" [ref=e28] [cursor=pointer]:
+          - /url: /login/
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Why Choose Shipnorth?" [level=2] [ref=e32]
+        - paragraph [ref=e33]: Everything you need to manage shipping operations efficiently
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - img [ref=e37]
+          - heading "AI-Powered Optimization" [level=3] [ref=e39]
+          - paragraph [ref=e40]: Smart load planning maximizes efficiency and reduces costs with advanced algorithms
+        - generic [ref=e41]:
+          - img [ref=e43]
+          - heading "Real-Time Tracking" [level=3] [ref=e46]
+          - paragraph [ref=e47]: GPS tracking updates every 5 minutes for complete visibility of your shipments
+        - generic [ref=e48]:
+          - img [ref=e50]
+          - heading "Automated Billing" [level=3] [ref=e52]
+          - paragraph [ref=e53]: Seamless payment processing with Stripe integration and instant invoicing
+        - generic [ref=e54]:
+          - img [ref=e56]
+          - heading "Enterprise Security" [level=3] [ref=e58]
+          - paragraph [ref=e59]: Bank-level encryption and SOC 2 compliance keep your data safe
+        - generic [ref=e60]:
+          - img [ref=e62]
+          - heading "Multi-Carrier Support" [level=3] [ref=e67]
+          - paragraph [ref=e68]: Integrate with all major carriers through ShipStation for best rates
+        - generic [ref=e69]:
+          - img [ref=e71]
+          - heading "Role-Based Access" [level=3] [ref=e76]
+          - paragraph [ref=e77]: Separate portals for staff, customers, and drivers with custom permissions
+    - generic [ref=e79]:
+      - generic [ref=e80]:
+        - heading "How It Works" [level=2] [ref=e81]
+        - paragraph [ref=e82]: Simple, efficient shipping in four easy steps
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e86]: "1"
+          - heading "Create Package" [level=3] [ref=e87]
+          - paragraph [ref=e88]: Staff enters package details and customer information
+        - generic [ref=e89]:
+          - generic [ref=e91]: "2"
+          - heading "Get Quote" [level=3] [ref=e92]
+          - paragraph [ref=e93]: System calculates best shipping rates instantly
+        - generic [ref=e94]:
+          - generic [ref=e96]: "3"
+          - heading "Purchase Label" [level=3] [ref=e97]
+          - paragraph [ref=e98]: Automatic payment processing and label generation
+        - generic [ref=e99]:
+          - generic [ref=e101]: "4"
+          - heading "Track & Deliver" [level=3] [ref=e102]
+          - paragraph [ref=e103]: Real-time updates until successful delivery
+    - generic [ref=e106]:
+      - generic [ref=e107]:
+        - paragraph [ref=e108]: 99.9%
+        - paragraph [ref=e109]: Uptime SLA
+      - generic [ref=e110]:
+        - paragraph [ref=e111]: 5 min
+        - paragraph [ref=e112]: Tracking Updates
+      - generic [ref=e113]:
+        - paragraph [ref=e114]: 24/7
+        - paragraph [ref=e115]: Customer Support
+      - generic [ref=e116]:
+        - paragraph [ref=e117]: 30%
+        - paragraph [ref=e118]: Cost Savings
+    - generic [ref=e120]:
+      - heading "Ready to Transform Your Shipping?" [level=2] [ref=e121]
+      - paragraph [ref=e122]: Join thousands of businesses shipping smarter with Shipnorth
+      - link "Start Free Trial" [ref=e123] [cursor=pointer]:
+        - /url: /register/
+        - text: Start Free Trial
+        - img [ref=e124] [cursor=pointer]
+      - paragraph [ref=e126]: No credit card required • 30-day free trial • Cancel anytime
+    - contentinfo [ref=e127]:
+      - generic [ref=e128]:
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - img [ref=e132]
+              - generic [ref=e136]: Shipnorth
+            - paragraph [ref=e137]: Autonomous shipping and billing for modern businesses
+          - generic [ref=e138]:
+            - heading "Product" [level=4] [ref=e139]
+            - list [ref=e140]:
+              - listitem [ref=e141]:
+                - link "Features" [ref=e142] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e143]:
+                - link "Pricing" [ref=e144] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e145]:
+                - link "API Docs" [ref=e146] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e147]:
+                - link "Integrations" [ref=e148] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e149]:
+            - heading "Company" [level=4] [ref=e150]
+            - list [ref=e151]:
+              - listitem [ref=e152]:
+                - link "About" [ref=e153] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e154]:
+                - link "Blog" [ref=e155] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e156]:
+                - link "Careers" [ref=e157] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e158]:
+                - link "Contact" [ref=e159] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e160]:
+            - heading "Legal" [level=4] [ref=e161]
+            - list [ref=e162]:
+              - listitem [ref=e163]:
+                - link "Privacy Policy" [ref=e164] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e165]:
+                - link "Terms of Service" [ref=e166] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e167]:
+                - link "Security" [ref=e168] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e169]:
+                - link "Compliance" [ref=e170] [cursor=pointer]:
+                  - /url: "#"
+        - generic [ref=e171]: © 2024 Shipnorth. All rights reserved.
+  - button "Open Next.js Dev Tools" [ref=e177] [cursor=pointer]:
+    - img [ref=e178] [cursor=pointer]
+  - alert [ref=e181]
+```

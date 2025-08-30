@@ -1,0 +1,38 @@
+# Dedicated Test Runner Container  
+# Built on Ubuntu for better Playwright support
+
+FROM mcr.microsoft.com/playwright:v1.55.0-jammy
+
+# Set working directory
+WORKDIR /app
+
+# Install additional system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci && npm cache clean --force
+
+# Copy test infrastructure
+COPY tests/ ./tests/
+COPY playwright*.config.ts ./
+COPY .env ./
+
+# Make scripts executable  
+RUN chmod +x tests/*.js 2>/dev/null || true
+
+# Create output directories with proper permissions
+RUN mkdir -p test-results test-reports test-artifacts test-artifacts-optimized live-scoreboard \
+    && chown -R pwuser:pwuser test-results test-reports test-artifacts test-artifacts-optimized live-scoreboard
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+    CMD npx playwright --version || exit 1
+
+# Run as root for Docker testing (since we're mounting host directories)
+# USER pwuser
+
+# Default command runs connectivity diagnostic
+CMD ["npx", "playwright", "test", "00-connectivity-diagnostic.spec.ts"]

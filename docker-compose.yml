@@ -45,8 +45,10 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=development  
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shipnorth-postgres:5432/${POSTGRES_DB}
+      # For container-to-container testing, API needs to be accessible via container name
+      - NEXT_PUBLIC_API_URL_CONTAINER=http://shipnorth-app:${API_PORT}
     command: ./scripts/docker-startup.sh
     restart: unless-stopped
     depends_on:
@@ -64,8 +66,47 @@ services:
       retries: 3
       start_period: 60s
 
+  # Test Runner Service (on-demand)
+  test-runner:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.tests
+    container_name: shipnorth-test-runner
+    volumes:
+      # Mount test files and source for live updates
+      - ./tests:/app/tests
+      - ./playwright-optimized.config.ts:/app/playwright-optimized.config.ts
+      - ./playwright.config.ts:/app/playwright.config.ts
+      - ./.env:/app/.env
+      # Mount output directories to host for report access
+      - ./test-results:/app/test-results
+      - ./test-reports:/app/test-reports
+      - ./test-artifacts:/app/test-artifacts
+      - ./test-artifacts-optimized:/app/test-artifacts-optimized
+      - ./live-scoreboard.html:/app/live-scoreboard.html
+      # Use dedicated volume for test runner node_modules
+      - test_runner_node_modules:/app/node_modules
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - TEST_ENV=local
+      - DOCKER_ENV=true
+      # Use localhost since test runner uses host networking
+      - WEB_PORT=${WEB_PORT}
+      - API_PORT=${API_PORT}
+    # Use host network mode so test container can access localhost ports
+    network_mode: host
+    depends_on:
+      - shipnorth
+      - postgres
+    profiles:
+      - testing  # Only start when explicitly requested
+    working_dir: /app
+
 volumes:
   node_modules:
   api_node_modules:
   web_node_modules:
   postgres_data:
+  test_runner_node_modules:

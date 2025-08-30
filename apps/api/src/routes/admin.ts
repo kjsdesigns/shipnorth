@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authorize, AuthRequest } from '../middleware/auth';
-import { UserModel, User } from '../models/user';
+import { User, UserModel } from '../models/user';
 import { CityModel, City } from '../models/city';
 import { DatabaseService } from '../services/database';
 import bcrypt from 'bcryptjs';

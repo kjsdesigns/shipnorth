@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { RouteOptimizationService } from '../services/route-optimization';
-import { LoadModel } from '../models/load';
-import { PackageModel, Package } from '../models/package';
+import { LoadModel } from '../models/load-postgres';
+import { PackageModel, Package } from '../models/package-postgres';
 import { AddressModel, Address } from '../models/address';
 
 const router = Router();

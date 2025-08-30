@@ -80,7 +80,8 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    headless: process.env.CI ? true : false,
+    // Force headless mode in Docker container or CI
+    headless: process.env.CI || process.env.DOCKER_ENV || !process.env.DISPLAY ? true : false,
   },
 
   // Output directories - optimized structure

@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - link "Shipnorth" [ref=e6] [cursor=pointer]:
+      - /url: /
+      - img [ref=e8] [cursor=pointer]
+      - heading "Shipnorth" [level=1] [ref=e12] [cursor=pointer]
+    - generic [ref=e13]:
+      - heading "Welcome back" [level=2] [ref=e14]
+      - paragraph [ref=e15]: Sign in to your account to continue
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]: Email Address
+        - textbox "Email Address" [ref=e19]
+      - generic [ref=e20]:
+        - generic [ref=e21]: Password
+        - generic [ref=e22]:
+          - textbox "Password" [ref=e23]
+          - button [ref=e24] [cursor=pointer]:
+            - img [ref=e25] [cursor=pointer]
+      - button "Sign In" [ref=e28] [cursor=pointer]
+    - paragraph [ref=e30]:
+      - text: New customer?
+      - link "Create an account" [ref=e31] [cursor=pointer]:
+        - /url: /register/
+    - generic [ref=e32]:
+      - paragraph [ref=e33]: Quick Login (Demo)
+      - generic [ref=e34]:
+        - button "Staff (Admin)" [ref=e35] [cursor=pointer]:
+          - generic [ref=e36] [cursor=pointer]: Staff (Admin)
+        - button "Staff" [ref=e38] [cursor=pointer]:
+          - generic [ref=e39] [cursor=pointer]: Staff
+        - button "Driver" [ref=e41] [cursor=pointer]:
+          - generic [ref=e42] [cursor=pointer]:
+            - img [ref=e43] [cursor=pointer]
+            - text: Driver
+        - button "Customer" [ref=e48] [cursor=pointer]:
+          - generic [ref=e49] [cursor=pointer]: Customer
+      - paragraph [ref=e51]: Click any role above to sign in instantly
+    - button "System" [ref=e54] [cursor=pointer]:
+      - img [ref=e55] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e62] [cursor=pointer]:
+    - img [ref=e63] [cursor=pointer]
+  - alert [ref=e66]
+```

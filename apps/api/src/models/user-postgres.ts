@@ -15,9 +15,14 @@ export interface User {
   password?: string;
   firstName?: string;
   lastName?: string;
+  phone?: string;
   role: 'admin' | 'staff' | 'customer' | 'driver';
+  roles?: ('admin' | 'staff' | 'customer' | 'driver')[];
+  lastUsedPortal?: 'admin' | 'staff' | 'customer' | 'driver';
+  customerId?: string;
   status: 'active' | 'inactive';
   createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class User {
@@ -110,12 +115,24 @@ export class User {
     }
   }
 
-  static async list(): Promise<User[]> {
+  static async list(role?: string, limit?: number): Promise<User[]> {
     try {
-      const result = await this.query(
-        'SELECT id, email, first_name as "firstName", last_name as "lastName", role, status, created_at as "createdAt" FROM users ORDER BY created_at DESC'
-      );
+      let query = 'SELECT id, email, first_name as "firstName", last_name as "lastName", phone, role, roles, last_used_portal as "lastUsedPortal", customer_id as "customerId", status, created_at as "createdAt", updated_at as "updatedAt" FROM users';
+      const params: any[] = [];
       
+      if (role && role !== 'all') {
+        query += ' WHERE role = $1';
+        params.push(role);
+      }
+      
+      query += ' ORDER BY created_at DESC';
+      
+      if (limit) {
+        query += ` LIMIT $${params.length + 1}`;
+        params.push(limit);
+      }
+      
+      const result = await this.query(query, params);
       return result.rows;
     } catch (error) {
       console.error('Error listing users:', error);

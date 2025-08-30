@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
-import { LoadModel } from '../models/load';
-import { PackageModel } from '../models/package';
+import { LoadModel } from '../models/load-postgres';
+import { PackageModel } from '../models/package-postgres';
 import { AddressModel } from '../models/address';
 import { OptimizedRouteModel } from '../models/optimized-route';
 import { RouteOptimizationService } from '../services/route-optimization';
