@@ -59,7 +59,8 @@ export default defineConfig({
   // Performance settings for faster execution
   timeout: 30000,
   globalTimeout: 600000, // 10 minutes max
-  workers: process.env.CI ? 4 : 6, // More parallelism
+  // Optimize workers for environment capacity
+  workers: process.env.DOCKER_ENV ? 8 : process.env.CI ? 4 : 6, // Increased Docker capacity
   fullyParallel: true,
   retries: 1, // Reduced retries for faster feedback
 

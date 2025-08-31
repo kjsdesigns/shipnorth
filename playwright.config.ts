@@ -22,6 +22,9 @@ export default defineConfig({
     // Priority 0: Connectivity diagnostic (runs first)
     '00-connectivity-diagnostic.spec.ts',
     
+    // Data verification test
+    'verify-dummy-data.spec.ts',
+    
     // Main test suite
     'auth.spec.ts',
     'staff-interface.spec.ts',

@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Optimize for concurrent testing
+  experimental: {
+    // Improve concurrent request handling
+    cpus: 4,
+    // Reduce memory pressure
+    isrMemoryCacheSize: 0,
+  },
   typedRoutes: false,
   // Explicit environment variable configuration
   env: {

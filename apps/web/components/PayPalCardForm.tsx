@@ -34,7 +34,7 @@ export default function PayPalCardForm({
 
   useEffect(() => {
     if (!window.paypal) {
-      onError('PayPal SDK not loaded. Please refresh the page.');
+      onError({ message: 'PayPal SDK not loaded. Please refresh the page.' });
       return;
     }
 
@@ -69,6 +69,7 @@ export default function PayPalCardForm({
           createOrder: async () => {
             try {
               // Create vault order for this customer
+              if (!customerId) throw new Error('Customer ID is required');
               const response = await customerAPI.createVaultOrder(customerId);
               return response.data.orderId;
             } catch (error) {
@@ -85,19 +86,20 @@ export default function PayPalCardForm({
               setLoading(true);
 
               // Complete payment method setup
+              if (!customerId) throw new Error('Customer ID is required');
               await customerAPI.completePaymentMethod(customerId, data.orderID);
 
               onSuccess();
             } catch (error: any) {
               console.error('Payment method completion failed:', error);
-              onError(error.response?.data?.message || 'Failed to save payment method');
+              onError({ message: error.response?.data?.message || 'Failed to save payment method' });
             } finally {
               setLoading(false);
             }
           },
           onError: (err: any) => {
             console.error('PayPal CardFields error:', err);
-            onError('Payment setup failed. Please try again.');
+            onError({ message: 'Payment setup failed. Please try again.' });
             setLoading(false);
           },
         });
@@ -107,11 +109,11 @@ export default function PayPalCardForm({
           cardFieldsRef.current.render('#paypal-card-fields-container');
           setCardFieldsReady(true);
         } else {
-          onError('Card payments are not available in your region');
+          onError({ message: 'Card payments are not available in your region' });
         }
       } catch (error) {
         console.error('PayPal initialization error:', error);
-        onError('Failed to initialize payment form');
+        onError({ message: 'Failed to initialize payment form' });
       }
     };
 
@@ -134,7 +136,7 @@ export default function PayPalCardForm({
     e.preventDefault();
 
     if (!cardFieldsRef.current) {
-      onError('Payment form not ready');
+      onError({ message: 'Payment form not ready' });
       return;
     }
 
@@ -145,7 +147,7 @@ export default function PayPalCardForm({
       // Success is handled in onApprove callback
     } catch (error) {
       console.error('Card submission error:', error);
-      onError('Payment method validation failed. Please check your card details.');
+      onError({ message: 'Payment method validation failed. Please check your card details.' });
       setLoading(false);
     }
   };

@@ -51,6 +51,15 @@ services:
       - NEXT_PUBLIC_API_URL_CONTAINER=http://shipnorth-app:${API_PORT}
     command: ./scripts/docker-startup.sh
     restart: unless-stopped
+    # Resource limits for concurrent testing optimization
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'    # Use 3 out of 4 available cores
+          memory: 4G     # Generous memory allocation
+        reservations:
+          cpus: '1.0'    # Reserve 1 core minimum
+          memory: 1G     # Reserve 1GB minimum
     depends_on:
       postgres:
         condition: service_healthy
@@ -95,6 +104,15 @@ services:
       # Use localhost since test runner uses host networking
       - WEB_PORT=${WEB_PORT}
       - API_PORT=${API_PORT}
+    # Resource limits for test runner optimization
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'    # Dedicated cores for test execution
+          memory: 3G     # Generous memory for browser processes
+        reservations:
+          cpus: '0.5'    # Reserve minimum for test runner
+          memory: 512M   # Reserve minimum memory
     # Use host network mode so test container can access localhost ports
     network_mode: host
     depends_on:

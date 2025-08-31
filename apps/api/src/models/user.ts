@@ -190,6 +190,16 @@ export class User {
   static hasStaffAccess(user: User): boolean {
     return user.role === 'admin' || user.role === 'staff';
   }
+
+  static async delete(id: string): Promise<boolean> {
+    try {
+      const result = await this.query('DELETE FROM users WHERE id = $1', [id]);
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
+  }
 }
 
 export const UserModel = User;

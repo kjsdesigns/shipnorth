@@ -12,6 +12,8 @@ const pool = new Pool({
 export interface Customer {
   id: string;
   name: string;
+  firstName?: string; // Parsed from name field
+  lastName?: string;  // Parsed from name field
   email?: string;
   phone?: string;
   business_name?: string;
@@ -37,7 +39,7 @@ export class CustomerModel {
         'SELECT * FROM customers ORDER BY created_at DESC LIMIT $1',
         [limit]
       );
-      return result.rows;
+      return result.rows.map(customer => this.addParsedNames(customer));
     } catch (error) {
       console.error('Error listing customers:', error);
       throw error;
@@ -47,7 +49,8 @@ export class CustomerModel {
   static async findById(id: string): Promise<Customer | null> {
     try {
       const result = await this.query('SELECT * FROM customers WHERE id = $1', [id]);
-      return result.rows[0] || null;
+      const customer = result.rows[0] || null;
+      return customer ? this.addParsedNames(customer) : null;
     } catch (error) {
       console.error('Error finding customer by ID:', error);
       throw error;
@@ -57,7 +60,8 @@ export class CustomerModel {
   static async findByEmail(email: string): Promise<Customer | null> {
     try {
       const result = await this.query('SELECT * FROM customers WHERE email = $1', [email]);
-      return result.rows[0] || null;
+      const customer = result.rows[0] || null;
+      return customer ? this.addParsedNames(customer) : null;
     } catch (error) {
       console.error('Error finding customer by email:', error);
       throw error;
@@ -126,10 +130,38 @@ export class CustomerModel {
         LIMIT $2
       `, [searchTerm, limit]);
       
-      return result.rows;
+      return result.rows.map(customer => this.addParsedNames(customer));
     } catch (error) {
       console.error('Error searching customers:', error);
       throw error;
     }
+  }
+
+  /**
+   * Get packages for a customer
+   */
+  static async getPackages(customerId: string): Promise<any[]> {
+    try {
+      const result = await this.query(
+        'SELECT * FROM packages WHERE customer_id = $1 ORDER BY created_at DESC',
+        [customerId]
+      );
+      return result.rows;
+    } catch (error) {
+      console.error('Error getting customer packages:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Parse full name into firstName and lastName for frontend compatibility
+   */
+  private static addParsedNames(customer: any): Customer {
+    if (customer.name) {
+      const nameParts = customer.name.trim().split(' ');
+      customer.firstName = nameParts[0] || '';
+      customer.lastName = nameParts.slice(1).join(' ') || '';
+    }
+    return customer;
   }
 }

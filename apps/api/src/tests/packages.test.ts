@@ -21,7 +21,7 @@ describe('Packages API', () => {
 
     // Login as customer
     const customerLogin = await request(app).post('/auth/login').send({
-      email: 'john.doe@example.com',
+      email: 'customer@test.com',
       password: 'customer123',
     });
     customerToken = customerLogin.body.accessToken;

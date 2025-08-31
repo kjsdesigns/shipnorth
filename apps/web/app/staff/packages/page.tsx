@@ -22,6 +22,10 @@ import {
   X,
   Calculator,
   MapPinOff,
+  Square,
+  CheckSquare,
+  Minus,
+  Wind,
 } from 'lucide-react';
 import RateLookupDialog from '@/components/RateLookupDialog';
 
@@ -83,6 +87,11 @@ export default function PackagesPage() {
     totalRevenue: 0,
   });
 
+  // Bulk selection state
+  const [selectedPackages, setSelectedPackages] = useState<Set<string>>(new Set());
+  const [isSelectAllMode, setIsSelectAllMode] = useState<'none' | 'filtered' | 'all'>('none');
+  const [showBulkActions, setShowBulkActions] = useState(false);
+
   // Form states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -141,6 +150,18 @@ export default function PackagesPage() {
 
     setFilteredPackages(filtered);
   }, [searchQuery, packages]);
+
+  // Clear selection when filtered packages change
+  useEffect(() => {
+    setSelectedPackages(new Set());
+    setIsSelectAllMode('none');
+    setShowBulkActions(false);
+  }, [filteredPackages]);
+
+  // Update bulk actions visibility
+  useEffect(() => {
+    setShowBulkActions(selectedPackages.size > 0);
+  }, [selectedPackages]);
 
   const loadData = async () => {
     try {
@@ -375,6 +396,136 @@ export default function PackagesPage() {
     );
   };
 
+  // Bulk selection handlers
+  const handleSelectPackage = (packageId: string, checked: boolean) => {
+    const newSelected = new Set(selectedPackages);
+    if (checked) {
+      newSelected.add(packageId);
+    } else {
+      newSelected.delete(packageId);
+    }
+    setSelectedPackages(newSelected);
+    
+    // Update select all mode based on current selection
+    if (newSelected.size === 0) {
+      setIsSelectAllMode('none');
+    } else if (newSelected.size === filteredPackages.length) {
+      setIsSelectAllMode('filtered');
+    } else {
+      setIsSelectAllMode('none');
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (isSelectAllMode === 'none') {
+      // Select all filtered packages
+      const filteredIds = new Set(filteredPackages.map(pkg => pkg.id));
+      setSelectedPackages(filteredIds);
+      setIsSelectAllMode('filtered');
+    } else if (isSelectAllMode === 'filtered') {
+      // Select all packages (including those not currently filtered)
+      const allIds = new Set(packages.map(pkg => pkg.id));
+      setSelectedPackages(allIds);
+      setIsSelectAllMode('all');
+    } else {
+      // Clear all selections
+      setSelectedPackages(new Set());
+      setIsSelectAllMode('none');
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedPackages(new Set());
+    setIsSelectAllMode('none');
+  };
+
+  // Bulk action handlers
+  const handleBulkAssignToLoad = async () => {
+    if (selectedPackages.size === 0) return;
+    
+    // Show load selection dialog
+    const selectedLoad = prompt(`Assign ${selectedPackages.size} package(s) to load:\n\nAvailable loads:\n${loads.map(l => `• ${l.id.slice(-6)} - ${l.driverName} (${l.status})`).join('\n')}\n\nEnter load ID (last 6 digits):`);
+    
+    if (selectedLoad) {
+      const fullLoadId = loads.find(l => l.id.endsWith(selectedLoad))?.id;
+      if (fullLoadId) {
+        try {
+          // In real implementation, this would call the API
+          console.log('Assigning packages to load:', Array.from(selectedPackages), fullLoadId);
+          alert(`✅ Assigned ${selectedPackages.size} packages to load ${selectedLoad}`);
+          clearSelection();
+          loadData(); // Refresh data
+        } catch (error) {
+          alert('❌ Failed to assign packages to load');
+        }
+      } else {
+        alert('❌ Load not found');
+      }
+    }
+  };
+
+  const handleBulkRemoveFromLoad = async () => {
+    if (selectedPackages.size === 0) return;
+    
+    const selectedPackagesList = Array.from(selectedPackages)
+      .map(id => packages.find(p => p.id === id))
+      .filter(pkg => pkg?.loadId);
+    
+    if (selectedPackagesList.length === 0) {
+      alert('❌ No selected packages are currently assigned to loads');
+      return;
+    }
+    
+    if (confirm(`Remove ${selectedPackagesList.length} package(s) from their loads?`)) {
+      try {
+        // In real implementation, this would call the API
+        console.log('Removing packages from loads:', selectedPackagesList.map(p => p.id));
+        alert(`✅ Removed ${selectedPackagesList.length} packages from loads`);
+        clearSelection();
+        loadData(); // Refresh data
+      } catch (error) {
+        alert('❌ Failed to remove packages from loads');
+      }
+    }
+  };
+
+  const handleBulkMarkDelivered = async () => {
+    if (selectedPackages.size === 0) return;
+    
+    if (confirm(`Mark ${selectedPackages.size} package(s) as delivered? This action cannot be undone.`)) {
+      try {
+        // In real implementation, this would call the API for each package
+        console.log('Marking packages as delivered:', Array.from(selectedPackages));
+        alert(`✅ Marked ${selectedPackages.size} packages as delivered! 💨`);
+        clearSelection();
+        loadData(); // Refresh data
+      } catch (error) {
+        alert('❌ Failed to mark packages as delivered');
+      }
+    }
+  };
+
+  const getSelectedPackageCount = () => {
+    if (isSelectAllMode === 'all') {
+      return packages.length;
+    } else if (isSelectAllMode === 'filtered') {
+      return filteredPackages.length;
+    } else {
+      return selectedPackages.size;
+    }
+  };
+
+  const getSelectedPackagesText = () => {
+    const count = getSelectedPackageCount();
+    if (isSelectAllMode === 'all') {
+      return `All ${count} packages selected`;
+    } else if (isSelectAllMode === 'filtered') {
+      return `All ${count} filtered packages selected`;
+    } else {
+      return `${count} package${count !== 1 ? 's' : ''} selected`;
+    }
+  };
+
   const handleSubmitCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     const errors = validateForm();
@@ -596,16 +747,101 @@ export default function PackagesPage() {
       {/* Packages Table */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Packages</h2>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {filteredPackages.length} of {packages.length} packages
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Packages</h2>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                {filteredPackages.length} of {packages.length} packages
+                {showBulkActions && (
+                  <span className="ml-2 text-blue-600 dark:text-blue-400 font-medium">
+                    • {getSelectedPackagesText()}
+                  </span>
+                )}
+              </p>
+            </div>
+            {showBulkActions && (
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={clearSelection}
+                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Bulk Actions Bar */}
+          {showBulkActions && (
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    {getSelectedPackagesText()}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handleBulkAssignToLoad}
+                    className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+                  >
+                    <Truck className="h-4 w-4 mr-1" />
+                    Assign to Load
+                  </button>
+                  <button
+                    onClick={handleBulkRemoveFromLoad}
+                    className="inline-flex items-center px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-md transition-colors"
+                  >
+                    <Minus className="h-4 w-4 mr-1" />
+                    Remove from Load
+                  </button>
+                  <button
+                    onClick={handleBulkMarkDelivered}
+                    className="inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md transition-colors"
+                  >
+                    <Wind className="h-4 w-4 mr-1" />
+                    Mark Delivered
+                  </button>
+                  <button
+                    onClick={clearSelection}
+                    className="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-md transition-colors"
+                  >
+                    Clear Selection
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200 dark:border-gray-700">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={handleSelectAll}
+                      className="flex items-center justify-center w-4 h-4 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {isSelectAllMode === 'none' ? (
+                        <Square className="h-3 w-3 text-gray-400" />
+                      ) : isSelectAllMode === 'filtered' ? (
+                        <CheckSquare className="h-3 w-3 text-blue-600" />
+                      ) : (
+                        <CheckSquare className="h-3 w-3 text-purple-600" />
+                      )}
+                    </button>
+                    {isSelectAllMode === 'filtered' && filteredPackages.length < packages.length && (
+                      <button
+                        onClick={handleSelectAll}
+                        className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                      >
+                        Select all {packages.length}
+                      </button>
+                    )}
+                  </div>
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Tracking #
                 </th>
@@ -627,13 +863,13 @@ export default function PackagesPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Est. Delivery
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Weight
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Quoted Rate
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Price
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -642,8 +878,18 @@ export default function PackagesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {filteredPackages.map((pkg, index) => (
-                <tr key={pkg.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              {filteredPackages.map((pkg, index) => {
+                const isSelected = selectedPackages.has(pkg.id) || isSelectAllMode === 'all' || (isSelectAllMode === 'filtered' && filteredPackages.some(p => p.id === pkg.id));
+                return (
+                <tr key={pkg.id || index} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
+                  <td className="px-6 py-4 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => handleSelectPackage(pkg.id, e.target.checked)}
+                      className="h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
+                    />
+                  </td>
                   <td className="px-6 py-4 text-sm font-medium">
                     <button
                       onClick={() => handleEditPackage(pkg)}
@@ -711,10 +957,10 @@ export default function PackagesPage() {
                       <span className="text-gray-400">-</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-left">
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-right">
                     {pkg.weight || '0'} kg
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-left">
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-right">
                     {pkg.quotedCarrier && pkg.quotedRate ? (
                       <div className="flex items-center space-x-2">
                         <span
@@ -750,7 +996,7 @@ export default function PackagesPage() {
                       </button>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-left">
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-right">
                     ${pkg.price || '0.00'}
                   </td>
                   <td className="px-6 py-4 text-sm">
@@ -790,7 +1036,7 @@ export default function PackagesPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>

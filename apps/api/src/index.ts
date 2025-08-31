@@ -38,13 +38,22 @@ import { authenticate, authorize } from './middleware/auth';
 const app = express();
 const PORT = process.env.API_PORT || process.env.PORT || 8850;
 
-// Global rate limiter - 200 req/min per IP
+// Global rate limiter - optimized for testing
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 200, // 200 requests per minute
+  // Increased limits for test environments to support concurrent testing
+  max: process.env.NODE_ENV === 'development' ? 1000 : 200, // 1000 req/min in dev, 200 in prod
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests from this IP, please try again later.',
+  // Skip rate limiting for localhost in development
+  skip: (req) => {
+    if (process.env.NODE_ENV === 'development' && 
+        (req.ip === '127.0.0.1' || req.ip === '::1' || req.ip?.startsWith('172.'))) {
+      return true;
+    }
+    return false;
+  }
 });
 
 // Middleware

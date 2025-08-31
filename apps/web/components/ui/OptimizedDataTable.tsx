@@ -2,6 +2,31 @@ import React, { ReactNode, memo, useMemo, useCallback } from 'react';
 import { ChevronDown, ChevronUp, Search, CheckSquare, Square, Minus } from 'lucide-react';
 import { useDataTable, useStableCallback, useVirtualList, useElementSize } from '@/hooks';
 
+// Helper function to detect if a column should be right-aligned based on its data
+function shouldAlignRight<T>(column: Column<T>, data: T[]): boolean {
+  if (column.align !== undefined) return column.align === 'right';
+  
+  // Check if column title suggests numeric data
+  const title = column.title.toLowerCase();
+  if (title.includes('weight') || title.includes('price') || title.includes('cost') || 
+      title.includes('rate') || title.includes('amount') || title.includes('total') ||
+      title.includes('count') || title.includes('packages') || title.includes('qty') ||
+      title.includes('quantity')) {
+    return true;
+  }
+  
+  // Sample first few non-null values to detect numeric patterns
+  const sampleValues = data.slice(0, 5).map(item => item[column.key]).filter(val => val != null);
+  
+  if (sampleValues.length === 0) return false;
+  
+  return sampleValues.every(value => {
+    const str = String(value).trim();
+    // Check for number patterns: "24", "24.5", "$24.50", "24 kg", "24.5 lbs", etc.
+    return /^[\$€£¥]?\d+\.?\d*\s*(kg|lbs|g|oz|%|$)?$/i.test(str) || !isNaN(Number(str));
+  });
+}
+
 export interface Column<T> {
   key: keyof T;
   title: string;
@@ -32,12 +57,18 @@ const TableCell = memo<{
   column: Column<any>;
   item: any;
   index: number;
-}>(({ column, item, index }) => {
+  data: any[];
+}>(({ column, item, index, data }) => {
   const value = item[column.key];
-  const align = column.align || 'left';
+  const isRightAligned = shouldAlignRight(column, data);
+  const alignClass = column.align === 'center' 
+    ? 'text-center' 
+    : isRightAligned 
+      ? 'text-right' 
+      : 'text-left';
 
   return (
-    <td className={`px-6 py-4 text-sm text-gray-900 dark:text-white text-${align}`}>
+    <td className={`px-6 py-4 text-sm text-gray-900 dark:text-white ${alignClass}`}>
       {column.render ? column.render(value, item, index) : String(value || '')}
     </td>
   );
@@ -54,7 +85,8 @@ const TableRow = memo<{
   isSelected: boolean;
   onToggleSelection: (id: string) => void;
   actions?: (item: any) => ReactNode;
-}>(({ item, columns, index, selectable, isSelected, onToggleSelection, actions }) => {
+  data: any[];
+}>(({ item, columns, index, selectable, isSelected, onToggleSelection, actions, data }) => {
   const handleToggleSelection = useCallback(() => {
     onToggleSelection(item.id);
   }, [item.id, onToggleSelection]);
@@ -73,7 +105,7 @@ const TableRow = memo<{
         </td>
       )}
       {columns.map((column) => (
-        <TableCell key={String(column.key)} column={column} item={item} index={index} />
+        <TableCell key={String(column.key)} column={column} item={item} index={index} data={data} />
       ))}
       {actions && <td className="px-6 py-4 text-sm">{actions(item)}</td>}
     </tr>
@@ -93,6 +125,7 @@ const TableHeader = memo<{
   isIndeterminate: boolean;
   onToggleAllSelection: () => void;
   actions: boolean;
+  data: any[];
 }>(
   ({
     columns,
@@ -104,6 +137,7 @@ const TableHeader = memo<{
     isIndeterminate,
     onToggleAllSelection,
     actions,
+    data,
   }) => {
     const SortButton = memo<{ column: Column<any> }>(({ column }) => {
       if (!column.sortable) return null;
@@ -147,16 +181,18 @@ const TableHeader = memo<{
               </button>
             </th>
           )}
-          {columns.map((column) => (
+          {columns.map((column) => {
+            const isRightAligned = shouldAlignRight(column, data);
+            const alignClass = column.align === 'center' 
+              ? 'text-center' 
+              : isRightAligned 
+                ? 'text-right' 
+                : 'text-left';
+            
+            return (
             <th
               key={String(column.key)}
-              className={`px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${
-                column.align === 'center'
-                  ? 'text-center'
-                  : column.align === 'right'
-                    ? 'text-right'
-                    : 'text-left'
-              }`}
+              className={`px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${alignClass}`}
               style={column.width ? { width: column.width } : undefined}
             >
               <div className="flex items-center">
@@ -164,7 +200,8 @@ const TableHeader = memo<{
                 <SortButton column={column} />
               </div>
             </th>
-          ))}
+            );
+          })}
           {actions && (
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">
               Actions
@@ -229,6 +266,7 @@ const VirtualizedTableBody = memo<{
                     isSelected={isSelected(item.id)}
                     onToggleSelection={onToggleSelection}
                     actions={actions}
+                    data={items}
                   />
                 </tbody>
               </table>
@@ -381,6 +419,7 @@ export const OptimizedDataTable = memo(function OptimizedDataTable<T extends { i
             isSelected={table.isSelected(item.id)}
             onToggleSelection={table.toggleSelection}
             actions={actions}
+            data={data}
           />
         ))}
       </tbody>
@@ -420,6 +459,7 @@ export const OptimizedDataTable = memo(function OptimizedDataTable<T extends { i
                 isIndeterminate={table.isIndeterminate}
                 onToggleAllSelection={table.toggleAllSelection}
                 actions={!!actions}
+                data={data}
               />
             </table>
             <VirtualizedTableBody
@@ -445,6 +485,7 @@ export const OptimizedDataTable = memo(function OptimizedDataTable<T extends { i
               isIndeterminate={table.isIndeterminate}
               onToggleAllSelection={table.toggleAllSelection}
               actions={!!actions}
+              data={data}
             />
             {TableContent}
           </table>

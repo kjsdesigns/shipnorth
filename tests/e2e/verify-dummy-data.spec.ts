@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('🧪 Dummy Data Verification', () => {
+test.describe('🧪 Data Verification', () => {
   
-  test('Staff portal shows populated data @data-verification', async ({ page }) => {
+  test('Staff portal shows populated data @smoke @data-verification', async ({ page }) => {
     console.log('🔍 Testing staff portal data visibility...');
     
     // Navigate to staff portal
@@ -65,7 +65,7 @@ test.describe('🧪 Dummy Data Verification', () => {
     expect(packageRows).toBeGreaterThan(0);
   });
   
-  test('Customer portal functionality @data-verification', async ({ page }) => {
+  test('Customer portal functionality @smoke @data-verification', async ({ page }) => {
     console.log('🔍 Testing customer portal...');
     
     // Navigate to customer portal
@@ -81,7 +81,7 @@ test.describe('🧪 Dummy Data Verification', () => {
     console.log('📸 Customer portal screenshot saved');
   });
   
-  test('Driver portal functionality @data-verification', async ({ page }) => {
+  test('Driver portal functionality @smoke @data-verification', async ({ page }) => {
     console.log('🔍 Testing driver portal...');
     
     // Navigate to driver portal
@@ -97,7 +97,7 @@ test.describe('🧪 Dummy Data Verification', () => {
     console.log('📸 Driver portal screenshot saved');
   });
 
-  test('Database API endpoints return populated data @data-verification', async ({ page }) => {
+  test('Database API endpoints return populated data @api @data-verification', async ({ page }) => {
     console.log('🔍 Testing API endpoints with populated data...');
     
     // Test customers endpoint

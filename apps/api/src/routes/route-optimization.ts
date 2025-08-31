@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { RouteOptimizationService, RouteOptimizationOptions } from '../services/route-optimization';
-import { LoadModel } from '../models/load-postgres';
+import { LoadModel } from '../models/load';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { TrafficConditionsService } from '../services/traffic-conditions';
 

@@ -6,6 +6,33 @@ import { AppError } from '../middleware/errorHandler';
 
 const router = Router();
 
+// List all customers (staff/admin only)
+router.get('/', authenticate, authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
+  try {
+    const customers = await CustomerModel.list();
+    
+    // Add package counts for each customer
+    const customersWithCounts = await Promise.all(
+      customers.map(async (customer) => {
+        const packageCountResult = await CustomerModel.query(
+          'SELECT COUNT(*) as count FROM packages WHERE customer_id = $1',
+          [customer.id]
+        );
+        const packageCount = parseInt(packageCountResult.rows[0]?.count || '0');
+        
+        return {
+          ...customer,
+          packageCount
+        };
+      })
+    );
+    
+    res.json({ customers: customersWithCounts });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Self-registration endpoint (public)
 router.post('/register', async (req, res, next) => {
   try {
@@ -344,6 +371,27 @@ router.get(
     }
   }
 );
+
+// Get individual customer by ID
+router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    // Check access permissions
+    if (req.user?.role === 'customer' && (req.user as any).customerId !== id) {
+      throw new AppError(403, 'Access denied');
+    }
+    
+    const customer = await CustomerModel.findById(id);
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found' });
+    }
+    
+    res.json({ customer });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Get customer packages
 router.get('/:id/packages', async (req: AuthRequest, res, next) => {

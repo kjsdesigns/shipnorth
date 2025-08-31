@@ -42,8 +42,8 @@ export class AuthHelpers {
 
     await expect(quickLoginButton).toBeVisible();
 
-    // Wait for any loading states to complete before clicking
-    await this.page.waitForTimeout(1000);
+    // Wait for any loading states to complete before clicking (reduced for concurrent testing)
+    await this.page.waitForTimeout(500);
 
     await quickLoginButton.click();
 

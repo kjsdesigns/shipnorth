@@ -229,7 +229,7 @@ export default function StaffDashboard() {
           {/* Stats Grid - with test IDs and classes expected by tests */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div
-              className="stat-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow"
+              className="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
               data-testid="total-packages"
             >
               <div className="flex items-center">
@@ -244,7 +244,7 @@ export default function StaffDashboard() {
             </div>
 
             <div
-              className="stat-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow"
+              className="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
               data-testid="active-customers"
             >
               <div className="flex items-center">
@@ -259,7 +259,7 @@ export default function StaffDashboard() {
             </div>
 
             <div
-              className="stat-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow"
+              className="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
               data-testid="active-loads"
             >
               <div className="flex items-center">
@@ -274,7 +274,7 @@ export default function StaffDashboard() {
             </div>
 
             <div
-              className="stat-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow"
+              className="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
               data-testid="revenue"
             >
               <div className="flex items-center">
@@ -307,7 +307,7 @@ export default function StaffDashboard() {
 
           {/* Package Status Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                 Unassigned Packages
               </h3>
@@ -315,7 +315,7 @@ export default function StaffDashboard() {
                 {packages.filter((p) => !p.loadId).length}
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                 Assigned Packages
               </h3>
@@ -323,7 +323,7 @@ export default function StaffDashboard() {
                 {packages.filter((p) => p.loadId && p.status !== 'delivered').length}
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                 In Transit
               </h3>
@@ -357,7 +357,7 @@ export default function StaffDashboard() {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                       Recent Activity
                     </h3>
@@ -365,13 +365,13 @@ export default function StaffDashboard() {
                       Latest package updates and deliveries
                     </p>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                       Pending Tasks
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">Items requiring attention</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                       Performance
                     </h3>

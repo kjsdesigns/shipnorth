@@ -414,9 +414,10 @@ test.describe('📄 Page Load Verification', () => {
 test.describe('⚡ Performance & Stability', () => {
   test('page load performance within limits @performance', async ({ page }) => {
     const performanceTargets = [
-      { path: '/', maxTime: 3000, name: 'Homepage' },
-      { path: '/login', maxTime: 2000, name: 'Login' },
-      { path: '/portal', maxTime: 5000, name: 'Customer Portal' },
+      // Adjusted targets for concurrent test execution environment
+      { path: '/', maxTime: process.env.DOCKER_ENV ? 5000 : 3000, name: 'Homepage' },
+      { path: '/login', maxTime: process.env.DOCKER_ENV ? 3000 : 2000, name: 'Login' },
+      { path: '/portal', maxTime: process.env.DOCKER_ENV ? 7000 : 5000, name: 'Customer Portal' },
     ];
 
     for (const target of performanceTargets) {

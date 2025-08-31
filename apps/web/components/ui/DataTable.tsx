@@ -26,6 +26,31 @@ interface DataTableProps<T extends { id: string }> {
   className?: string;
 }
 
+// Helper function to detect if a column should be right-aligned based on its data
+function shouldAlignRight<T>(column: Column<T>, data: T[]): boolean {
+  if (column.align !== undefined) return column.align === 'right';
+  
+  // Check if column title suggests numeric data
+  const title = column.title.toLowerCase();
+  if (title.includes('weight') || title.includes('price') || title.includes('cost') || 
+      title.includes('rate') || title.includes('amount') || title.includes('total') ||
+      title.includes('count') || title.includes('packages') || title.includes('qty') ||
+      title.includes('quantity')) {
+    return true;
+  }
+  
+  // Sample first few non-null values to detect numeric patterns
+  const sampleValues = data.slice(0, 5).map(item => item[column.key]).filter(val => val != null);
+  
+  if (sampleValues.length === 0) return false;
+  
+  return sampleValues.every(value => {
+    const str = String(value).trim();
+    // Check for number patterns: "24", "24.5", "$24.50", "24 kg", "24.5 lbs", etc.
+    return /^[\$€£¥]?\d+\.?\d*\s*(kg|lbs|g|oz|%|$)?$/i.test(str) || !isNaN(Number(str));
+  });
+}
+
 export default function DataTable<T extends { id: string }>({
   data,
   columns,
@@ -247,16 +272,18 @@ export default function DataTable<T extends { id: string }>({
                   <SelectAllCheckbox />
                 </th>
               )}
-              {columns.map((column) => (
+              {columns.map((column) => {
+                const isRightAligned = shouldAlignRight(column, data);
+                const alignClass = column.align === 'center' 
+                  ? 'text-center' 
+                  : isRightAligned 
+                    ? 'text-right' 
+                    : 'text-left';
+                
+                return (
                 <th
                   key={String(column.key)}
-                  className={`px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${
-                    column.align === 'center'
-                      ? 'text-center'
-                      : column.align === 'right'
-                        ? 'text-right'
-                        : 'text-left'
-                  }`}
+                  className={`px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${alignClass}`}
                   style={column.width ? { width: column.width } : undefined}
                 >
                   <div className="flex items-center">
@@ -264,7 +291,8 @@ export default function DataTable<T extends { id: string }>({
                     <SortButton column={column} />
                   </div>
                 </th>
-              ))}
+                );
+              })}
               {actions && (
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">
                   Actions
@@ -288,22 +316,25 @@ export default function DataTable<T extends { id: string }>({
                       <SelectCheckbox item={item} />
                     </td>
                   )}
-                  {columns.map((column) => (
+                  {columns.map((column) => {
+                    const isRightAligned = shouldAlignRight(column, data);
+                    const alignClass = column.align === 'center' 
+                      ? 'text-center' 
+                      : isRightAligned 
+                        ? 'text-right' 
+                        : 'text-left';
+                    
+                    return (
                     <td
                       key={String(column.key)}
-                      className={`px-6 py-4 text-sm text-gray-900 dark:text-white ${
-                        column.align === 'center'
-                          ? 'text-center'
-                          : column.align === 'right'
-                            ? 'text-right'
-                            : 'text-left'
-                      }`}
+                      className={`px-6 py-4 text-sm text-gray-900 dark:text-white ${alignClass}`}
                     >
                       {column.render
                         ? column.render(item[column.key], item, index)
                         : String(item[column.key] || '')}
                     </td>
-                  ))}
+                    );
+                  })}
                   {actions && <td className="px-6 py-4 text-sm">{actions(item)}</td>}
                 </tr>
               ))
