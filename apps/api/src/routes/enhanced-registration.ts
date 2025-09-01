@@ -85,15 +85,22 @@ router.post('/register-enhanced', async (req: Request, res: Response) => {
     // Create customer record
     const customerId = generateId();
     const customer = await CustomerModel.create({
-      id: customerId,
       accountType: registrationData.accountType,
+      name: `${registrationData.firstName} ${registrationData.lastName}`,
       firstName: registrationData.firstName,
       lastName: registrationData.lastName,
       email: registrationData.email,
       phone: registrationData.phone,
-      businessName: registrationData.businessName,
+      business_name: registrationData.businessName,
       primaryContactName: registrationData.primaryContactName,
-      address: {
+      // Store address components individually instead of nested object
+      addressLine1: registrationData.addressLine1,
+      addressLine2: registrationData.addressLine2,
+      city: registrationData.city,
+      province: registrationData.province,
+      postalCode: registrationData.postalCode,
+      country: registrationData.country,
+      /*address: {
         line1: registrationData.addressLine1,
         line2: registrationData.addressLine2,
         city: registrationData.city,
@@ -106,9 +113,9 @@ router.post('/register-enhanced', async (req: Request, res: Response) => {
         } : undefined,
         formattedAddress: registrationData.formattedAddress,
         placeId: registrationData.placeId
-      },
-      status: 'pending_verification',
-      createdAt: new Date().toISOString()
+      },*/
+      status: 'pending_verification'
+      // createdAt will be set automatically by the database
     });
     
     // Create user account for login
@@ -140,7 +147,7 @@ router.post('/register-enhanced', async (req: Request, res: Response) => {
         : 'Personal account created successfully',
       nextSteps: {
         emailVerification: true,
-        paymentSetup: mode === 'verification',
+        paymentSetup: registrationData.accountType === 'business',
         portalAccess: `/portal?customer=${customerId}`
       }
     });

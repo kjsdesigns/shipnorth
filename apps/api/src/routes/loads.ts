@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { authorize, authenticate } from '../middleware/auth';
 import { LoadModel } from '../models/load';
 import { PackageModel } from '../models/package';
+import { CustomerModel } from '../models/customer';
 
 const router = Router();
 
@@ -40,7 +41,7 @@ router.get('/', authenticate, async (req, res) => {
       loads.map(async (load) => {
         const packages = await LoadModel.getPackages(load.id);
         const destinationsWithDates =
-          load.deliveryCities?.filter((city) => city.expectedDeliveryDate).length || 0;
+          load.deliveryCities?.filter((city) => typeof city === 'object' && city.expectedDeliveryDate).length || 0;
         const totalDestinations = load.deliveryCities?.length || 0;
 
         return {
@@ -54,14 +55,14 @@ router.get('/', authenticate, async (req, res) => {
           deliveryDateRange: {
             earliest: load.deliveryCities?.reduce(
               (min, city) =>
-                city.expectedDeliveryDate && (!min || city.expectedDeliveryDate < min)
+                typeof city === 'object' && city.expectedDeliveryDate && (!min || city.expectedDeliveryDate < min)
                   ? city.expectedDeliveryDate
                   : min,
               ''
             ),
             latest: load.deliveryCities?.reduce(
               (max, city) =>
-                city.expectedDeliveryDate && (!max || city.expectedDeliveryDate > max)
+                typeof city === 'object' && city.expectedDeliveryDate && (!max || city.expectedDeliveryDate > max)
                   ? city.expectedDeliveryDate
                   : max,
               ''
@@ -86,15 +87,66 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Load not found' });
     }
 
-    const packages = await LoadModel.getPackages(load.id);
-    const packageDetails = await Promise.all(
-      packages.map((packageId) => PackageModel.findById(packageId))
-    );
+    const packageIds = await LoadModel.getPackages(load.id);
+    
+    // Get package details with address information using direct SQL
+    const packageDetails = [];
+    for (const packageId of packageIds) {
+      try {
+        const pkg = await PackageModel.findById(packageId);
+        if (pkg) {
+          // Get customer info
+          const customer = await CustomerModel.findById(pkg.customer_id);
+          
+          // Get complete address info including coordinates from PostgreSQL
+          const addressResult = await PackageModel.query(`
+            SELECT address_line1, address_line2, city, province_state as province, postal_code, country, coordinates, geocoding_status
+            FROM addresses 
+            WHERE id = $1
+          `, [pkg.ship_to_address_id]);
+          
+          console.log(`Address query for package ${packageId}:`, {
+            ship_to_address_id: pkg.ship_to_address_id,
+            addressFound: addressResult.rows.length > 0,
+            address: addressResult.rows[0]
+          });
+          
+          const address = addressResult.rows[0];
+          
+          // Structure package data for frontend compatibility
+          const packageWithAddress = {
+            ...pkg,
+            trackingNumber: pkg.tracking_number,
+            shipTo: address ? {
+              name: customer?.name || 'Unknown',
+              address1: address.address_line1,
+              address2: address.address_line2,
+              city: address.city,
+              province: address.province,
+              postalCode: address.postal_code,
+              country: address.country
+            } : null,
+            address: address ? {
+              coordinates: address.coordinates ? (typeof address.coordinates === 'string' ? JSON.parse(address.coordinates) : address.coordinates) : null,
+              geocodingStatus: address.geocoding_status || 'not_attempted'
+            } : null,
+            customer: customer ? {
+              name: customer.name,
+              email: customer.email
+            } : null
+          };
+          
+          packageDetails.push(packageWithAddress);
+        }
+      } catch (error) {
+        console.warn(`Failed to load package ${packageId}:`, error);
+      }
+    }
 
     res.json({
       load: {
         ...load,
-        packages: packageDetails.filter(Boolean),
+        packages: packageDetails,
       },
     });
   } catch (error: any) {
@@ -128,7 +180,7 @@ router.post('/:id/location', authorize('staff', 'admin', 'driver'), async (req, 
     const { lat, lng, address, isManual } = req.body;
     const addedBy = req.user?.id;
 
-    const success = await LoadModel.addLocationTracking(id, lat, lng, isManual, addedBy, address);
+    const success = await LoadModel.addLocationTracking(id, { lat, lng, isManual, addedBy, address });
     if (!success) {
       return res.status(404).json({ error: 'Load not found' });
     }
@@ -228,7 +280,7 @@ router.post('/:id/gps', authorize('driver', 'staff', 'admin'), async (req, res) 
     const { lat, lng } = req.body;
     const addedBy = req.user?.id;
 
-    const success = await LoadModel.addLocationTracking(id, lat, lng, false, addedBy);
+    const success = await LoadModel.addLocationTracking(id, { lat, lng, isManual: false, addedBy });
     if (!success) {
       return res.status(404).json({ error: 'Load not found' });
     }

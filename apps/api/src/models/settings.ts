@@ -25,9 +25,12 @@ export interface SystemSettings {
 
 export class SettingsModel {
   static async get(): Promise<SystemSettings> {
-    const item = await DatabaseService.get('SETTINGS', 'system');
+    const result = await DatabaseService.query(
+      'SELECT * FROM settings WHERE id = $1 LIMIT 1',
+      ['system']
+    );
 
-    if (!item?.Data) {
+    if (result.rows.length === 0) {
       // Return default settings if none exist
       return {
         id: 'system',
@@ -49,7 +52,7 @@ export class SettingsModel {
       };
     }
 
-    return item.Data;
+    return result.rows[0];
   }
 
   static async update(settings: Partial<SystemSettings>): Promise<SystemSettings> {
@@ -60,14 +63,19 @@ export class SettingsModel {
       updatedAt: new Date().toISOString(),
     };
 
-    await DatabaseService.put({
-      PK: 'SETTINGS',
-      SK: 'system',
-      Type: 'Settings',
-      Data: updated,
-    });
+    const keys = Object.keys(updated).filter(key => key !== 'id');
+    const values = keys.map(key => updated[key as keyof SystemSettings]);
+    const setClause = keys.map((key, i) => `${key} = $${i + 2}`).join(', ');
 
-    return updated;
+    const result = await DatabaseService.query(
+      `INSERT INTO settings (id, ${keys.join(', ')})
+       VALUES ($1, ${keys.map((_, i) => `$${i + 2}`).join(', ')})
+       ON CONFLICT (id) DO UPDATE SET ${setClause}
+       RETURNING *`,
+      ['system', ...values]
+    );
+
+    return result.rows[0];
   }
 
   static async getDefaultOriginAddress(): Promise<SystemSettings['defaultOriginAddress']> {
@@ -79,5 +87,28 @@ export class SettingsModel {
     address: SystemSettings['defaultOriginAddress']
   ): Promise<void> {
     await this.update({ defaultOriginAddress: address });
+  }
+
+  static async getOriginCoordinates(): Promise<{ lat: number; lng: number } | null> {
+    try {
+      const settings = await this.get();
+      // Try to get coordinates from a separate setting
+      const coordsResult = await DatabaseService.query(
+        'SELECT * FROM settings WHERE id = $1 LIMIT 1',
+        ['origin_coordinates']
+      );
+      if (coordsResult.rows.length > 0) {
+        return coordsResult.rows[0];
+      }
+      
+      // Default coordinates for Owen Sound if not set
+      return {
+        lat: 44.5675,
+        lng: -80.9436
+      };
+    } catch (error) {
+      console.warn('Failed to get origin coordinates:', error);
+      return null;
+    }
   }
 }

@@ -28,10 +28,10 @@ router.get('/users', async (req: AuthRequest, res) => {
       const searchTerm = (search as string).toLowerCase();
       users = users.filter(
         (user) =>
-          user.email.toLowerCase().includes(searchTerm) ||
-          user.firstName.toLowerCase().includes(searchTerm) ||
-          user.lastName.toLowerCase().includes(searchTerm) ||
-          `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm)
+          user.email?.toLowerCase().includes(searchTerm) ||
+          user.firstName?.toLowerCase().includes(searchTerm) ||
+          user.lastName?.toLowerCase().includes(searchTerm) ||
+          `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -242,7 +242,7 @@ router.delete('/users/:id', async (req: AuthRequest, res) => {
   }
 });
 
-// Bulk operations
+// Enhanced bulk operations with role management
 router.post('/users/bulk-update', async (req: AuthRequest, res) => {
   try {
     const { userIds, updates } = req.body;
@@ -254,7 +254,34 @@ router.post('/users/bulk-update', async (req: AuthRequest, res) => {
     const results = [];
     for (const userId of userIds) {
       try {
-        const updatedUser = await UserModel.update(userId, updates);
+        let processedUpdates = { ...updates };
+        
+        // Handle special role operations
+        if (updates.addRole) {
+          const user = await UserModel.findById(userId);
+          if (user) {
+            const currentRoles = user.roles || [user.role];
+            if (!currentRoles.includes(updates.addRole)) {
+              processedUpdates.roles = [...currentRoles, updates.addRole];
+            }
+            delete processedUpdates.addRole;
+          }
+        }
+        
+        if (updates.removeRole) {
+          const user = await UserModel.findById(userId);
+          if (user) {
+            const currentRoles = user.roles || [user.role];
+            processedUpdates.roles = currentRoles.filter(role => role !== updates.removeRole);
+            // Ensure primary role is maintained
+            if (!processedUpdates.roles.includes(user.role)) {
+              processedUpdates.roles.push(user.role);
+            }
+          }
+          delete processedUpdates.removeRole;
+        }
+
+        const updatedUser = await UserModel.update(userId, processedUpdates);
         if (updatedUser) {
           results.push({ userId, success: true, user: updatedUser });
         } else {
@@ -278,20 +305,93 @@ router.post('/users/bulk-update', async (req: AuthRequest, res) => {
   }
 });
 
-// Get user activity logs (placeholder for future implementation)
+// Get user activity logs with enhanced mock data
 router.get('/users/:id/activity', async (req: AuthRequest, res) => {
   try {
-    // For now, return mock data - in the future this would come from audit logs
-    res.json({
-      activities: [
-        {
-          action: 'login',
-          timestamp: new Date().toISOString(),
-          ipAddress: '192.168.1.1',
-          userAgent: 'Mozilla/5.0...',
-        },
-      ],
-    });
+    const { id } = req.params;
+    const user = await UserModel.findById(id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Generate realistic mock activity data based on user role
+    const now = new Date();
+    const activities = [];
+    
+    // Recent login activity
+    if (user.role !== 'customer') { // Staff, drivers, admins login more frequently
+      for (let i = 0; i < Math.floor(Math.random() * 5) + 1; i++) {
+        const loginTime = new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+        activities.push({
+          id: `activity-${Date.now()}-${i}`,
+          action: 'Login',
+          timestamp: loginTime.toISOString(),
+          ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`,
+          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+          details: {
+            portal: user.role === 'admin' ? 'staff' : user.role,
+            sessionDuration: `${Math.floor(Math.random() * 240) + 30} minutes`,
+            device: 'Desktop'
+          }
+        });
+      }
+    }
+
+    // Role-specific activities
+    if (user.roles?.includes('admin') || user.role === 'admin') {
+      activities.push({
+        id: `activity-admin-${Date.now()}`,
+        action: 'User Management Access',
+        timestamp: new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
+        ipAddress: '192.168.1.100',
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        details: {
+          module: 'User Management',
+          action: 'Viewed user list',
+          affectedUsers: Math.floor(Math.random() * 10) + 1
+        }
+      });
+    }
+
+    if (user.roles?.includes('staff') || user.role === 'staff') {
+      activities.push({
+        id: `activity-staff-${Date.now()}`,
+        action: 'Package Management',
+        timestamp: new Date(now.getTime() - Math.random() * 12 * 60 * 60 * 1000).toISOString(),
+        ipAddress: '192.168.1.50',
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        details: {
+          module: 'Packages',
+          action: 'Updated package status',
+          packageCount: Math.floor(Math.random() * 5) + 1
+        }
+      });
+    }
+
+    if (user.roles?.includes('driver') || user.role === 'driver') {
+      activities.push({
+        id: `activity-driver-${Date.now()}`,
+        action: 'GPS Location Update',
+        timestamp: new Date(now.getTime() - Math.random() * 6 * 60 * 60 * 1000).toISOString(),
+        ipAddress: '192.168.1.25',
+        userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15',
+        details: {
+          module: 'GPS Tracking',
+          location: 'Toronto, ON',
+          accuracy: '±5m',
+          loadId: 'LOAD-001'
+        }
+      });
+    }
+
+    // Sort by timestamp (newest first)
+    activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    // Log admin action
+    console.log(`Admin ${req.user?.email} accessed activity logs for user: ${user.email}`);
+
+    res.json({ activities: activities.slice(0, 20) }); // Return last 20 activities
   } catch (error) {
     console.error('Error fetching user activity:', error);
     res.status(500).json({ error: 'Failed to fetch user activity' });

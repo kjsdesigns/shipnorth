@@ -16,7 +16,7 @@ new DatabaseStack(app, `ShipnorthDatabase-${environment}`, {
     region: process.env.CDK_DEFAULT_REGION || 'ca-central-1',
   },
   stackName: `shipnorth-database-${environment}`,
-  description: `Shipnorth DynamoDB tables for ${environment} environment`,
+  description: `Shipnorth database infrastructure for ${environment} environment`,
 });
 
 // Simple Lambda Stack (API)

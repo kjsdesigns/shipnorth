@@ -9,7 +9,14 @@ const router = Router();
 // List all customers (staff/admin only)
 router.get('/', authenticate, authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
   try {
+    console.log('🎯 Customers API called');
     const customers = await CustomerModel.list();
+    console.log('📊 CustomerModel.list returned:', customers.length, 'customers');
+    console.log('🔍 First customer:', customers[0] ? {
+      name: customers[0].name,
+      addressLine1: customers[0].addressLine1,
+      city: customers[0].city
+    } : 'No customers');
     
     // Add package counts for each customer
     const customersWithCounts = await Promise.all(
@@ -33,7 +40,7 @@ router.get('/', authenticate, authorize('staff', 'admin'), async (req: AuthReque
   }
 });
 
-// Self-registration endpoint (public)
+// Self-registration endpoint (public) - Creates both customer and user account
 router.post('/register', async (req, res, next) => {
   try {
     const {
@@ -47,6 +54,7 @@ router.post('/register', async (req, res, next) => {
       province,
       postalCode,
       country = 'CA',
+      password = 'temp123', // Default password for customers
     } = req.body;
 
     // Check if customer already exists
@@ -60,7 +68,19 @@ router.post('/register', async (req, res, next) => {
       });
     }
 
-    // Create customer record first (without payment method)
+    // Also check if user account exists
+    const { UserModel } = await import('../models/user');
+    const existingUser = await UserModel.findByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({
+        error: 'User account already exists',
+        message: 'An account with this email already exists. Please sign in instead.',
+        loginSuggested: true,
+        email: email,
+      });
+    }
+
+    // Create customer record first
     const customerData: any = {
       firstName,
       lastName,
@@ -79,6 +99,40 @@ router.post('/register', async (req, res, next) => {
 
     const customer = await CustomerModel.create(customerData);
 
+    // Create user account linked to customer
+    const userData = {
+      email,
+      password,
+      firstName,
+      lastName,
+      phone,
+      role: 'customer' as const,
+      customerId: customer.id,
+    };
+
+    const user = await UserModel.create(userData);
+
+    // Generate authentication tokens
+    const jwt = require('jsonwebtoken');
+    const accessToken = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        customerId: customer.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+      process.env.JWT_SECRET || 'development-secret',
+      { expiresIn: '24h' }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_REFRESH_SECRET || 'development-refresh-secret',
+      { expiresIn: '30d' }
+    );
+
     res.status(201).json({
       customerId: customer.id,
       customer: {
@@ -87,7 +141,17 @@ router.post('/register', async (req, res, next) => {
         lastName: customer.lastName,
         email: customer.email,
       },
-      message: 'Registration successful. Please add a payment method to complete setup.',
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        customerId: customer.id,
+      },
+      accessToken,
+      refreshToken,
+      message: 'Registration successful. You are now logged in.',
     });
   } catch (error) {
     next(error);
@@ -114,9 +178,9 @@ router.post('/create-vault-order', async (req, res, next) => {
     }
 
     const vaultOrder = await paypalService.createVaultOrder({
-      email: customer.email,
-      name: `${customer.firstName} ${customer.lastName}`,
-      phone: customer.phone,
+      email: customer.email || '',
+      name: `${customer.firstName || ''} ${customer.lastName || ''}`.trim(),
+      phone: customer.phone || '',
     });
 
     res.json({
@@ -196,7 +260,7 @@ router.post('/process-payment', async (req, res, next) => {
       throw new AppError(404, 'Customer not found');
     }
 
-    if (!customer.paymentMethod?.token) {
+    if (!customer.paymentMethod || typeof customer.paymentMethod === 'string' || !customer.paymentMethod.token) {
       throw new AppError(400, 'No payment method available');
     }
 
@@ -221,7 +285,7 @@ router.post('/process-payment', async (req, res, next) => {
     }
 
     const paymentResult = await paypalService.processPaymentWithToken(
-      customer.paymentMethod.token,
+      (customer.paymentMethod as any).token,
       amount,
       description,
       referenceId
@@ -555,9 +619,9 @@ router.post('/:id/payment-methods/replace', authorize('staff', 'admin'), async (
 
     // Create new setup token for payment method replacement
     const setupToken = await paypalService.createCustomerSetupToken({
-      email: customer.email,
-      name: `${customer.firstName} ${customer.lastName}`,
-      phone: customer.phone,
+      email: customer.email || '',
+      name: `${customer.firstName || ''} ${customer.lastName || ''}`.trim(),
+      phone: customer.phone || '',
     });
 
     res.json({
@@ -686,9 +750,9 @@ router.post(
 
       // Create new setup token for payment method replacement
       const setupToken = await paypalService.createCustomerSetupToken({
-        email: customer.email,
-        name: `${customer.firstName} ${customer.lastName}`,
-        phone: customer.phone,
+        email: customer.email || '',
+        name: `${customer.firstName || ''} ${customer.lastName || ''}`.trim(),
+        phone: customer.phone || '',
       });
 
       res.json({

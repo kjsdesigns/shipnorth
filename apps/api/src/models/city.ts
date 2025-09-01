@@ -1,219 +1,197 @@
-import { DatabaseService, generateId } from '../services/database';
+import { Pool } from 'pg';
+import { v4 as uuidv4 } from 'uuid';
+
+const pool = new Pool({
+  host: process.env.POSTGRES_HOST || 'localhost',
+  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  database: process.env.POSTGRES_DB || 'shipnorth',
+  user: process.env.POSTGRES_USER || 'shipnorth',
+  password: process.env.POSTGRES_PASSWORD || 'shipnorth_dev',
+});
 
 export interface City {
   id: string;
   name: string;
   province: string;
-  alternativeNames?: string[]; // Non-standard names that correlate with this city
-  packageCount?: number; // Calculated field for display
-  businessRules?: {
-    [key: string]: any; // Flexible structure for future business rules
-  };
-  createdAt: string;
-  updatedAt: string;
+  alternativeNames?: string[];
+  packageCount?: number;
+  businessRules?: any;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class CityModel {
-  static async create(cityData: Omit<City, 'id' | 'createdAt' | 'updatedAt'>): Promise<City> {
-    const id = generateId();
-    const now = new Date().toISOString();
-
-    const newCity: City = {
-      id,
-      ...cityData,
-      alternativeNames: cityData.alternativeNames || [],
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    await DatabaseService.put({
-      PK: `CITY#${id}`,
-      SK: 'METADATA',
-      GSI1PK: `PROVINCE#${cityData.province.toUpperCase()}`,
-      GSI1SK: `CITY#${cityData.name.toUpperCase()}`,
-      GSI2PK: `CITYNAME#${cityData.name.toUpperCase()}`,
-      GSI2SK: `CITY#${id}`,
-      Type: 'City',
-      Data: newCity,
-    });
-
-    return newCity;
-  }
-
-  static async findById(id: string): Promise<City | null> {
-    const item = await DatabaseService.get(`CITY#${id}`, 'METADATA');
-    return item ? item.Data : null;
+  static async query(text: string, params: any[] = []) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(text, params);
+      return result;
+    } finally {
+      client.release();
+    }
   }
 
   static async findByName(name: string, province?: string): Promise<City[]> {
-    const items = await DatabaseService.queryByGSI('GSI2', `CITYNAME#${name.toUpperCase()}`);
-    let cities = items.filter((item: any) => item.Type === 'City').map((item: any) => item.Data);
-
-    if (province) {
-      cities = cities.filter(
-        (city: City) => city.province.toLowerCase() === province.toLowerCase()
-      );
+    try {
+      let query = 'SELECT * FROM cities WHERE name ILIKE $1';
+      const params = [`%${name}%`];
+      
+      if (province) {
+        query += ' AND province ILIKE $2';
+        params.push(`%${province}%`);
+      }
+      
+      query += ' ORDER BY name';
+      
+      const result = await this.query(query, params);
+      return result.rows;
+    } catch (error) {
+      console.error('Error finding cities by name:', error);
+      return [];
     }
-
-    return cities;
   }
 
-  static async findByProvince(province: string): Promise<City[]> {
-    const items = await DatabaseService.queryByGSI('GSI1', `PROVINCE#${province.toUpperCase()}`);
-    return items
-      .filter((item: any) => item.Type === 'City')
-      .map((item: any) => item.Data)
-      .sort((a: City, b: City) => a.name.localeCompare(b.name));
+  static async findById(id: string): Promise<City | null> {
+    try {
+      const result = await this.query('SELECT * FROM cities WHERE id = $1', [id]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Error finding city by ID:', error);
+      return null;
+    }
   }
 
-  static async list(): Promise<City[]> {
-    const items = await DatabaseService.scan({
-      FilterExpression: '#type = :type',
-      ExpressionAttributeNames: {
-        '#type': 'Type',
-      },
-      ExpressionAttributeValues: {
-        ':type': 'City',
-      },
-    });
+  static async create(cityData: Omit<City, 'id' | 'createdAt' | 'updatedAt'>): Promise<City> {
+    try {
+      const id = uuidv4();
+      const result = await this.query(`
+        INSERT INTO cities (id, name, province, alternative_names, business_rules)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+      `, [
+        id, 
+        cityData.name, 
+        cityData.province, 
+        cityData.alternativeNames || [], 
+        JSON.stringify(cityData.businessRules || {})
+      ]);
+      
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating city:', error);
+      throw error;
+    }
+  }
 
-    return items
-      .map((item: any) => item.Data)
-      .filter(Boolean)
-      .sort((a: City, b: City) => {
-        const provinceCompare = a.province.localeCompare(b.province);
-        if (provinceCompare !== 0) return provinceCompare;
-        return a.name.localeCompare(b.name);
-      });
+  static async getCitiesWithPackageCounts(): Promise<City[]> {
+    try {
+      const result = await this.query(`
+        SELECT 
+          c.*,
+          COUNT(DISTINCT a.id) as package_count
+        FROM cities c
+        LEFT JOIN addresses a ON c.name ILIKE a.city AND c.province ILIKE a.province_state
+        LEFT JOIN packages p ON a.id = p.ship_to_address_id
+        GROUP BY c.id, c.name, c.province
+        ORDER BY package_count DESC, c.name
+      `);
+      
+      return result.rows;
+    } catch (error) {
+      console.error('Error getting cities with package counts:', error);
+      return [];
+    }
   }
 
   static async update(id: string, updates: Partial<City>): Promise<City | null> {
-    const current = await this.findById(id);
-    if (!current) return null;
+    try {
+      const setClause = Object.keys(updates)
+        .filter(key => key !== 'id')
+        .map((key, i) => {
+          if (key === 'alternativeNames') return `alternative_names = $${i + 2}`;
+          if (key === 'businessRules') return `business_rules = $${i + 2}`;
+          return `${key} = $${i + 2}`;
+        })
+        .join(', ');
 
-    const updatedCity = {
-      ...current,
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
+      const values = Object.entries(updates)
+        .filter(([key]) => key !== 'id')
+        .map(([key, value]) => {
+          if (key === 'businessRules') return JSON.stringify(value);
+          return value;
+        });
 
-    const updateData: any = {
-      Data: updatedCity,
-    };
+      const result = await this.query(`
+        UPDATE cities SET ${setClause}, updated_at = NOW()
+        WHERE id = $1 
+        RETURNING *
+      `, [id, ...values]);
 
-    // Update GSI indexes if name or province changed
-    if (updates.name && updates.name !== current.name) {
-      updateData.GSI2PK = `CITYNAME#${updates.name.toUpperCase()}`;
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Error updating city:', error);
+      throw error;
     }
-
-    if (updates.province && updates.province !== current.province) {
-      updateData.GSI1PK = `PROVINCE#${updates.province.toUpperCase()}`;
-      updateData.GSI1SK = `CITY#${(updates.name || current.name).toUpperCase()}`;
-    }
-
-    if (updates.name && updates.name !== current.name) {
-      updateData.GSI1SK = `CITY#${updates.name.toUpperCase()}`;
-    }
-
-    const result = await DatabaseService.update(`CITY#${id}`, 'METADATA', updateData);
-    return result ? result.Data : null;
   }
 
   static async delete(id: string): Promise<boolean> {
-    await DatabaseService.delete(`CITY#${id}`, 'METADATA');
-    return true;
+    try {
+      const result = await this.query('DELETE FROM cities WHERE id = $1', [id]);
+      return (result.rowCount || 0) > 0;
+    } catch (error) {
+      console.error('Error deleting city:', error);
+      throw error;
+    }
   }
 
-  // Method to correlate city names with package addresses
-  static async findCityByAddress(city: string, province: string): Promise<City | null> {
-    const normalizedCity = city.toUpperCase().trim();
-    const normalizedProvince = province.toUpperCase().trim();
-
-    // First try exact match
-    const exactMatches = await this.findByName(normalizedCity, normalizedProvince);
-    if (exactMatches.length > 0) {
-      return exactMatches[0];
-    }
-
-    // Then try alternative names
-    const allCitiesInProvince = await this.findByProvince(normalizedProvince);
-
-    for (const cityRecord of allCitiesInProvince) {
-      if (
-        cityRecord.alternativeNames?.some(
-          (altName) => altName.toUpperCase().trim() === normalizedCity
-        )
-      ) {
-        return cityRecord;
+  static async addAlternativeName(id: string, name: string): Promise<City | null> {
+    try {
+      const city = await this.findById(id);
+      if (!city) return null;
+      
+      const currentNames = city.alternativeNames || [];
+      if (!currentNames.includes(name)) {
+        currentNames.push(name);
+        return await this.update(id, { alternativeNames: currentNames });
       }
+      
+      return city;
+    } catch (error) {
+      console.error('Error adding alternative name:', error);
+      throw error;
     }
-
-    return null;
   }
 
-  // Method to get package count for each city
-  static async getCitiesWithPackageCounts(): Promise<City[]> {
-    const cities = await this.list();
-
-    // Import PackageModel here to avoid circular imports
-    const { PackageModel } = await import('./package');
-    const packages = await PackageModel.list(10000); // Get all packages for counting
-
-    return cities.map((city) => {
-      const packageCount = packages.filter((pkg) => {
-        // TODO: Fix this to properly resolve address from addressId
-        const pkgCity = 'UNKNOWN'; // pkg.shipTo.city.toUpperCase().trim();
-        const pkgProvince = 'UNKNOWN'; // pkg.shipTo.province.toUpperCase().trim();
-
-        // Check exact match
-        if (pkgCity === city.name.toUpperCase() && pkgProvince === city.province.toUpperCase()) {
-          return true;
-        }
-
-        // Check alternative names
-        return (
-          city.alternativeNames?.some(
-            (altName) =>
-              altName.toUpperCase().trim() === pkgCity &&
-              pkgProvince === city.province.toUpperCase()
-          ) || false
-        );
-      }).length;
-
-      return {
-        ...city,
-        packageCount,
-      };
-    });
-  }
-
-  // Method to add alternative name to a city
-  static async addAlternativeName(id: string, alternativeName: string): Promise<City | null> {
-    const city = await this.findById(id);
-    if (!city) return null;
-
-    const currentAlternatives = city.alternativeNames || [];
-    const normalizedName = alternativeName.trim();
-
-    if (!currentAlternatives.includes(normalizedName)) {
-      return await this.update(id, {
-        alternativeNames: [...currentAlternatives, normalizedName],
-      });
+  static async removeAlternativeName(id: string, name: string): Promise<City | null> {
+    try {
+      const city = await this.findById(id);
+      if (!city) return null;
+      
+      const currentNames = city.alternativeNames || [];
+      const updatedNames = currentNames.filter(n => n !== name);
+      
+      return await this.update(id, { alternativeNames: updatedNames });
+    } catch (error) {
+      console.error('Error removing alternative name:', error);
+      throw error;
     }
-
-    return city;
   }
 
-  // Method to remove alternative name from a city
-  static async removeAlternativeName(id: string, alternativeName: string): Promise<City | null> {
-    const city = await this.findById(id);
-    if (!city) return null;
-
-    const currentAlternatives = city.alternativeNames || [];
-    const updatedAlternatives = currentAlternatives.filter((name) => name !== alternativeName);
-
-    return await this.update(id, {
-      alternativeNames: updatedAlternatives,
-    });
+  static async findCityByAddress(address: any): Promise<City | null> {
+    try {
+      if (!address?.city || !address?.province) {
+        return null;
+      }
+      
+      const result = await this.query(
+        'SELECT * FROM cities WHERE name ILIKE $1 AND province ILIKE $2 LIMIT 1',
+        [address.city, address.province]
+      );
+      
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Error finding city by address:', error);
+      return null;
+    }
   }
 }

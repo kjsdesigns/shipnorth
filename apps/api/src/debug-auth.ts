@@ -25,7 +25,7 @@ const debugAuth = async () => {
     console.log(`Stored hash: ${user.password}`);
 
     // Test bcrypt directly
-    const isValid = await bcrypt.compare(test.password, user.password);
+    const isValid = user.password ? await bcrypt.compare(test.password, user.password) : false;
     console.log(`Direct bcrypt comparison: ${isValid ? '✅ Valid' : '❌ Invalid'}`);
 
     // Test through validatePassword

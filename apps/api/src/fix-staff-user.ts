@@ -39,7 +39,7 @@ const fixStaffUser = async () => {
     console.log(`  Password hash: ${dbUser.password}`);
 
     // Test password
-    const isValid = await bcrypt.compare('staff123', dbUser.password);
+    const isValid = dbUser.password ? await bcrypt.compare('staff123', dbUser.password) : false;
     console.log(`\nDirect bcrypt test: ${isValid ? '✅ VALID' : '❌ INVALID'}`);
 
     // Test through validatePassword
@@ -64,7 +64,7 @@ const fixStaffUser = async () => {
       const updatedUser = await UserModel.findByEmail('staff@shipnorth.com');
       if (updatedUser) {
         console.log(`Updated hash: ${updatedUser.password}`);
-        const updatedValid = await bcrypt.compare('staff123', updatedUser.password);
+        const updatedValid = updatedUser.password ? await bcrypt.compare('staff123', updatedUser.password) : false;
         console.log(`Updated password test: ${updatedValid ? '✅ VALID' : '❌ INVALID'}`);
       }
     }

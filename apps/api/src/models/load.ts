@@ -14,12 +14,30 @@ export interface Load {
   name: string;
   driver_id?: string;
   vehicle?: string;
+  vehicleId?: string; // Alias for vehicle
   status: string;
   departure_date?: string;
   estimated_duration?: number;
   actual_duration?: number;
   created_at?: Date;
   updated_at?: Date;
+  
+  // Additional properties used by services (with getters/aliases)
+  driverId?: string;
+  departureDate?: string;
+  routeOptimized?: boolean;
+  totalPackages?: number;
+  estimatedDistance?: number;
+  estimatedDuration?: number; // Alias for estimated_duration
+  defaultDeliveryDate?: string;
+  deliveryCities?: Array<{city: string; province: string; country?: string; expectedDeliveryDate?: string}> | string[];
+  driverName?: string;
+  carrierOrTruck?: string;
+  originAddress?: string;
+  transportMode?: string;
+  notes?: string;
+  locationHistory?: any[];
+  currentLocation?: any;
 }
 
 export class LoadModel {
@@ -87,20 +105,33 @@ export class LoadModel {
 
   static async update(id: string, updates: Partial<Load>): Promise<Load | null> {
     try {
-      const setClause = Object.keys(updates)
-        .filter(key => key !== 'id')
-        .map((key, i) => `${key} = $${i + 2}`)
-        .join(', ');
+      const setFields = [];
+      const values = [id];
+      let paramIndex = 2;
 
-      const values = Object.entries(updates)
-        .filter(([key]) => key !== 'id')
-        .map(([, value]) => value);
+      // Handle field mapping and build SET clause dynamically
+      for (const [key, value] of Object.entries(updates)) {
+        if (key === 'id') continue;
+        
+        let dbField = key;
+        if (key === 'routeOptimized') dbField = 'route_optimized';
+        else if (key === 'estimatedDistance') dbField = 'estimated_distance';
+        else if (key === 'estimatedDuration') dbField = 'estimated_duration_total';
+        
+        setFields.push(`${dbField} = $${paramIndex}`);
+        values.push(value);
+        paramIndex++;
+      }
+
+      // Always update the updated_at timestamp
+      setFields.push(`updated_at = NOW()`);
 
       const result = await this.query(`
-        UPDATE loads SET ${setClause}, updated_at = NOW()
+        UPDATE loads 
+        SET ${setFields.join(', ')}
         WHERE id = $1 
         RETURNING *
-      `, [id, ...values]);
+      `, values);
 
       return result.rows[0] || null;
     } catch (error) {
@@ -127,22 +158,26 @@ export class LoadModel {
     try {
       await client.query('BEGIN');
 
-      // Remove existing assignments for this load
-      await client.query('DELETE FROM load_packages WHERE load_id = $1', [loadId]);
+      // Remove existing assignments for these packages (they might be assigned to other loads)
+      if (packageIds.length > 0) {
+        const placeholders = packageIds.map((_, i) => `$${i + 1}`).join(',');
+        await client.query(
+          `DELETE FROM load_packages WHERE package_id IN (${placeholders})`,
+          packageIds
+        );
+      }
 
-      // Add new assignments
+      // Add new assignments to the junction table
       for (let i = 0; i < packageIds.length; i++) {
         const packageId = packageIds[i];
         await client.query(
           'INSERT INTO load_packages (load_id, package_id, sequence_order) VALUES ($1, $2, $3)',
           [loadId, packageId, i + 1]
         );
-        
-        // Update package with load_id
-        await client.query('UPDATE packages SET load_id = $1 WHERE id = $2', [loadId, packageId]);
       }
 
       await client.query('COMMIT');
+      console.log(`✅ Assigned ${packageIds.length} packages to load ${loadId}`);
       return true;
     } catch (error) {
       await client.query('ROLLBACK');
@@ -168,13 +203,49 @@ export class LoadModel {
       const result = await client.query('DELETE FROM loads WHERE id = $1', [id]);
       
       await client.query('COMMIT');
-      return result.rowCount > 0;
+      return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       await client.query('ROLLBACK');
       console.error('Error deleting load:', error);
       throw error;
     } finally {
       client.release();
+    }
+  }
+
+  static async assignDriver(loadId: string, driverId: string): Promise<boolean> {
+    try {
+      const result = await this.query(
+        'UPDATE loads SET driver_id = $1, updated_at = NOW() WHERE id = $2',
+        [driverId, loadId]
+      );
+      return result.rowCount !== null && result.rowCount > 0;
+    } catch (error) {
+      console.error('Error assigning driver to load:', error);
+      throw error;
+    }
+  }
+
+  static async addLocationTracking(loadId: string, location: any): Promise<boolean> {
+    try {
+      // Mock implementation for location tracking
+      // This would typically update a GPS tracking table
+      console.log(`Adding location tracking for load ${loadId}:`, location);
+      return true;
+    } catch (error) {
+      console.error('Error adding location tracking:', error);
+      throw error;
+    }
+  }
+
+  static async updateDeliveryCities(loadId: string, cities: string[]): Promise<boolean> {
+    try {
+      // Mock implementation - would typically update a separate table or JSON column
+      console.log(`Updating delivery cities for load ${loadId}:`, cities);
+      return true;
+    } catch (error) {
+      console.error('Error updating delivery cities:', error);
+      throw error;
     }
   }
 }

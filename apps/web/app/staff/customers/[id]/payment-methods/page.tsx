@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, User } from 'lucide-react';
 import ModernLayout from '@/components/ModernLayout';
 import PaymentMethodManager from '@/components/PaymentMethodManager';
+import PayPalScript from '@/components/PayPalScript';
 import { authAPI, customerAPI } from '@/lib/api';
 
 interface Customer {
@@ -89,6 +90,7 @@ export default function CustomerPaymentMethodsPage() {
 
   return (
     <ModernLayout role={user.role}>
+      <PayPalScript enabled={true} />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center space-x-4">

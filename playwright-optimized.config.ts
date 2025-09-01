@@ -27,6 +27,8 @@ export default defineConfig({
     'auth.spec.ts',
     'customer-portal.spec.ts',
     'staff-interface.spec.ts',
+    'route-optimization.spec.ts',
+    'verify-load-packages.spec.ts',
 
     // Priority 3: Extended features (optional)
     'driver-mobile.spec.ts',

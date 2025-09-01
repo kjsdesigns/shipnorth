@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // PostgreSQL connection pool
 const pool = new Pool({
-  host: process.env.POSTGRES_HOST || 'localhost',
+  host: process.env.POSTGRES_HOST || 'shipnorth-postgres',
   port: parseInt(process.env.POSTGRES_PORT || '5432'),
   database: process.env.POSTGRES_DB || 'shipnorth',
   user: process.env.POSTGRES_USER || 'shipnorth',
@@ -230,7 +230,8 @@ export class DatabaseService {
         );
       } catch (error) {
         // Ignore duplicate key errors
-        if (!error.message.includes('duplicate key')) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (!errorMessage.includes('duplicate key')) {
           console.error('❌ Test user creation failed:', error);
         }
       }
@@ -241,3 +242,4 @@ export class DatabaseService {
 }
 
 export default DatabaseService;
+export { pool };

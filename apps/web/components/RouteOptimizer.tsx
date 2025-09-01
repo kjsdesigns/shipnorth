@@ -51,6 +51,8 @@ interface RouteOptimizerProps {
   onRouteUpdate?: (route: RouteData) => void;
   userRole: 'staff' | 'driver';
   className?: string;
+  availablePackages?: any[]; // Packages not yet assigned to this route
+  onPackagesChanged?: (addedPackages: string[], removedPackages: string[]) => void;
 }
 
 export default function RouteOptimizer({
@@ -59,6 +61,8 @@ export default function RouteOptimizer({
   onRouteUpdate,
   userRole,
   className = '',
+  availablePackages = [],
+  onPackagesChanged,
 }: RouteOptimizerProps) {
   const [route, setRoute] = useState<RouteData>(
     initialRoute || {
@@ -76,6 +80,9 @@ export default function RouteOptimizer({
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingStop, setEditingStop] = useState<RouteStop | null>(null);
+  const [showPackageManager, setShowPackageManager] = useState(false);
+  const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
+  const [drivingTimes, setDrivingTimes] = useState<Record<string, number>>({});
 
   const generateAIRoute = async () => {
     setIsOptimizing(true);
@@ -205,6 +212,129 @@ export default function RouteOptimizer({
     setEditingStop(null);
   };
 
+  const addPackagesToRoute = async (packageIds: string[]) => {
+    try {
+      const { authAPI } = await import('@/lib/api');
+      
+      // Add packages to load
+      await authAPI.packages.assignToLoad(loadId, packageIds);
+      
+      // Trigger re-optimization
+      onPackagesChanged?.(packageIds, []);
+      await generateAIRoute();
+      
+      setSelectedPackages([]);
+      setShowPackageManager(false);
+    } catch (error) {
+      console.error('Failed to add packages:', error);
+    }
+  };
+
+  const removePackageFromRoute = async (packageId: string) => {
+    try {
+      const { authAPI } = await import('@/lib/api');
+      
+      // Remove package from load
+      await authAPI.packages.removeFromLoad(loadId, packageId);
+      
+      // Update local route state
+      const updatedRoute = {
+        ...route,
+        stops: route.stops.map(stop => ({
+          ...stop,
+          packages: stop.packages.filter(pid => pid !== packageId)
+        })).filter(stop => stop.packages.length > 0),
+        lastModified: new Date().toISOString(),
+      };
+      
+      setRoute(updatedRoute);
+      onPackagesChanged?.([], [packageId]);
+      
+      // Re-optimize if there are still stops
+      if (updatedRoute.stops.length > 0) {
+        await generateAIRoute();
+      }
+    } catch (error) {
+      console.error('Failed to remove package:', error);
+    }
+  };
+
+  const reorderCities = async (newOrder: RouteStop[]) => {
+    try {
+      // Update local state immediately for better UX
+      const updatedRoute = {
+        ...route,
+        stops: newOrder,
+        lastModified: new Date().toISOString(),
+      };
+      setRoute(updatedRoute);
+
+      // Calculate driving times between cities
+      await calculateDrivingTimes(newOrder);
+      
+      // Trigger re-optimization with new city order
+      const { authAPI } = await import('@/lib/api');
+      const result = await authAPI.routes.generateAI(loadId, {
+        customCityOrder: newOrder.map(stop => ({ city: stop.city, province: stop.province })),
+        preserveCityOrder: true,
+      });
+
+      if (result.data.success && result.data.routeData) {
+        // Update with optimized route data
+        const optimizedRoute = {
+          ...updatedRoute,
+          totalDistance: result.data.routeData.totalDistance || 0,
+          estimatedDuration: result.data.routeData.totalDuration || 0,
+          optimizationScore: result.data.routeData.optimizationScore || 85,
+        };
+        setRoute(optimizedRoute);
+        onRouteUpdate?.(optimizedRoute);
+      }
+    } catch (error) {
+      console.error('Failed to reorder cities:', error);
+    }
+  };
+
+  const calculateDrivingTimes = async (stops: RouteStop[]) => {
+    try {
+      const times: Record<string, number> = {};
+      
+      for (let i = 1; i < stops.length; i++) {
+        const fromStop = stops[i - 1];
+        const toStop = stops[i];
+        const key = `${fromStop.id}-${toStop.id}`;
+        
+        // Mock driving time calculation (in real implementation, use Google Maps API)
+        const distance = calculateHaversineDistance(
+          fromStop.coordinates?.lat || 0,
+          fromStop.coordinates?.lng || 0,
+          toStop.coordinates?.lat || 0,
+          toStop.coordinates?.lng || 0
+        );
+        
+        // Assume average speed of 80 km/h
+        times[key] = Math.round((distance / 80) * 60); // Convert to minutes
+      }
+      
+      setDrivingTimes(times);
+    } catch (error) {
+      console.error('Failed to calculate driving times:', error);
+    }
+  };
+
+  const calculateHaversineDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
   return (
     <div className={`bg-white dark:bg-gray-800 rounded-lg shadow ${className}`}>
       {/* Header */}
@@ -304,13 +434,31 @@ export default function RouteOptimizer({
           )}
 
           {isEditing && (
-            <button
-              onClick={addStop}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Stop
-            </button>
+            <>
+              <button
+                onClick={addStop}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Stop
+              </button>
+              
+              <button
+                onClick={() => setShowPackageManager(true)}
+                className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center"
+              >
+                <Package className="h-4 w-4 mr-2" />
+                Manage Packages
+              </button>
+              
+              <button
+                onClick={() => generateAIRoute()}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center"
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Re-optimize
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -350,6 +498,7 @@ export default function RouteOptimizer({
             {route.stops.map((stop, index) => (
               <div
                 key={stop.id}
+                data-testid="route-stop"
                 className={`border rounded-lg p-4 ${
                   stop.status === 'completed'
                     ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
@@ -391,6 +540,16 @@ export default function RouteOptimizer({
                           </>
                         )}
                       </div>
+                      
+                      {/* Driving time to this stop */}
+                      {index > 0 && (
+                        <div className="flex items-center mt-1">
+                          <Route className="h-3 w-3 text-blue-400 mr-1" />
+                          <span className="text-xs text-blue-600 dark:text-blue-400">
+                            {drivingTimes[`${route.stops[index - 1].id}-${stop.id}`] || '?'} min drive from previous stop
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -401,6 +560,7 @@ export default function RouteOptimizer({
                         <button
                           onClick={() => moveStop(index, 'up')}
                           disabled={index === 0}
+                          aria-label="Move up"
                           className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50"
                         >
                           <ArrowUp className="h-4 w-4" />
@@ -408,6 +568,7 @@ export default function RouteOptimizer({
                         <button
                           onClick={() => moveStop(index, 'down')}
                           disabled={index === route.stops.length - 1}
+                          aria-label="Move down"
                           className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50"
                         >
                           <ArrowDown className="h-4 w-4" />
@@ -538,6 +699,115 @@ export default function RouteOptimizer({
                   Save Stop
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Package Manager Modal */}
+      {showPackageManager && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Manage Route Packages
+                </h4>
+                <button
+                  onClick={() => setShowPackageManager(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Available Packages */}
+                <div>
+                  <h5 className="font-medium text-gray-900 dark:text-white mb-3">
+                    Available Packages ({availablePackages.length})
+                  </h5>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {availablePackages.map((pkg) => (
+                      <div
+                        key={pkg.id}
+                        className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                          selectedPackages.includes(pkg.id)
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                        onClick={() => {
+                          setSelectedPackages(prev => 
+                            prev.includes(pkg.id)
+                              ? prev.filter(id => id !== pkg.id)
+                              : [...prev, pkg.id]
+                          );
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-sm">{pkg.trackingNumber}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                              {pkg.shipTo?.city}, {pkg.shipTo?.province}
+                            </p>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {pkg.weight}kg
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Current Route Packages */}
+                <div>
+                  <h5 className="font-medium text-gray-900 dark:text-white mb-3">
+                    Route Packages ({route.stops.reduce((sum, stop) => sum + stop.packages.length, 0)})
+                  </h5>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {route.stops.map((stop) => 
+                      stop.packages.map((packageId) => (
+                        <div
+                          key={packageId}
+                          className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 flex items-center justify-between"
+                        >
+                          <div>
+                            <p className="font-medium text-sm">{packageId}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                              {stop.city}, {stop.province}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => removePackageFromRoute(packageId)}
+                            className="text-red-600 hover:text-red-800 p-1"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+              <button
+                onClick={() => setShowPackageManager(false)}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => addPackagesToRoute(selectedPackages)}
+                disabled={selectedPackages.length === 0}
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg"
+              >
+                Add {selectedPackages.length} Packages to Route
+              </button>
             </div>
           </div>
         </div>

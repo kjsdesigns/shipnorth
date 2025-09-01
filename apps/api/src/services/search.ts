@@ -131,7 +131,7 @@ export class SearchService {
       }
 
       // Recipient name
-      if (pkg.shipTo.name.toLowerCase().includes(searchTerm)) {
+      if (pkg.shipTo?.name?.toLowerCase().includes(searchTerm)) {
         matchedFields.push('recipientName');
         relevanceScore += 70;
       }
@@ -156,9 +156,9 @@ export class SearchService {
 
       // Status
       if (
-        pkg.shipmentStatus.toLowerCase().includes(searchTerm) ||
-        pkg.labelStatus.toLowerCase().includes(searchTerm) ||
-        pkg.paymentStatus.toLowerCase().includes(searchTerm)
+        pkg.shipmentStatus?.toLowerCase().includes(searchTerm) ||
+        pkg.labelStatus?.toLowerCase().includes(searchTerm) ||
+        pkg.paymentStatus?.toLowerCase().includes(searchTerm)
       ) {
         matchedFields.push('status');
         relevanceScore += 30;
@@ -181,8 +181,8 @@ export class SearchService {
           id: pkg.id,
           type: 'package',
           title: `Package ${pkg.barcode}`,
-          subtitle: `${pkg.shipTo.name} • Address ID: ${pkg.shipTo.addressId}`,
-          description: `${pkg.shipmentStatus} • ${pkg.trackingNumber || 'No tracking'}`,
+          subtitle: `${pkg.shipTo?.name || 'Unknown'} • Address ID: ${pkg.shipTo?.addressId || 'N/A'}`,
+          description: `${pkg.shipmentStatus || 'Unknown'} • ${pkg.trackingNumber || pkg.tracking_number || 'No tracking'}`,
           relevanceScore,
           matchedFields,
           data: pkg,
@@ -206,16 +206,16 @@ export class SearchService {
       let relevanceScore = 0;
 
       // Email (exact match gets highest score)
-      if (customer.email.toLowerCase() === searchTerm) {
+      if (customer.email?.toLowerCase() === searchTerm) {
         matchedFields.push('email');
         relevanceScore += 100;
-      } else if (customer.email.toLowerCase().includes(searchTerm)) {
+      } else if (customer.email?.toLowerCase().includes(searchTerm)) {
         matchedFields.push('email');
         relevanceScore += 80;
       }
 
       // Full name exact match
-      const fullName = `${customer.firstName} ${customer.lastName}`.toLowerCase();
+      const fullName = `${customer.firstName || ''} ${customer.lastName || ''}`.toLowerCase();
       if (fullName === searchTerm) {
         matchedFields.push('fullName');
         relevanceScore += 95;
@@ -225,13 +225,13 @@ export class SearchService {
       }
 
       // First name
-      if (customer.firstName.toLowerCase().includes(searchTerm)) {
+      if (customer.firstName?.toLowerCase().includes(searchTerm)) {
         matchedFields.push('firstName');
         relevanceScore += 60;
       }
 
       // Last name
-      if (customer.lastName.toLowerCase().includes(searchTerm)) {
+      if (customer.lastName?.toLowerCase().includes(searchTerm)) {
         matchedFields.push('lastName');
         relevanceScore += 60;
       }
@@ -311,9 +311,12 @@ export class SearchService {
 
       // Delivery cities
       for (const city of load.deliveryCities || []) {
+        const cityText = typeof city === 'string' ? city : city.city;
+        const provinceText = typeof city === 'string' ? '' : city.province;
+        
         if (
-          city.city.toLowerCase().includes(searchTerm) ||
-          city.province.toLowerCase().includes(searchTerm)
+          cityText.toLowerCase().includes(searchTerm) ||
+          provinceText.toLowerCase().includes(searchTerm)
         ) {
           matchedFields.push('deliveryCities');
           relevanceScore += 60;
@@ -328,7 +331,7 @@ export class SearchService {
       }
 
       // Transport mode
-      if (load.transportMode.toLowerCase().includes(searchTerm)) {
+      if (load.transportMode?.toLowerCase().includes(searchTerm)) {
         matchedFields.push('transportMode');
         relevanceScore += 40;
       }
@@ -347,7 +350,7 @@ export class SearchService {
 
       if (matchedFields.length > 0) {
         const citiesText =
-          load.deliveryCities?.map((c) => `${c.city}, ${c.province}`).join('; ') ||
+          load.deliveryCities?.map((c) => typeof c === 'string' ? c : `${c.city}, ${c.province}`).join('; ') ||
           'No destinations';
 
         results.push({
@@ -395,13 +398,13 @@ export class SearchService {
       }
 
       // First name
-      if (user.firstName.toLowerCase().includes(searchTerm)) {
+      if (user.firstName?.toLowerCase().includes(searchTerm)) {
         matchedFields.push('firstName');
         relevanceScore += 60;
       }
 
       // Last name
-      if (user.lastName.toLowerCase().includes(searchTerm)) {
+      if (user.lastName?.toLowerCase().includes(searchTerm)) {
         matchedFields.push('lastName');
         relevanceScore += 60;
       }

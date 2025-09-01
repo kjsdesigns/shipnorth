@@ -26,96 +26,104 @@ export class InvoiceModel {
       ...invoice,
       status: invoice.status || 'draft',
       currency: invoice.currency || 'CAD',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
-    await DatabaseService.put({
-      PK: `INVOICE#${id}`,
-      SK: 'METADATA',
-      GSI1PK: `CUSTOMER#${invoice.customerId}`,
-      GSI1SK: `INVOICE#${id}`,
-      Type: 'Invoice',
-      Data: newInvoice,
-    });
+    const keys = Object.keys(newInvoice);
+    const values = Object.values(newInvoice);
+    const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+
+    const result = await DatabaseService.query(
+      `INSERT INTO invoices (${keys.join(', ')}) 
+       VALUES (${placeholders}) 
+       RETURNING *`,
+      values
+    );
 
     // Link invoice to package
     if (invoice.packageId) {
-      await DatabaseService.update(`PACKAGE#${invoice.packageId}`, 'METADATA', {
-        'Data.invoiceId': id,
-      });
+      await DatabaseService.query(
+        'UPDATE packages SET invoice_id = $1 WHERE id = $2',
+        [id, invoice.packageId]
+      );
     }
 
-    return newInvoice;
+    return result.rows[0];
   }
 
   static async findById(id: string): Promise<Invoice | null> {
-    const item = await DatabaseService.get(`INVOICE#${id}`, 'METADATA');
-    return item ? item.Data : null;
+    const result = await DatabaseService.query(
+      'SELECT * FROM invoices WHERE id = $1 LIMIT 1',
+      [id]
+    );
+    return result.rows.length > 0 ? result.rows[0] : null;
   }
 
   static async findByCustomer(customerId: string): Promise<Invoice[]> {
-    const items = await DatabaseService.queryByGSI('GSI1', `CUSTOMER#${customerId}`);
-    return items.filter((item: any) => item.Type === 'Invoice').map((item: any) => item.Data);
+    const result = await DatabaseService.query(
+      `SELECT * FROM invoices WHERE customer_id = $1`,
+      [customerId]
+    );
+    return result.rows;
   }
 
   static async findByPackage(packageId: string): Promise<Invoice | null> {
-    const items = await DatabaseService.scan({
-      FilterExpression: '#type = :type AND #data.#packageId = :packageId',
-      ExpressionAttributeNames: {
-        '#type': 'Type',
-        '#data': 'Data',
-        '#packageId': 'packageId',
-      },
-      ExpressionAttributeValues: {
-        ':type': 'Invoice',
-        ':packageId': packageId,
-      },
-    });
-
-    return items.length > 0 ? items[0].Data : null;
+    const result = await DatabaseService.query(
+      `SELECT * FROM invoices WHERE package_id = $1 LIMIT 1`,
+      [packageId]
+    );
+    return result.rows.length > 0 ? result.rows[0] : null;
   }
 
   static async update(id: string, updates: Partial<Invoice>): Promise<Invoice | null> {
     const current = await this.findById(id);
     if (!current) return null;
 
-    const updatedInvoice = { ...current, ...updates };
+    const updatedInvoice = { 
+      ...current, 
+      ...updates, 
+      updatedAt: new Date().toISOString() 
+    };
 
     // Track payment time
     if (updates.status === 'paid' && current.status !== 'paid') {
       updatedInvoice.paidAt = new Date().toISOString();
     }
 
-    const result = await DatabaseService.update(`INVOICE#${id}`, 'METADATA', {
-      Data: updatedInvoice,
-    });
+    const keys = Object.keys(updatedInvoice).filter(key => key !== 'id');
+    const values = keys.map(key => updatedInvoice[key as keyof Invoice]);
+    const setClause = keys.map((key, i) => `${key} = $${i + 2}`).join(', ');
 
-    return result ? result.Data : null;
+    const result = await DatabaseService.query(
+      `UPDATE invoices SET ${setClause} WHERE id = $1 RETURNING *`,
+      [id, ...values]
+    );
+
+    return result.rows.length > 0 ? result.rows[0] : null;
   }
 
   static async list(limit = 100): Promise<Invoice[]> {
-    const items = await DatabaseService.scan({
-      FilterExpression: '#type = :type',
-      ExpressionAttributeNames: {
-        '#type': 'Type',
-      },
-      ExpressionAttributeValues: {
-        ':type': 'Invoice',
-      },
-      Limit: limit,
-    });
-
-    return items.map((item: any) => item.Data).filter(Boolean);
+    const result = await DatabaseService.query(
+      'SELECT * FROM invoices ORDER BY created_at DESC LIMIT $1',
+      [limit]
+    );
+    return result.rows;
   }
 
   static async calculateTotal(
     packageId: string
   ): Promise<{ amount: number; tax: number; total: number }> {
-    const pkg = await DatabaseService.get(`PACKAGE#${packageId}`, 'METADATA');
-    if (!pkg || !pkg.Data) {
+    const result = await DatabaseService.query(
+      'SELECT price, quoted_rate FROM packages WHERE id = $1 LIMIT 1',
+      [packageId]
+    );
+    if (result.rows.length === 0) {
       throw new Error('Package not found');
     }
 
-    const baseAmount = pkg.Data.price || pkg.Data.quotedRate || 25.0;
+    const pkg = result.rows[0];
+    const baseAmount = pkg.price || pkg.quoted_rate || 25.0;
     const taxRate = 0.13; // 13% HST for Ontario
     const tax = Math.round(baseAmount * taxRate * 100) / 100;
     const total = Math.round((baseAmount + tax) * 100) / 100;
@@ -142,9 +150,10 @@ export class InvoiceModel {
 
       // Update package payment status
       if (invoice.packageId) {
-        await DatabaseService.update(`PACKAGE#${invoice.packageId}`, 'METADATA', {
-          'Data.paymentStatus': 'paid',
-        });
+        await DatabaseService.query(
+          'UPDATE packages SET payment_status = $1 WHERE id = $2',
+          ['paid', invoice.packageId]
+        );
       }
     } else {
       await this.update(id, {
@@ -153,9 +162,10 @@ export class InvoiceModel {
 
       // Update package payment status
       if (invoice.packageId) {
-        await DatabaseService.update(`PACKAGE#${invoice.packageId}`, 'METADATA', {
-          'Data.paymentStatus': 'failed',
-        });
+        await DatabaseService.query(
+          'UPDATE packages SET payment_status = $1 WHERE id = $2',
+          ['failed', invoice.packageId]
+        );
       }
     }
 
@@ -172,9 +182,10 @@ export class InvoiceModel {
 
     // Update package payment status
     if (invoice.packageId) {
-      await DatabaseService.update(`PACKAGE#${invoice.packageId}`, 'METADATA', {
-        'Data.paymentStatus': 'refunded',
-      });
+      await DatabaseService.query(
+        'UPDATE packages SET payment_status = $1 WHERE id = $2',
+        ['refunded', invoice.packageId]
+      );
     }
 
     return true;
@@ -186,12 +197,16 @@ export class InvoiceModel {
 
     // Remove invoice reference from package
     if (invoice.packageId) {
-      await DatabaseService.update(`PACKAGE#${invoice.packageId}`, 'METADATA', {
-        'Data.invoiceId': null,
-      });
+      await DatabaseService.query(
+        'UPDATE packages SET invoice_id = NULL WHERE id = $1',
+        [invoice.packageId]
+      );
     }
 
-    await DatabaseService.delete(`INVOICE#${id}`, 'METADATA');
+    await DatabaseService.query(
+      'DELETE FROM invoices WHERE id = $1',
+      [id]
+    );
 
     return true;
   }

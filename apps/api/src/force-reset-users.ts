@@ -79,7 +79,7 @@ const forceResetUsers = async () => {
         // Debug the issue
         const createdUser = await UserModel.findByEmail(userData.email);
         if (createdUser) {
-          const directTest = await bcrypt.compare(userData.password, createdUser.password);
+          const directTest = createdUser.password ? await bcrypt.compare(userData.password, createdUser.password) : false;
           console.log(`   Direct bcrypt test: ${directTest ? 'PASS' : 'FAIL'}`);
           console.log(`   Expected password: ${userData.password}`);
           console.log(`   Stored hash: ${createdUser.password}`);
@@ -91,6 +91,7 @@ const forceResetUsers = async () => {
     const existing = await CustomerModel.findByEmail('john.doe@example.com');
     if (!existing) {
       await CustomerModel.create({
+        name: 'John Doe',
         email: 'john.doe@example.com',
         firstName: 'John',
         lastName: 'Doe',

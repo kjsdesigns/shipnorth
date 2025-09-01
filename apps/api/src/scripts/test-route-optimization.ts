@@ -81,7 +81,7 @@ async function createTestData() {
     const address = createdAddresses[i];
 
     const pkg = await PackageModel.create({
-      customerId: 'test-customer-001',
+      customer_id: 'test-customer-001',
       shipTo: {
         name: `Recipient ${i + 1}`,
         addressId: address.id,
@@ -90,10 +90,12 @@ async function createTestData() {
       length: 20 + Math.random() * 30,
       width: 15 + Math.random() * 25,
       height: 10 + Math.random() * 20,
+      status: 'received',
+      barcode: `TEST-PKG-${Date.now()}-${i}`,
       labelStatus: 'unlabeled',
       paymentStatus: 'unpaid',
       shipmentStatus: 'ready',
-      receivedDate: new Date().toISOString(),
+      receivedDate: new Date(),
       notes: `Test package for ${address.city}`,
     });
 
@@ -105,6 +107,7 @@ async function createTestData() {
 
   // Create test load
   const load = await LoadModel.create({
+    name: 'Test Load - Route Optimization',
     departureDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
     deliveryCities: [],
     transportMode: 'truck',

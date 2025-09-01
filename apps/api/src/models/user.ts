@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 
 const pool = new Pool({
@@ -20,7 +21,9 @@ export interface User {
   roles?: ('admin' | 'staff' | 'customer' | 'driver')[];
   lastUsedPortal?: 'admin' | 'staff' | 'customer' | 'driver';
   customerId?: string;
+  customer_id?: string; // Alias for database compatibility
   status: 'active' | 'inactive';
+  lastLogin?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -76,21 +79,22 @@ export class User {
 
   static async create(userData: Partial<User>): Promise<User> {
     try {
-      const id = userData.id || `user-${Date.now()}`;
+      const id = userData.id || uuidv4();
       const hashedPassword = userData.password ? await bcrypt.hash(userData.password, 10) : null;
 
       const result = await this.query(
-        `INSERT INTO users (id, email, password, first_name, last_name, role, status) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7) 
-         RETURNING id, email, first_name as "firstName", last_name as "lastName", role, status, created_at as "createdAt"`,
+        `INSERT INTO users (id, email, password_hash, first_name, last_name, phone, role, customer_id) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+         RETURNING id, email, first_name as "firstName", last_name as "lastName", phone, role, customer_id as "customerId", created_at as "createdAt"`,
         [
           id,
           userData.email,
           hashedPassword,
           userData.firstName,
           userData.lastName,
+          userData.phone,
           userData.role || 'customer',
-          userData.status || 'active'
+          userData.customerId
         ]
       );
 
@@ -142,19 +146,40 @@ export class User {
 
   static async update(id: string, updates: Partial<User>): Promise<User> {
     try {
-      const setClause = Object.keys(updates)
-        .filter(key => key !== 'id')
-        .map((key, i) => `${key === 'firstName' ? 'first_name' : key === 'lastName' ? 'last_name' : key} = $${i + 2}`)
-        .join(', ');
+      const setFields = [];
+      const values = [id];
+      let paramIndex = 2;
 
-      const values = Object.entries(updates)
-        .filter(([key]) => key !== 'id')
-        .map(([, value]) => value);
+      // Handle field mapping and build SET clause dynamically
+      for (const [key, value] of Object.entries(updates)) {
+        if (key === 'id') continue;
+        
+        let dbField = key;
+        let processedValue = value;
+        
+        if (key === 'firstName') dbField = 'first_name';
+        else if (key === 'lastName') dbField = 'last_name';
+        else if (key === 'lastUsedPortal') dbField = 'last_used_portal';
+        else if (key === 'roles') {
+          // Convert roles array to JSON string for database storage
+          dbField = 'roles';
+          processedValue = Array.isArray(value) ? JSON.stringify(value) : (value ? String(value) : '');
+        }
+        
+        setFields.push(`${dbField} = $${paramIndex}`);
+        values.push(processedValue as string);
+        paramIndex++;
+      }
 
-      const result = await this.query(
-        `UPDATE users SET ${setClause} WHERE id = $1 RETURNING id, email, first_name as "firstName", last_name as "lastName", role, status`,
-        [id, ...values]
-      );
+      // Always update the updated_at timestamp
+      setFields.push(`updated_at = NOW()`);
+
+      const result = await this.query(`
+        UPDATE users 
+        SET ${setFields.join(', ')}
+        WHERE id = $1 
+        RETURNING id, email, first_name as "firstName", last_name as "lastName", phone, role, roles, last_used_portal as "lastUsedPortal", customer_id as "customerId", status, created_at as "createdAt", updated_at as "updatedAt"
+      `, values);
 
       return result.rows[0];
     } catch (error) {
@@ -194,9 +219,57 @@ export class User {
   static async delete(id: string): Promise<boolean> {
     try {
       const result = await this.query('DELETE FROM users WHERE id = $1', [id]);
-      return result.rowCount > 0;
+      return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       console.error('Error deleting user:', error);
+      throw error;
+    }
+  }
+
+  static async changePassword(id: string, newPassword: string): Promise<boolean> {
+    try {
+      const bcrypt = require('bcrypt');
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const result = await this.query(
+        'UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2',
+        [hashedPassword, id]
+      );
+      return result.rowCount !== null && result.rowCount > 0;
+    } catch (error) {
+      console.error('Error changing password:', error);
+      throw error;
+    }
+  }
+
+  static canAccessPortal(user: any, portal: string): boolean {
+    if (!user) return false;
+    
+    // Check roles array first, then fallback to role
+    const userRoles = user.roles || [user.role];
+    
+    switch (portal) {
+      case 'staff':
+        return userRoles.includes('staff') || userRoles.includes('admin');
+      case 'driver':
+        return userRoles.includes('driver');
+      case 'customer':
+        return userRoles.includes('customer');
+      case 'admin':
+        return userRoles.includes('admin');
+      default:
+        return false;
+    }
+  }
+
+  static async updateLastUsedPortal(id: string, portal: string): Promise<boolean> {
+    try {
+      const result = await this.query(
+        'UPDATE users SET last_used_portal = $1, updated_at = NOW() WHERE id = $2',
+        [portal, id]
+      );
+      return result.rowCount !== null && result.rowCount > 0;
+    } catch (error) {
+      console.error('Error updating last used portal:', error);
       throw error;
     }
   }

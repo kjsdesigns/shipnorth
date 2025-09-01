@@ -168,7 +168,7 @@ export class LoadModel {
       const result = await client.query('DELETE FROM loads WHERE id = $1', [id]);
       
       await client.query('COMMIT');
-      return result.rowCount > 0;
+      return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       await client.query('ROLLBACK');
       console.error('Error deleting load:', error);

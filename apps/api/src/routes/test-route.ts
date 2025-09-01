@@ -88,7 +88,7 @@ router.get('/test-route/:loadId', authenticate, async (req: AuthRequest, res: Re
 
         testResults.packages.push({
           id: pkg.id,
-          customerId: pkg.customerId,
+          customer_id: pkg.customer_id,
           shipTo: pkg.shipTo,
           weight: pkg.weight,
         });

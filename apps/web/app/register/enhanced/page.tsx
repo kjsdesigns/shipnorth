@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { customerAPI, authAPI } from '@/lib/api';
 import ModernLayout from '@/components/ModernLayout';
 import PayPalCardForm from '@/components/PayPalCardForm';
+import PayPalScript from '@/components/PayPalScript';
 import { 
   User, MapPin, CreditCard, Building2, CheckCircle, AlertCircle, 
   Phone, Mail, Home, Globe, Eye, ChevronDown, Shield
@@ -714,6 +715,7 @@ function EnhancedRegistration() {
 
   return (
     <ModernLayout role="customer">
+      <PayPalScript enabled={true} />
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
         <div className="max-w-4xl mx-auto px-6">
           {/* Progress Steps */}

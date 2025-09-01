@@ -107,7 +107,7 @@ export class CustomerModel {
   static async delete(id: string): Promise<boolean> {
     try {
       const result = await this.query('DELETE FROM customers WHERE id = $1', [id]);
-      return result.rowCount > 0;
+      return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       console.error('Error deleting customer:', error);
       throw error;

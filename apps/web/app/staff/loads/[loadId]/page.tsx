@@ -61,13 +61,32 @@ export default function LoadDetailPage() {
     try {
       setLoading(true);
 
-      const [loadRes, packagesRes] = await Promise.all([
-        loadAPI.get(loadId),
-        packageAPI.getByLoad(loadId).catch(() => ({ data: { packages: [] } })),
-      ]);
-
-      setLoad(loadRes.data.load || loadRes.data);
-      setPackages(packagesRes.data.packages || []);
+      const loadRes = await loadAPI.get(loadId);
+      
+      // Be very defensive about response structure
+      let loadData = null;
+      let packagesData = [];
+      
+      if (loadRes.data) {
+        if (loadRes.data.load) {
+          loadData = loadRes.data.load;
+          packagesData = loadRes.data.load.packages || [];
+        } else {
+          loadData = loadRes.data;
+          packagesData = loadRes.data.packages || [];
+        }
+      }
+      
+      if (!loadData) {
+        throw new Error('Invalid load response structure');
+      }
+      
+      setLoad(loadData);
+      
+      // Set packages from load response, no separate API call needed
+      setPackages(packagesData);
+      
+      console.log(`✅ Loaded ${packagesData.length} packages for load ${loadId}`);
 
       // Load route preview
       try {
@@ -434,7 +453,7 @@ ${routeData.cityClusters
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="font-medium text-gray-900 dark:text-white text-sm">
-                        {pkg.trackingNumber || `PKG-${index + 1001}`}
+                        {pkg.tracking_number || pkg.trackingNumber || pkg.barcode || `PKG-${index + 1001}`}
                       </div>
                       {pkg.address?.coordinates ? (
                         <MapPin className="h-3 w-3 text-green-500" />
@@ -443,9 +462,9 @@ ${routeData.cityClusters
                       )}
                     </div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">
-                      <div>{pkg.shipTo?.name}</div>
+                      <div>{pkg.shipTo?.name || pkg.customer?.name || 'Customer'}</div>
                       <div>
-                        {pkg.shipTo?.city}, {pkg.shipTo?.province}
+                        {pkg.shipTo?.city || 'Unknown'}, {pkg.shipTo?.province || 'Unknown'}
                       </div>
                       <div className="mt-1 font-medium">{pkg.weight || 0} kg</div>
                     </div>

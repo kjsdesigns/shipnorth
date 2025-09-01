@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ModernLayout from '@/components/ModernLayout';
 import PaymentMethodManager from '@/components/PaymentMethodManager';
+import PayPalScript from '@/components/PayPalScript';
 import { authAPI } from '@/lib/api';
 
 export default function PaymentMethodsPage() {
@@ -44,6 +45,7 @@ export default function PaymentMethodsPage() {
 
   return (
     <ModernLayout role={user.role}>
+      <PayPalScript enabled={true} />
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Payment Methods</h1>

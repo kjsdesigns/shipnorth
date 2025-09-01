@@ -25,6 +25,10 @@ export default defineConfig({
     // Data verification test
     'verify-dummy-data.spec.ts',
     
+    // Package functionality tests
+    'bulk-package-assignment.spec.ts',
+    'package-creation-workflow.spec.ts',
+    
     // Main test suite
     'auth.spec.ts',
     'staff-interface.spec.ts',

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { customerAPI } from '@/lib/api';
 import ModernLayout from '@/components/ModernLayout';
 import PayPalCardForm from '@/components/PayPalCardForm';
+import PayPalScript from '@/components/PayPalScript';
 import { CreditCard, User, MapPin, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 
 // const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -99,6 +100,14 @@ function RegistrationForm() {
           `/login?email=${encodeURIComponent(formData.email)}&message=${encodeURIComponent('Account already exists. Please sign in.')}`
         );
         return;
+      }
+
+      // Store authentication tokens using the same method as authAPI.register
+      if (response.data.accessToken && response.data.refreshToken && response.data.user) {
+        const Cookies = (await import('js-cookie')).default;
+        Cookies.set('accessToken', response.data.accessToken);
+        Cookies.set('refreshToken', response.data.refreshToken);
+        Cookies.set('user', JSON.stringify(response.data.user));
       }
 
       setCustomerId(response.data.customerId);
@@ -379,12 +388,33 @@ function RegistrationForm() {
 
   const renderStep4 = () => {
     return (
-      <PayPalCardForm
-        customerId={customerId}
-        onSuccess={() => setCurrentStep(5)}
-        onError={(errorMsg) => setError(typeof errorMsg === 'string' ? errorMsg : errorMsg.message)}
-        onBack={() => setCurrentStep(3)}
-      />
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Payment Method</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Add a payment method for shipping charges, or skip for now
+          </p>
+        </div>
+        
+        <PayPalCardForm
+          customerId={customerId}
+          onSuccess={() => setCurrentStep(5)}
+          onError={(errorMsg) => setError(typeof errorMsg === 'string' ? errorMsg : errorMsg.message)}
+          onBack={() => setCurrentStep(3)}
+        />
+        
+        <div className="text-center">
+          <button
+            onClick={() => setCurrentStep(5)}
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 underline"
+          >
+            Skip payment method for now
+          </button>
+          <p className="text-xs text-gray-500 mt-1">
+            You can add payment methods later in your account settings
+          </p>
+        </div>
+      </div>
     );
   };
 
@@ -408,16 +438,16 @@ function RegistrationForm() {
 
       <div className="flex space-x-4">
         <Link
-          href="/login"
+          href="/portal"
           className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-center"
         >
-          Sign In to Your Account
+          Go to Your Dashboard
         </Link>
         <Link
-          href="/"
-          className="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors text-center"
+          href="/portal/payment-methods"
+          className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors text-center"
         >
-          Return Home
+          Add Payment Method
         </Link>
       </div>
     </div>
@@ -448,6 +478,7 @@ function RegistrationForm() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+      <PayPalScript enabled={true} />
       <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
         {currentStep < 5 && renderProgressBar()}
 

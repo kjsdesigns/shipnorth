@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="etag" content={`dev-${Date.now()}`} />
       </head>
       <body className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-        <PayPalScript />
+        <PayPalScript enabled={false} />
         <ThemeProvider>{children}</ThemeProvider>
         {/* Development Cache Buster Script */}
         <script

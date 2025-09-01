@@ -97,6 +97,7 @@ const cleanAndSeed = async () => {
     const existing = await CustomerModel.findByEmail('john.doe@example.com');
     if (!existing) {
       await CustomerModel.create({
+        name: 'John Doe',
         email: 'john.doe@example.com',
         firstName: 'John',
         lastName: 'Doe',

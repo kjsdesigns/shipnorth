@@ -1,7 +1,7 @@
 {
   "config": {
-    "configFile": "/app/playwright-optimized.config.ts",
-    "rootDir": "/app/tests/e2e",
+    "configFile": "/Users/keith/claude/shipnorth/playwright-optimized.config.ts",
+    "rootDir": "/Users/keith/claude/shipnorth/tests/e2e",
     "forbidOnly": false,
     "fullyParallel": true,
     "globalSetup": null,
@@ -21,7 +21,7 @@
         "Comprehensive page load verification",
         "Focused failure detection"
       ],
-      "actualWorkers": 8
+      "actualWorkers": 6
     },
     "preserveOutput": "always",
     "reporter": [
@@ -58,7 +58,7 @@
     "quiet": false,
     "projects": [
       {
-        "outputDir": "/app/test-artifacts-optimized",
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -72,11 +72,11 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 8
+          "actualWorkers": 6
         },
         "id": "critical-path",
         "name": "critical-path",
-        "testDir": "/app/tests/e2e",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
         "testIgnore": [
           "**/node_modules/**",
           "**/apps/api/src/tests/**",
@@ -102,7 +102,7 @@
         "timeout": 45000
       },
       {
-        "outputDir": "/app/test-artifacts-optimized",
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
         "repeatEach": 1,
         "retries": 1,
         "metadata": {
@@ -116,11 +116,11 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 8
+          "actualWorkers": 6
         },
         "id": "core-functionality",
         "name": "core-functionality",
-        "testDir": "/app/tests/e2e",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
         "testIgnore": [
           "**/node_modules/**",
           "**/apps/api/src/tests/**",
@@ -147,7 +147,7 @@
         "timeout": 30000
       },
       {
-        "outputDir": "/app/test-artifacts-optimized",
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -161,11 +161,11 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 8
+          "actualWorkers": 6
         },
         "id": "extended-features",
         "name": "extended-features",
-        "testDir": "/app/tests/e2e",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
         "testIgnore": [
           "**/node_modules/**",
           "**/apps/api/src/tests/**",
@@ -192,7 +192,7 @@
         "timeout": 25000
       },
       {
-        "outputDir": "/app/test-artifacts-optimized",
+        "outputDir": "/Users/keith/claude/shipnorth/test-artifacts-optimized",
         "repeatEach": 1,
         "retries": 1,
         "metadata": {
@@ -206,11 +206,11 @@
             "Comprehensive page load verification",
             "Focused failure detection"
           ],
-          "actualWorkers": 8
+          "actualWorkers": 6
         },
         "id": "mobile-verification",
         "name": "mobile-verification",
-        "testDir": "/app/tests/e2e",
+        "testDir": "/Users/keith/claude/shipnorth/tests/e2e",
         "testIgnore": [
           "**/node_modules/**",
           "**/apps/api/src/tests/**",
@@ -238,8 +238,8 @@
     "shard": null,
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
-    "version": "1.55.0",
-    "workers": 8,
+    "version": "1.54.2",
+    "workers": 6,
     "webServer": null
   },
   "suites": [
@@ -275,7 +275,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18331,
+                      "duration": 6005,
                       "errors": [],
                       "stdout": [
                         {
@@ -297,15 +297,6 @@
                           "text": "✅ API directly accessible from browser\n"
                         },
                         {
-                          "text": "📋 Testing quick login functionality...\n"
-                        },
-                        {
-                          "text": "✅ Login triggered API requests successfully\n"
-                        },
-                        {
-                          "text": "📊 Requests: POST http://localhost:8850/auth/login?_cb=1756607362910, GET http://localhost:8850/packages?_cb=1756607362910&limit=50, GET http://localhost:8850/customers?_cb=1756607362910, GET http://localhost:8850/loads?_cb=1756607362910\n"
-                        },
-                        {
                           "text": "✅ Database authentication working through API\n"
                         },
                         {
@@ -315,18 +306,21 @@
                           "text": "===================================\n"
                         },
                         {
-                          "text": "⚠️ Warnings (2):\n"
+                          "text": "⚠️ Warnings (3):\n"
                         },
                         {
                           "text": "  1. Minor fetch issue (non-CORS): Failed to fetch\n"
                         },
                         {
                           "text": "  2. Next.js environment data not properly loaded\n"
+                        },
+                        {
+                          "text": "  3. Staff quick login button not found\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.536Z",
+                      "startTime": "2025-09-01T01:15:07.691Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -341,7 +335,7 @@
             },
             {
               "title": "Environment configuration verification @config @critical",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "config",
                 "critical"
@@ -357,28 +351,65 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2307,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 1593,
+                      "error": {
+                        "message": "Error: Services not responding on configured ports - check environment variables",
+                        "stack": "Error: Services not responding on configured ports - check environment variables\n    at /Users/keith/claude/shipnorth/tests/e2e/00-connectivity-diagnostic.spec.ts:226:13",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/00-connectivity-diagnostic.spec.ts",
+                          "column": 13,
+                          "line": 226
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 224 |\u001b[39m       console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ Both services responding on environment-configured ports'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 225 |\u001b[39m     } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 226 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m'Services not responding on configured ports - check environment variables'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 227 |\u001b[39m     }\n \u001b[90m 228 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 229 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/00-connectivity-diagnostic.spec.ts",
+                            "column": 13,
+                            "line": 226
+                          },
+                          "message": "Error: Services not responding on configured ports - check environment variables\n\n\u001b[0m \u001b[90m 224 |\u001b[39m       console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ Both services responding on environment-configured ports'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 225 |\u001b[39m     } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 226 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m'Services not responding on configured ports - check environment variables'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 227 |\u001b[39m     }\n \u001b[90m 228 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 229 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/00-connectivity-diagnostic.spec.ts:226:13\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "🔧 Verifying centralized environment configuration...\n"
                         },
                         {
-                          "text": "📊 Configuration check: {\n  \"apiUrl\": \"http://localhost:8850\",\n  \"webUrl\": \"http://localhost:8849\",\n  \"portsFromEnv\": {\n    \"api\": \"8850\",\n    \"web\": \"8849\"\n  }\n}\n"
-                        },
-                        {
-                          "text": "✅ Both services responding on environment-configured ports\n"
+                          "text": "📊 Configuration check: {\n  \"apiUrl\": \"http://localhost:8850\",\n  \"webUrl\": \"http://localhost:8849\",\n  \"portsFromEnv\": {\n    \"api\": \"default\",\n    \"web\": \"default\"\n  }\n}\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:33.012Z",
+                      "startTime": "2025-09-01T01:15:14.157Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/00-connectivity-diagnostic-176eb-erification-config-critical-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/00-connectivity-diagnostic-176eb-erification-config-critical-critical-path/video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/00-connectivity-diagnostic-176eb-erification-config-critical-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/00-connectivity-diagnostic.spec.ts",
+                        "column": 13,
+                        "line": 226
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "5cdc8dd6af4f0fd049c0-8c7f23e86f7fd1777df5",
@@ -405,7 +436,7 @@
           "specs": [
             {
               "title": "infrastructure health check @critical",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "critical"
               ],
@@ -420,22 +451,63 @@
                     {
                       "workerIndex": 1,
                       "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 7390,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 8334,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1, h2').first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1, h2').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1, h2').first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1, h2').first()\u001b[22m\n\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:44:50",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 50,
+                          "line": 44
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 42 |\u001b[39m     \u001b[90m// Test frontend loads without errors\u001b[39m\n \u001b[90m 43 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 44 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1, h2'\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[90m// Test authentication endpoints\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[36mconst\u001b[39m loginResponse \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mrequest\u001b[33m.\u001b[39mpost(\u001b[32m`${config.apiUrl}/auth/login`\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Infrastructure health check passed\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 50,
+                            "line": 44
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1, h2').first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1, h2').first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 42 |\u001b[39m     \u001b[90m// Test frontend loads without errors\u001b[39m\n \u001b[90m 43 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 44 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1, h2'\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[90m// Test authentication endpoints\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[36mconst\u001b[39m loginResponse \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mrequest\u001b[33m.\u001b[39mpost(\u001b[32m`${config.apiUrl}/auth/login`\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:44:50\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.527Z",
+                      "startTime": "2025-09-01T01:15:07.711Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔥-Ro-3109f-cture-health-check-critical-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔥-Ro-3109f-cture-health-check-critical-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔥-Ro-3109f-cture-health-check-critical-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔥-Ro-3109f-cture-health-check-critical-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 50,
+                        "line": 44
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-65f37cfe715b4658e167",
@@ -461,7 +533,7 @@
                       "workerIndex": 2,
                       "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 858,
+                      "duration": 776,
                       "errors": [],
                       "stdout": [
                         {
@@ -470,7 +542,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.612Z",
+                      "startTime": "2025-09-01T01:15:07.703Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -501,7 +573,7 @@
                       "workerIndex": 3,
                       "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 23505,
+                      "duration": 13559,
                       "errors": [],
                       "stdout": [
                         {
@@ -510,7 +582,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.617Z",
+                      "startTime": "2025-09-01T01:15:07.675Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -533,7 +605,7 @@
           "specs": [
             {
               "title": "complete customer workflow @core",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "core"
               ],
@@ -548,22 +620,63 @@
                     {
                       "workerIndex": 4,
                       "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 24419,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 18645,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:103:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 68,
+                          "line": 11
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Complete customer workflow verified\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 68,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m\n\u001b[2m    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\u001b[22m\n\u001b[2m    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\u001b[22m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:103:5\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.611Z",
+                      "startTime": "2025-09-01T01:15:07.697Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Cu-6396e-lete-customer-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 68,
+                        "line": 11
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-9637dcf2425899ce0ea0",
@@ -581,7 +694,7 @@
           "specs": [
             {
               "title": "complete staff workflow @core",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "core"
               ],
@@ -596,22 +709,63 @@
                     {
                       "workerIndex": 5,
                       "parallelIndex": 5,
-                      "status": "passed",
-                      "duration": 26584,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 18647,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 68,
+                          "line": 11
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Complete staff workflow verified\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 68,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m\n\u001b[2m    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\u001b[22m\n\u001b[2m    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\u001b[22m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.624Z",
+                      "startTime": "2025-09-01T01:15:07.687Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-494cd-omplete-staff-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 68,
+                        "line": 11
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-ca957f7728b7acbf0ee5",
@@ -621,7 +775,7 @@
             },
             {
               "title": "admin features visibility @admin",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "admin"
               ],
@@ -634,24 +788,65 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 6,
-                      "parallelIndex": 6,
-                      "status": "passed",
-                      "duration": 24800,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 18317,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 68,
+                          "line": 11
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Admin features visible in staff portal\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 68,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m\n\u001b[2m    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\u001b[22m\n\u001b[2m    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\u001b[22m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:163:5\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.608Z",
+                      "startTime": "2025-09-01T01:15:08.931Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-St-a8d48-n-features-visibility-admin-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 68,
+                        "line": 11
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-e8a822ebb18020bee312",
@@ -669,7 +864,7 @@
           "specs": [
             {
               "title": "complete driver workflow @core",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "core"
               ],
@@ -682,39 +877,65 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 7,
-                      "parallelIndex": 7,
-                      "status": "passed",
-                      "duration": 12274,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Driver nav item found: Dashboard\n"
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15796,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:236:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 68,
+                          "line": 11
                         },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Driver nav item found: My Loads\n"
-                        },
-                        {
-                          "text": "✅ Driver nav item found: Routes\n"
-                        },
-                        {
-                          "text": "✅ Driver nav item found: Deliveries\n"
-                        },
-                        {
-                          "text": "✅ Driver nav item found: Earnings\n"
-                        },
-                        {
-                          "text": "✅ Driver portal accessibility verified\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 68,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m\n\u001b[2m    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\u001b[22m\n\u001b[2m    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\u001b[22m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:236:5\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:13.622Z",
+                      "startTime": "2025-09-01T01:15:16.183Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🎯-Dr-c1bd3-mplete-driver-workflow-core-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 68,
+                        "line": 11
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-118367569cf30a30a0dc",
@@ -732,7 +953,7 @@
           "specs": [
             {
               "title": "unified login redirects to correct portal @auth",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "auth"
               ],
@@ -745,33 +966,65 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 2,
-                      "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 28418,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ customer redirected to /portal\n"
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 15735,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('button:has-text(\"Customer\")').first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('button:has-text(\"Customer\")').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('button:has-text(\"Customer\")').first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('button:has-text(\"Customer\")').first()\u001b[22m\n\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:307:33",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 33,
+                          "line": 307
                         },
+                        "snippet": "\u001b[0m \u001b[90m 305 |\u001b[39m       }\n \u001b[90m 306 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 307 |\u001b[39m       \u001b[36mawait\u001b[39m expect(quickButton)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 308 |\u001b[39m       \u001b[36mawait\u001b[39m quickButton\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 309 |\u001b[39m\n \u001b[90m 310 |\u001b[39m       \u001b[90m// Should redirect to correct portal (handle trailing slash)\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ staff redirected to /staff\n"
-                        },
-                        {
-                          "text": "✅ driver redirected to /driver\n"
-                        },
-                        {
-                          "text": "✅ admin redirected to /staff\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 33,
+                            "line": 307
+                          },
+                          "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('button:has-text(\"Customer\")').first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('button:has-text(\"Customer\")').first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 305 |\u001b[39m       }\n \u001b[90m 306 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 307 |\u001b[39m       \u001b[36mawait\u001b[39m expect(quickButton)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 308 |\u001b[39m       \u001b[36mawait\u001b[39m quickButton\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 309 |\u001b[39m\n \u001b[90m 310 |\u001b[39m       \u001b[90m// Should redirect to correct portal (handle trailing slash)\u001b[39m\u001b[0m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:307:33\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:15.381Z",
+                      "startTime": "2025-09-01T01:15:17.001Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-df343-ects-to-correct-portal-auth-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 33,
+                        "line": 307
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-1b216b04a6e15bfbbbf8",
@@ -781,7 +1034,7 @@
             },
             {
               "title": "portal switching functionality @auth",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "auth"
               ],
@@ -794,24 +1047,65 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 10111,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 15702,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('button:has-text(\"Staff (Admin)\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('button:has-text(\"Staff (Admin)\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('button:has-text(\"Staff (Admin)\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('button:has-text(\"Staff (Admin)\")')\u001b[22m\n\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:328:31",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 31,
+                          "line": 328
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 326 |\u001b[39m     \u001b[90m// Login as admin (should have access to staff portal)\u001b[39m\n \u001b[90m 327 |\u001b[39m     \u001b[36mconst\u001b[39m adminButton \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'button:has-text(\"Staff (Admin)\")'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 328 |\u001b[39m     \u001b[36mawait\u001b[39m expect(adminButton)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 329 |\u001b[39m     \u001b[36mawait\u001b[39m adminButton\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 330 |\u001b[39m\n \u001b[90m 331 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[35m/\\/staff\\/?$/\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Portal switcher found and accessible\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 31,
+                            "line": 328
+                          },
+                          "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('button:has-text(\"Staff (Admin)\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('button:has-text(\"Staff (Admin)\")')\u001b[22m\n\n\n\u001b[0m \u001b[90m 326 |\u001b[39m     \u001b[90m// Login as admin (should have access to staff portal)\u001b[39m\n \u001b[90m 327 |\u001b[39m     \u001b[36mconst\u001b[39m adminButton \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'button:has-text(\"Staff (Admin)\")'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 328 |\u001b[39m     \u001b[36mawait\u001b[39m expect(adminButton)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 329 |\u001b[39m     \u001b[36mawait\u001b[39m adminButton\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 330 |\u001b[39m\n \u001b[90m 331 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[35m/\\/staff\\/?$/\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:328:31\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:22.017Z",
+                      "startTime": "2025-09-01T01:15:21.716Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔄-Un-96a0e-witching-functionality-auth-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 31,
+                        "line": 328
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-cac28d6901255199af22",
@@ -842,76 +1136,66 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 7,
-                      "parallelIndex": 7,
-                      "status": "timedOut",
-                      "duration": 49740,
+                      "workerIndex": 8,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 2840,
                       "error": {
-                        "message": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:393:28",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 28,
+                          "line": 393
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 391 |\u001b[39m         \u001b[36mconst\u001b[39m hasErrorBoundary \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m':text(\"Something went wrong\")'\u001b[39m)\u001b[33m.\u001b[39misVisible()\u001b[33m;\u001b[39m\n \u001b[90m 392 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 393 |\u001b[39m         expect(is500Error)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 394 |\u001b[39m         expect(is404Error)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 395 |\u001b[39m         expect(hasErrorBoundary)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 396 |\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
-                          "message": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
-                        },
-                        {
                           "location": {
-                            "file": "/app/tests/e2e/utils/auth-helpers.ts",
-                            "column": 21,
-                            "line": 46
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 28,
+                            "line": 393
                           },
-                          "message": "Error: page.waitForTimeout: Test timeout of 45000ms exceeded.\n\n   at utils/auth-helpers.ts:46\n\n  44 |\n  45 |     // Wait for any loading states to complete before clicking\n> 46 |     await this.page.waitForTimeout(1000);\n     |                     ^\n  47 |\n  48 |     await quickLoginButton.click();\n  49 |\n    at AuthHelpers.quickLogin (/app/tests/e2e/utils/auth-helpers.ts:46:21)\n    at /app/tests/e2e/optimized-test-suite.spec.ts:374:11"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n\u001b[0m \u001b[90m 391 |\u001b[39m         \u001b[36mconst\u001b[39m hasErrorBoundary \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m':text(\"Something went wrong\")'\u001b[39m)\u001b[33m.\u001b[39misVisible()\u001b[33m;\u001b[39m\n \u001b[90m 392 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 393 |\u001b[39m         expect(is500Error)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 394 |\u001b[39m         expect(is404Error)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 395 |\u001b[39m         expect(hasErrorBoundary)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 396 |\u001b[39m\u001b[0m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:393:28\u001b[22m"
                         }
                       ],
                       "stdout": [
                         {
-                          "text": "✅ Homepage loads successfully\n"
-                        },
-                        {
-                          "text": "✅ Login loads successfully\n"
-                        },
-                        {
-                          "text": "✅ Register loads successfully\n"
-                        },
-                        {
-                          "text": "✅ Customer Portal loads successfully\n"
-                        },
-                        {
-                          "text": "✅ Staff Portal loads successfully\n"
-                        },
-                        {
-                          "text": "✅ Driver Portal loads successfully\n"
-                        },
-                        {
-                          "text": "❌ Staff Customers failed: page.waitForTimeout: Test timeout of 45000ms exceeded.\n"
+                          "text": "❌ Homepage failed: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:26.731Z",
+                      "startTime": "2025-09-01T01:15:27.348Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/test-failed-1.png"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/video.webm"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/error-context.md"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/trace.zip"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-📄-Pa-7b6a6-ithout-500-404-errors-pages-critical-path/trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 28,
+                        "line": 393
+                      }
                     }
                   ],
                   "status": "unexpected"
@@ -945,61 +1229,61 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
+                      "workerIndex": 9,
+                      "parallelIndex": 5,
                       "status": "failed",
-                      "duration": 9206,
+                      "duration": 3583,
                       "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m3000\u001b[39m\nReceived:   \u001b[31m6511\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m3000\u001b[39m\nReceived:   \u001b[31m6511\u001b[39m\n    at /app/tests/e2e/optimized-test-suite.spec.ts:428:24",
+                        "message": "TimeoutError: locator.waitFor: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('h1, h2, main').first() to be visible\u001b[22m\n",
+                        "stack": "TimeoutError: locator.waitFor: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('h1, h2, main').first() to be visible\u001b[22m\n\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:426:50",
                         "location": {
-                          "file": "/app/tests/e2e/optimized-test-suite.spec.ts",
-                          "column": 24,
-                          "line": 428
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                          "column": 50,
+                          "line": 426
                         },
-                        "snippet": "  426 |       const loadTime = Date.now() - startTime;\n  427 |\n> 428 |       expect(loadTime).toBeLessThan(target.maxTime);\n      |                        ^\n  429 |       console.log(`✅ ${target.name}: ${loadTime}ms (target: ${target.maxTime}ms)`);\n  430 |     }\n  431 |   });"
+                        "snippet": "\u001b[0m \u001b[90m 424 |\u001b[39m       \u001b[36mconst\u001b[39m startTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow()\u001b[33m;\u001b[39m\n \u001b[90m 425 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(target\u001b[33m.\u001b[39mpath)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 426 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1, h2, main'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mwaitFor({ timeout\u001b[33m:\u001b[39m target\u001b[33m.\u001b[39mmaxTime })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 427 |\u001b[39m       \u001b[36mconst\u001b[39m loadTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m startTime\u001b[33m;\u001b[39m\n \u001b[90m 428 |\u001b[39m\n \u001b[90m 429 |\u001b[39m       expect(loadTime)\u001b[33m.\u001b[39mtoBeLessThan(target\u001b[33m.\u001b[39mmaxTime)\u001b[33m;\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "/app/tests/e2e/optimized-test-suite.spec.ts",
-                            "column": 24,
-                            "line": 428
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 50,
+                            "line": 426
                           },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m3000\u001b[39m\nReceived:   \u001b[31m6511\u001b[39m\n\n  426 |       const loadTime = Date.now() - startTime;\n  427 |\n> 428 |       expect(loadTime).toBeLessThan(target.maxTime);\n      |                        ^\n  429 |       console.log(`✅ ${target.name}: ${loadTime}ms (target: ${target.maxTime}ms)`);\n  430 |     }\n  431 |   });\n    at /app/tests/e2e/optimized-test-suite.spec.ts:428:24"
+                          "message": "TimeoutError: locator.waitFor: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('h1, h2, main').first() to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 424 |\u001b[39m       \u001b[36mconst\u001b[39m startTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow()\u001b[33m;\u001b[39m\n \u001b[90m 425 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(target\u001b[33m.\u001b[39mpath)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 426 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1, h2, main'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mwaitFor({ timeout\u001b[33m:\u001b[39m target\u001b[33m.\u001b[39mmaxTime })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 427 |\u001b[39m       \u001b[36mconst\u001b[39m loadTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m startTime\u001b[33m;\u001b[39m\n \u001b[90m 428 |\u001b[39m\n \u001b[90m 429 |\u001b[39m       expect(loadTime)\u001b[33m.\u001b[39mtoBeLessThan(target\u001b[33m.\u001b[39mmaxTime)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:426:50\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:32.309Z",
+                      "startTime": "2025-09-01T01:15:27.348Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/test-failed-1.png"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/video.webm"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/error-context.md"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "/app/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/trace.zip"
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-⚡-Per-b0e51-e-within-limits-performance-critical-path/trace.zip"
                         }
                       ],
                       "errorLocation": {
-                        "file": "/app/tests/e2e/optimized-test-suite.spec.ts",
-                        "column": 24,
-                        "line": 428
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                        "column": 50,
+                        "line": 426
                       }
                     }
                   ],
@@ -1026,19 +1310,19 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
+                      "workerIndex": 10,
+                      "parallelIndex": 2,
                       "status": "passed",
-                      "duration": 17701,
+                      "duration": 6366,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "⚠️ Critical console errors found: [\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (404) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 400 ()'\u001b[39m\n]\n"
+                          "text": "⚠️ Critical console errors found: [\n  \u001b[32m'Failed to load resource: the server responded with a status of 500 (Internal Server Error)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 500 (Internal Server Error)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (500) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (500) was received when fetching the script.'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 404 (Not Found)'\u001b[39m,\n  \u001b[32m'A bad HTTP response code (500) was received when fetching the script.'\u001b[39m\n]\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:35.811Z",
+                      "startTime": "2025-09-01T01:15:27.745Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1048,7 +1332,7 @@
               ],
               "id": "17e7f8c5616d93753744-a53c6b86581417ef4b68",
               "file": "optimized-test-suite.spec.ts",
-              "line": 433,
+              "line": 434,
               "column": 7
             }
           ]
@@ -1056,12 +1340,12 @@
         {
           "title": "🔧 Core Feature Integration",
           "file": "optimized-test-suite.spec.ts",
-          "line": 470,
+          "line": 471,
           "column": 6,
           "specs": [
             {
               "title": "authentication and session management @integration",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "integration"
               ],
@@ -1074,29 +1358,70 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 3,
-                      "parallelIndex": 3,
-                      "status": "passed",
-                      "duration": 12613,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": 11,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 15729,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\n    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\n    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:476:5",
+                        "location": {
+                          "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                          "column": 68,
+                          "line": 11
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Authentication and session management verified\n"
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                            "column": 68,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[31mTimed out 15000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h2:has-text(\"Welcome back\")')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2:has-text(\"Welcome back\")')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mutils/auth-helpers.ts:11\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[36masync\u001b[39m goToLogin()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'h2:has-text(\"Welcome back\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m   }\n \u001b[90m 13 |\u001b[39m\n \u001b[90m 14 |\u001b[39m   \u001b[36masync\u001b[39m clearStorage()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\u001b[0m\n\u001b[2m    at AuthHelpers.goToLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:11:68)\u001b[22m\n\u001b[2m    at AuthHelpers.quickLogin (/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts:28:5)\u001b[22m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:476:5\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:38.314Z",
+                      "startTime": "2025-09-01T01:15:30.701Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-🔧-Co-79524-sion-management-integration-critical-path/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/keith/claude/shipnorth/tests/e2e/utils/auth-helpers.ts",
+                        "column": 68,
+                        "line": 11
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-3ca9c9770983db6af68a",
               "file": "optimized-test-suite.spec.ts",
-              "line": 471,
+              "line": 472,
               "column": 7
             },
             {
@@ -1114,10 +1439,10 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 4,
-                      "parallelIndex": 4,
+                      "workerIndex": 12,
+                      "parallelIndex": 5,
                       "status": "passed",
-                      "duration": 4998,
+                      "duration": 345,
                       "errors": [],
                       "stdout": [
                         {
@@ -1126,7 +1451,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:39.119Z",
+                      "startTime": "2025-09-01T01:15:31.474Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1136,7 +1461,7 @@
               ],
               "id": "17e7f8c5616d93753744-005fdf3bd663c62df4c9",
               "file": "optimized-test-suite.spec.ts",
-              "line": 498,
+              "line": 499,
               "column": 7
             }
           ]
@@ -1144,12 +1469,12 @@
         {
           "title": "♿ Essential Accessibility",
           "file": "optimized-test-suite.spec.ts",
-          "line": 526,
+          "line": 527,
           "column": 6,
           "specs": [
             {
               "title": "keyboard navigation basics @accessibility",
-              "ok": true,
+              "ok": false,
               "tags": [
                 "accessibility"
               ],
@@ -1162,29 +1487,62 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 6,
-                      "parallelIndex": 6,
-                      "status": "passed",
-                      "duration": 4901,
-                      "errors": [],
-                      "stdout": [
+                      "workerIndex": 12,
+                      "parallelIndex": 5,
+                      "status": "timedOut",
+                      "duration": 45996,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Keyboard navigation working, focused: \n"
+                          "message": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts",
+                            "column": 57,
+                            "line": 537
+                          },
+                          "message": "Error: locator.textContent: Test timeout of 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator(':focus')\u001b[22m\n\n\n\u001b[0m \u001b[90m 535 |\u001b[39m\n \u001b[90m 536 |\u001b[39m     \u001b[90m// Should be able to reach submit button\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 537 |\u001b[39m     \u001b[36mconst\u001b[39m focusedElement \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m':focus'\u001b[39m)\u001b[33m.\u001b[39mtextContent()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 538 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`✅ Keyboard navigation working, focused: ${focusedElement}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 539 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 540 |\u001b[39m\u001b[0m\n\u001b[2m    at /Users/keith/claude/shipnorth/tests/e2e/optimized-test-suite.spec.ts:537:57\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:39.326Z",
+                      "startTime": "2025-09-01T01:15:31.915Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-♿-Ess-9f1c9-gation-basics-accessibility-critical-path/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-♿-Ess-9f1c9-gation-basics-accessibility-critical-path/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-♿-Ess-9f1c9-gation-basics-accessibility-critical-path/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/keith/claude/shipnorth/test-artifacts-optimized/optimized-test-suite-♿-Ess-9f1c9-gation-basics-accessibility-critical-path/trace.zip"
+                        }
+                      ]
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "17e7f8c5616d93753744-825f5cbc315f811fc0a6",
               "file": "optimized-test-suite.spec.ts",
-              "line": 527,
+              "line": 528,
               "column": 7
             },
             {
@@ -1202,19 +1560,19 @@
                   "projectName": "critical-path",
                   "results": [
                     {
-                      "workerIndex": 5,
-                      "parallelIndex": 5,
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3987,
+                      "duration": 255,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "✅ Mobile viewport: no horizontal scroll (375px vs 375px)\n"
+                          "text": "✅ Mobile viewport: no horizontal scroll (359px vs 359px)\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-31T02:29:41.121Z",
+                      "startTime": "2025-09-01T01:15:32.535Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1224,7 +1582,7 @@
               ],
               "id": "17e7f8c5616d93753744-98e5a155c9b76806c07a",
               "file": "optimized-test-suite.spec.ts",
-              "line": 540,
+              "line": 541,
               "column": 7
             }
           ]
@@ -1234,11 +1592,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-31T02:29:05.496Z",
-    "duration": 71554.67099999999,
-    "expected": 16,
+    "startTime": "2025-09-01T01:15:07.097Z",
+    "duration": 70859.758,
+    "expected": 6,
     "skipped": 0,
-    "unexpected": 2,
+    "unexpected": 12,
     "flaky": 0
   }
 }

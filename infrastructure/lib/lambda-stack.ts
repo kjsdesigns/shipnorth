@@ -16,8 +16,7 @@ export class ShipnorthLambdaStack extends cdk.Stack {
 
     const env = this.node.tryGetContext('environment') || 'dev';
 
-    // Import existing DynamoDB table
-    const tableName = `shipnorth-${env}-main`;
+    // DynamoDB no longer used - migrated to PostgreSQL
 
     // Import secrets
     const secrets = secretsmanager.Secret.fromSecretNameV2(
@@ -55,29 +54,16 @@ export class ShipnorthLambdaStack extends cdk.Stack {
       memorySize: 1024,
       environment: {
         NODE_ENV: 'production',
-        DYNAMODB_TABLE: tableName,
+        // DYNAMODB_TABLE: tableName,  // Removed - using PostgreSQL
+        POSTGRES_HOST: process.env.POSTGRES_HOST || 'postgres',
+        POSTGRES_DB: process.env.POSTGRES_DB || 'shipnorth',
+        POSTGRES_USER: process.env.POSTGRES_USER || 'shipnorth',
         CORS_ORIGIN: env === 'prod' ? 'https://shipnorth.com' : '*',
       },
     });
 
-    // Grant permissions to Lambda
-    apiFunction.addToRolePolicy(
-      new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: [
-          'dynamodb:GetItem',
-          'dynamodb:PutItem',
-          'dynamodb:UpdateItem',
-          'dynamodb:DeleteItem',
-          'dynamodb:Query',
-          'dynamodb:Scan',
-        ],
-        resources: [
-          `arn:aws:dynamodb:${this.region}:${this.account}:table/${tableName}`,
-          `arn:aws:dynamodb:${this.region}:${this.account}:table/${tableName}/index/*`,
-        ],
-      })
-    );
+    // DynamoDB permissions removed - now using PostgreSQL
+    // PostgreSQL connection will be handled via VPC/security groups
 
     // Grant S3 permissions
     apiFunction.addToRolePolicy(

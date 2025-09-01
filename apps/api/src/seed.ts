@@ -73,6 +73,7 @@ const seedUsers = async () => {
 
   // Also create in customer table
   const customerData = {
+    name: 'John Doe',
     email: 'john.doe@example.com',
     firstName: 'John',
     lastName: 'Doe',

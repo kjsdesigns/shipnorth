@@ -172,7 +172,7 @@ export class PackageModel {
   static async delete(id: string): Promise<boolean> {
     try {
       const result = await this.query('DELETE FROM packages WHERE id = $1', [id]);
-      return result.rowCount > 0;
+      return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       console.error('Error deleting package:', error);
       throw error;

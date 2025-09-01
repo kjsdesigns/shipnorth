@@ -28,6 +28,8 @@ import {
   Wind,
 } from 'lucide-react';
 import RateLookupDialog from '@/components/RateLookupDialog';
+import CustomerSelectionDialog from '@/components/CustomerSelectionDialog';
+import CreatePackageDialog from '@/components/CreatePackageDialog';
 
 // Modal interfaces
 interface ModalProps {
@@ -91,6 +93,12 @@ export default function PackagesPage() {
   const [selectedPackages, setSelectedPackages] = useState<Set<string>>(new Set());
   const [isSelectAllMode, setIsSelectAllMode] = useState<'none' | 'filtered' | 'all'>('none');
   const [showBulkActions, setShowBulkActions] = useState(false);
+  
+  // Bulk assignment modal state
+  const [showBulkAssignModal, setShowBulkAssignModal] = useState(false);
+  const [selectedLoadId, setSelectedLoadId] = useState('');
+  const [bulkAssignLoading, setBulkAssignLoading] = useState(false);
+  const [loadOptions, setLoadOptions] = useState<ChipOption[]>([]);
 
   // Form states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -103,6 +111,11 @@ export default function PackagesPage() {
   } | null>(null);
   const [rateLookupPackage, setRateLookupPackage] = useState<any>(null);
   const [isRateLookupOpen, setIsRateLookupOpen] = useState(false);
+  
+  // Two-step package creation states
+  const [showCustomerSelection, setShowCustomerSelection] = useState(false);
+  const [showCreatePackage, setShowCreatePackage] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [formData, setFormData] = useState({
     customerId: '',
     recipientName: '',
@@ -151,12 +164,16 @@ export default function PackagesPage() {
     setFilteredPackages(filtered);
   }, [searchQuery, packages]);
 
-  // Clear selection when filtered packages change
+  // Clear selection only when packages data actually changes (not just filtering)
   useEffect(() => {
-    setSelectedPackages(new Set());
-    setIsSelectAllMode('none');
-    setShowBulkActions(false);
-  }, [filteredPackages]);
+    // Only clear selections when the package list fundamentally changes
+    // Don't clear on search filtering
+    if (packages.length === 0) {
+      setSelectedPackages(new Set());
+      setIsSelectAllMode('none');
+      setShowBulkActions(false);
+    }
+  }, [packages.length]);
 
   // Update bulk actions visibility
   useEffect(() => {
@@ -165,11 +182,18 @@ export default function PackagesPage() {
 
   const loadData = async () => {
     try {
+      console.log('🔄 Loading data: packages, customers, and loads...');
       const [packagesRes, customersRes, loadsRes] = await Promise.all([
         packageAPI.list({ limit: 100 }),
         customerAPI.list(),
         loadAPI.list(),
       ]);
+      
+      console.log('📊 API responses:', {
+        packages: packagesRes.data?.packages?.length || 0,
+        customers: customersRes.data?.customers?.length || 0,
+        loads: loadsRes.data?.loads?.length || 0
+      });
 
       const packagesData = packagesRes.data.packages || [];
       const customersData = customersRes.data.customers || [];
@@ -180,19 +204,45 @@ export default function PackagesPage() {
       setLoads(loadsData);
 
       // Convert customers to ChipSelector options
-      const options = customersData.map((customer: any) => ({
+      const customerOptions = customersData.map((customer: any) => ({
         value: customer.id,
         label: `${customer.firstName} ${customer.lastName}`,
         subtitle: customer.email,
       }));
-      setCustomerOptions(options);
+      setCustomerOptions(customerOptions);
+
+      // Convert loads to ChipSelector options for bulk assignment
+      const loadOptionsData = (loadsData || []).map((load: any) => {
+        // Find driver name from users if we have driver_id
+        const driverName = load.driver_id ? 'Driver Assigned' : 'Unassigned';
+        
+        return {
+          value: load.id,
+          label: `${load.name || 'Load'} - ${load.vehicle || 'No Vehicle'}`,
+          subtitle: `Driver: ${driverName} | Status: ${load.status || 'planned'} | Packages: ${load.packageCount || 0}`,
+        };
+      });
+      console.log('🔍 Load options debug:', {
+        loadsDataLength: loadsData.length,
+        firstLoad: loadsData[0],
+        loadOptionsLength: loadOptionsData.length,
+        firstOption: loadOptionsData[0]
+      });
+      setLoadOptions(loadOptionsData);
       setFilteredPackages(packagesData);
 
-      // Calculate stats
+      // Calculate stats with proper type handling
       const unassigned = packagesData.filter((p: any) => !p.loadId).length;
-      const inTransit = packagesData.filter((p: any) => p.shipmentStatus === 'in_transit').length;
-      const delivered = packagesData.filter((p: any) => p.shipmentStatus === 'delivered').length;
-      const revenue = packagesData.reduce((sum: number, p: any) => sum + (p.price || 0), 0);
+      const inTransit = packagesData.filter((p: any) => 
+        p.shipmentStatus === 'in_transit' || p.status === 'shipped'
+      ).length;
+      const delivered = packagesData.filter((p: any) => 
+        p.shipmentStatus === 'delivered' || p.status === 'delivered'
+      ).length;
+      const revenue = packagesData.reduce((sum: number, p: any) => {
+        const price = typeof p.price === 'string' ? parseFloat(p.price) : (p.price || 0);
+        return sum + (isNaN(price) ? 0 : price);
+      }, 0);
 
       setStats({
         totalPackages: packagesData.length,
@@ -335,8 +385,64 @@ export default function PackagesPage() {
   };
 
   const handleAddPackage = () => {
-    resetForm();
-    setIsCreateModalOpen(true);
+    setSelectedCustomer(null);
+    setShowCustomerSelection(true);
+  };
+
+  const handleSelectCustomer = (customer: any) => {
+    setSelectedCustomer(customer);
+    setShowCustomerSelection(false);
+    setShowCreatePackage(true);
+  };
+
+  const handleBackToCustomerSelection = () => {
+    setShowCreatePackage(false);
+    setShowCustomerSelection(true);
+  };
+
+  const handleCreatePackage = async (packageData: any) => {
+    try {
+      const packagePayload = {
+        customerId: packageData.customerId,
+        shipTo: {
+          name: packageData.recipientName,
+          address1: packageData.addressLine1,
+          address2: packageData.addressLine2,
+          city: packageData.city,
+          province: packageData.province,
+          postalCode: packageData.postalCode,
+          country: packageData.country,
+        },
+        weight: packageData.weight,
+        dimensions: {
+          length: packageData.length,
+          width: packageData.width,
+          height: packageData.height,
+        },
+        // Also send individual dimension fields for PostgreSQL compatibility
+        length: packageData.length,
+        width: packageData.width,
+        height: packageData.height,
+        description: packageData.description,
+        declared_value: packageData.declaredValue,
+        notes: packageData.specialInstructions,
+        // Additional fields expected by the API
+        barcode: `PKG-${Date.now()}`, // Generate a temporary barcode
+        status: 'pending',
+      };
+
+      await packageAPI.create(packagePayload);
+      await loadData(); // Refresh the package list
+    } catch (error: any) {
+      console.error('Failed to create package:', error);
+      throw error;
+    }
+  };
+
+  const handleCloseDialogs = () => {
+    setShowCustomerSelection(false);
+    setShowCreatePackage(false);
+    setSelectedCustomer(null);
   };
 
   const handleEditPackage = (pkg: any) => {
@@ -354,9 +460,9 @@ export default function PackagesPage() {
         country: pkg.shipTo?.country || 'Canada',
       },
       weight: pkg.weight?.toString() || '',
-      length: pkg.dimensions?.length?.toString() || '',
-      width: pkg.dimensions?.width?.toString() || '',
-      height: pkg.dimensions?.height?.toString() || '',
+      length: (pkg.dimensions?.length || pkg.length)?.toString() || '',
+      width: (pkg.dimensions?.width || pkg.width)?.toString() || '',
+      height: (pkg.dimensions?.height || pkg.height)?.toString() || '',
       notes: pkg.notes || '',
     });
     setSubmitMessage(null);
@@ -442,25 +548,33 @@ export default function PackagesPage() {
   // Bulk action handlers
   const handleBulkAssignToLoad = async () => {
     if (selectedPackages.size === 0) return;
+    setShowBulkAssignModal(true);
+  };
+
+  const executeBulkAssignment = async () => {
+    if (!selectedLoadId || selectedPackages.size === 0) return;
     
-    // Show load selection dialog
-    const selectedLoad = prompt(`Assign ${selectedPackages.size} package(s) to load:\n\nAvailable loads:\n${loads.map(l => `• ${l.id.slice(-6)} - ${l.driverName} (${l.status})`).join('\n')}\n\nEnter load ID (last 6 digits):`);
-    
-    if (selectedLoad) {
-      const fullLoadId = loads.find(l => l.id.endsWith(selectedLoad))?.id;
-      if (fullLoadId) {
-        try {
-          // In real implementation, this would call the API
-          console.log('Assigning packages to load:', Array.from(selectedPackages), fullLoadId);
-          alert(`✅ Assigned ${selectedPackages.size} packages to load ${selectedLoad}`);
-          clearSelection();
-          loadData(); // Refresh data
-        } catch (error) {
-          alert('❌ Failed to assign packages to load');
-        }
-      } else {
-        alert('❌ Load not found');
-      }
+    setBulkAssignLoading(true);
+    try {
+      // Call API to assign packages to load
+      const packageIds = Array.from(selectedPackages);
+      await packageAPI.bulkAssign(packageIds, selectedLoadId);
+      
+      console.log(`✅ Successfully assigned ${packageIds.length} packages to load ${selectedLoadId}`);
+      
+      // Close modal and clear selection
+      setShowBulkAssignModal(false);
+      setSelectedLoadId('');
+      clearSelection();
+      
+      // Refresh data to show updated assignments
+      await loadData();
+      
+    } catch (error) {
+      console.error('Failed to assign packages to load:', error);
+      alert('❌ Failed to assign packages to load. Please try again.');
+    } finally {
+      setBulkAssignLoading(false);
     }
   };
 
@@ -606,6 +720,10 @@ export default function PackagesPage() {
           width: parseFloat(formData.width),
           height: parseFloat(formData.height),
         },
+        // Also send individual dimension fields for PostgreSQL compatibility
+        length: parseFloat(formData.length),
+        width: parseFloat(formData.width),
+        height: parseFloat(formData.height),
         notes: formData.notes,
       };
 
@@ -666,6 +784,7 @@ export default function PackagesPage() {
           <button
             onClick={handleAddPackage}
             className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            data-testid="create-package-button"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Package
@@ -721,7 +840,7 @@ export default function PackagesPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                ${stats.totalRevenue.toFixed(2)}
+                ${(stats.totalRevenue || 0).toFixed(2)}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
             </div>
@@ -923,14 +1042,16 @@ export default function PackagesPage() {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        pkg.shipmentStatus === 'delivered'
+                        (pkg.shipmentStatus || pkg.status) === 'delivered'
                           ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                          : pkg.shipmentStatus === 'in_transit'
+                          : (pkg.shipmentStatus || pkg.status) === 'in_transit' || (pkg.shipmentStatus || pkg.status) === 'shipped'
                             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            : (pkg.shipmentStatus || pkg.status) === 'pending'
+                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}
                     >
-                      {pkg.shipmentStatus || 'ready'}
+                      {pkg.shipmentStatus || pkg.status || 'ready'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
@@ -961,31 +1082,31 @@ export default function PackagesPage() {
                     {pkg.weight || '0'} kg
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-right">
-                    {pkg.quotedCarrier && pkg.quotedRate ? (
+                    {(pkg.quotedCarrier || pkg.carrier) && (pkg.quotedRate || pkg.estimatedCost) ? (
                       <div className="flex items-center space-x-2">
                         <span
                           className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            pkg.quotedCarrier === 'CanadaPost'
+                            (pkg.quotedCarrier || pkg.carrier) === 'CanadaPost' || (pkg.quotedCarrier || pkg.carrier) === 'Canada Post'
                               ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                              : pkg.quotedService?.toLowerCase().includes('express') ||
-                                  pkg.quotedService?.toLowerCase().includes('priority')
+                              : (pkg.quotedService || pkg.serviceType)?.toLowerCase().includes('express') ||
+                                  (pkg.quotedService || pkg.serviceType)?.toLowerCase().includes('priority')
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
                                 : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                           }`}
                         >
-                          {pkg.quotedCarrier === 'CanadaPost'
+                          {(pkg.quotedCarrier || pkg.carrier) === 'CanadaPost' || (pkg.quotedCarrier || pkg.carrier) === 'Canada Post'
                             ? 'CP'
-                            : pkg.quotedCarrier === 'UPS'
+                            : (pkg.quotedCarrier || pkg.carrier) === 'UPS'
                               ? 'UPS'
-                              : pkg.quotedCarrier === 'FedEx'
+                              : (pkg.quotedCarrier || pkg.carrier) === 'FedEx'
                                 ? 'FDX'
-                                : pkg.quotedCarrier?.substring(0, 3).toUpperCase() || '???'}
-                          {pkg.quotedService?.toLowerCase().includes('express') ||
-                          pkg.quotedService?.toLowerCase().includes('priority')
+                                : (pkg.quotedCarrier || pkg.carrier)?.substring(0, 3).toUpperCase() || '???'}
+                          {(pkg.quotedService || pkg.serviceType)?.toLowerCase().includes('express') ||
+                          (pkg.quotedService || pkg.serviceType)?.toLowerCase().includes('priority')
                             ? '+'
                             : ''}
                         </span>
-                        <span className="font-medium">${pkg.quotedRate.toFixed(2)}</span>
+                        <span className="font-medium">${parseFloat(pkg.quotedRate || pkg.estimatedCost || '0').toFixed(2)}</span>
                       </div>
                     ) : (
                       <button
@@ -997,7 +1118,7 @@ export default function PackagesPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-right">
-                    ${pkg.price || '0.00'}
+                    ${parseFloat(pkg.price || pkg.actualCost || pkg.estimatedCost || '0').toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <div className="flex space-x-2">
@@ -1579,6 +1700,127 @@ export default function PackagesPage() {
           onRateSaved={handleRateSaved}
         />
       )}
+
+      {/* Bulk Load Assignment Modal */}
+      <Modal 
+        isOpen={showBulkAssignModal} 
+        onClose={() => {
+          setShowBulkAssignModal(false);
+          setSelectedLoadId('');
+        }} 
+        title="Assign Packages to Load"
+      >
+        <div className="space-y-6">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+              Bulk Assignment Summary
+            </h4>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              You are about to assign <strong>{selectedPackages.size} package{selectedPackages.size !== 1 ? 's' : ''}</strong> to the selected load.
+            </p>
+            <div className="mt-2 text-xs text-blue-600 dark:text-blue-400">
+              Selected packages: {Array.from(selectedPackages).slice(0, 3).map(id => 
+                packages.find(p => p.id === id)?.trackingNumber || id.slice(-8)
+              ).join(', ')}
+              {selectedPackages.size > 3 && ` and ${selectedPackages.size - 3} more...`}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Select Load *
+            </label>
+            <select
+              value={selectedLoadId}
+              onChange={(e) => setSelectedLoadId(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+              name="loadId"
+            >
+              <option value="">Select a load...</option>
+              {loadOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label} - {option.subtitle}
+                </option>
+              ))}
+            </select>
+            {loadOptions.length === 0 && (
+              <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                ⚠️ No loads available. Create a load first before assigning packages.
+              </p>
+            )}
+          </div>
+
+          {selectedLoadId && (
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <h4 className="font-medium text-green-900 dark:text-green-100 mb-2">
+                Selected Load Details
+              </h4>
+              {(() => {
+                const selectedLoad = loads.find(l => l.id === selectedLoadId);
+                return selectedLoad ? (
+                  <div className="text-sm text-green-700 dark:text-green-300 space-y-1">
+                    <div><strong>Name:</strong> {selectedLoad.name}</div>
+                    <div><strong>Driver:</strong> {selectedLoad.driverName || 'Unassigned'}</div>
+                    <div><strong>Vehicle:</strong> {selectedLoad.vehicle || 'TBD'}</div>
+                    <div><strong>Status:</strong> {selectedLoad.status || 'planned'}</div>
+                    <div><strong>Current Packages:</strong> {selectedLoad.packageCount || 0}</div>
+                    <div><strong>Departure:</strong> {selectedLoad.departure_date ? new Date(selectedLoad.departure_date).toLocaleDateString() : 'TBD'}</div>
+                  </div>
+                ) : null;
+              })()}
+            </div>
+          )}
+
+          <div className="flex justify-end space-x-3 pt-4">
+            <button
+              onClick={() => {
+                setShowBulkAssignModal(false);
+                setSelectedLoadId('');
+              }}
+              disabled={bulkAssignLoading}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={executeBulkAssignment}
+              disabled={!selectedLoadId || bulkAssignLoading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg flex items-center disabled:cursor-not-allowed"
+              data-testid="assign-packages-button"
+            >
+              {bulkAssignLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  Assigning...
+                </>
+              ) : (
+                <>
+                  <Truck className="h-4 w-4 mr-2" />
+                  Assign {selectedPackages.size} Package{selectedPackages.size !== 1 ? 's' : ''}
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Customer Selection Dialog */}
+      <CustomerSelectionDialog
+        isOpen={showCustomerSelection}
+        onClose={handleCloseDialogs}
+        onSelectCustomer={handleSelectCustomer}
+        customers={customers}
+      />
+
+      {/* Create Package Dialog */}
+      <CreatePackageDialog
+        isOpen={showCreatePackage}
+        onClose={handleCloseDialogs}
+        onCreatePackage={handleCreatePackage}
+        selectedCustomer={selectedCustomer}
+        onBackToCustomerSelection={handleBackToCustomerSelection}
+      />
     </ModernLayout>
   );
 }

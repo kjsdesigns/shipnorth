@@ -21,7 +21,7 @@ router.get('/:id/rates', authenticate, async (req: any, res) => {
     }
 
     // Check authorization: customers can only quote their own packages
-    if (req.user.role === 'customer' && pkg.customerId !== req.user.customerId) {
+    if (req.user.role === 'customer' && pkg.customer_id !== req.user.customerId) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -32,13 +32,13 @@ router.get('/:id/rates', authenticate, async (req: any, res) => {
 
     // Get full address for validation
     const { AddressModel } = await import('../models/address');
-    const fullAddress = await AddressModel.findById(pkg.shipTo.addressId);
+    const fullAddress = await AddressModel.findById(pkg.shipTo?.addressId || '');
     if (!fullAddress) {
       return res.status(400).json({ error: 'Invalid shipping address' });
     }
 
     const destination = {
-      name: pkg.shipTo.name,
+      name: pkg.shipTo?.name || '',
       address1: fullAddress.address1,
       address2: fullAddress.address2,
       city: fullAddress.city,
@@ -141,29 +141,118 @@ router.post('/:id/rates/save', authenticate, authorize('admin', 'staff'), async 
 // List packages
 router.get('/', authenticate, async (req: any, res) => {
   try {
+    console.log('🚀 Packages API called with:', { status: req.query.status, limit: req.query.limit, userRole: req.user?.role });
     const { status, limit = 50, page = 1 } = req.query;
 
-    let packages;
+    // Get packages with customer, address, and load information
+    let query = `
+      SELECT 
+        p.*,
+        c.name as customer_name,
+        c.email as customer_email,
+        a.address_line1,
+        a.address_line2,
+        a.city,
+        a.province_state as province,
+        a.postal_code,
+        a.country,
+        lp.load_id,
+        l.name as load_name,
+        l.vehicle as load_vehicle,
+        l.driver_id as load_driver_id
+      FROM packages p
+      LEFT JOIN customers c ON p.customer_id = c.id
+      LEFT JOIN addresses a ON p.ship_to_address_id = a.id
+      LEFT JOIN load_packages lp ON p.id = lp.package_id
+      LEFT JOIN loads l ON lp.load_id = l.id
+    `;
+    
+    let params: any[] = [];
+    let whereClause = '';
+    
+    // Add status filter if provided
     if (status) {
-      packages = await PackageModel.getPackagesByLoadStatus(status as string);
-    } else {
-      packages = await PackageModel.list(Number(limit));
+      if (status === 'unassigned') {
+        whereClause = ' WHERE lp.load_id IS NULL';
+      } else if (status === 'assigned') {
+        whereClause = ' WHERE lp.load_id IS NOT NULL';
+      } else if (status === 'in_transit') {
+        whereClause = ' WHERE p.status = $1';
+        params.push('shipped');
+      } else {
+        whereClause = ' WHERE p.status = $1';
+        params.push(status);
+      }
     }
-
-    // Filter packages based on user role
+    
+    // Add customer filter for customer role
     if (req.user.role === 'customer') {
-      // Customers can only see their own packages
-      packages = packages.filter((pkg) => pkg.customerId === req.user.customerId);
+      const customerFilter = whereClause ? ' AND p.customer_id = $' + (params.length + 1) : ' WHERE p.customer_id = $1';
+      whereClause += customerFilter;
+      params.push(req.user.customerId);
     }
-    // Staff and admin can see all packages (no filtering needed)
+    
+    query += whereClause + ' ORDER BY p.created_at DESC LIMIT $' + (params.length + 1);
+    params.push(Number(limit));
 
-    // Add expected delivery dates
-    const packagesWithDelivery = await Promise.all(
-      packages.map(async (pkg) => {
-        const expectedDeliveryDate = await PackageModel.getExpectedDeliveryDate(pkg.id);
-        return { ...pkg, expectedDeliveryDate };
-      })
-    );
+    const result = await PackageModel.query(query, params);
+    let packages = result.rows;
+    
+    console.log('🔍 Debug packages query result:', {
+      queryLength: packages.length,
+      firstPackage: packages[0] ? {
+        id: packages[0].id?.slice(0,8),
+        customer_name: packages[0].customer_name,
+        city: packages[0].city,
+        customer_id: packages[0].customer_id?.slice(0,8)
+      } : 'No packages'
+    });
+
+    // Transform data to match frontend expectations
+    const transformedPackages = packages.map((pkg: any) => ({
+      id: pkg.id,
+      trackingNumber: pkg.tracking_number,
+      customerId: pkg.customer_id,
+      customerName: pkg.customer_name,
+      customerEmail: pkg.customer_email,
+      shipTo: {
+        name: pkg.customer_name,
+        address1: pkg.address_line1,
+        address2: pkg.address_line2,
+        city: pkg.city,
+        province: pkg.province,
+        postalCode: pkg.postal_code,
+        country: pkg.country
+      },
+      weight: pkg.weight,
+      dimensions: {
+        length: pkg.length,
+        width: pkg.width,
+        height: pkg.height
+      },
+      status: pkg.status || 'ready',
+      shipmentStatus: pkg.status || 'ready',
+      carrier: pkg.carrier,
+      serviceType: pkg.service_type,
+      labelUrl: pkg.label_url,
+      estimatedCost: pkg.estimated_cost,
+      actualCost: pkg.actual_cost,
+      price: pkg.actual_cost || pkg.estimated_cost || 0,
+      loadId: pkg.load_id, // From the junction table join
+      loadName: pkg.load_name,
+      loadVehicle: pkg.load_vehicle,
+      quotedCarrier: pkg.carrier,
+      quotedService: pkg.service_type,
+      quotedRate: pkg.estimated_cost,
+      createdAt: pkg.created_at,
+      updatedAt: pkg.updated_at
+    }));
+
+    // Add expected delivery dates (temporarily disabled to debug)
+    const packagesWithDelivery = transformedPackages.map((pkg) => ({
+      ...pkg,
+      expectedDeliveryDate: null // Will be implemented later
+    }));
 
     res.json({
       packages: packagesWithDelivery,
@@ -209,7 +298,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Bulk assign packages to load
-router.post('/bulk-assign', authorize('staff', 'admin'), async (req, res) => {
+router.post('/bulk-assign', authenticate, authorize('staff', 'admin'), async (req, res) => {
   try {
     const { packageIds, loadId } = req.body;
 
@@ -221,10 +310,9 @@ router.post('/bulk-assign', authorize('staff', 'admin'), async (req, res) => {
       return res.status(400).json({ error: 'loadId is required' });
     }
 
-    // Update each package with the load assignment
-    for (const packageId of packageIds) {
-      await PackageModel.update(packageId, { loadId });
-    }
+    // Assign packages to load using LoadModel
+    const { LoadModel } = await import('../models/load');
+    await LoadModel.assignPackages(loadId, packageIds);
 
     res.json({ success: true, assignedCount: packageIds.length });
   } catch (error: any) {
@@ -249,7 +337,7 @@ router.post('/:id/mark-delivered', authorize('staff', 'admin', 'driver'), async 
       finalPhotoUrl = photoData;
     }
 
-    const updatedPackage = await PackageModel.markAsDelivered(id, {
+    const deliverySuccess = await PackageModel.markAsDelivered(id, {
       deliveredAt,
       photoUrl: finalPhotoUrl,
       signature,
@@ -258,13 +346,19 @@ router.post('/:id/mark-delivered', authorize('staff', 'admin', 'driver'), async 
       confirmedBy,
     });
 
-    if (!updatedPackage) {
+    if (!deliverySuccess) {
       return res.status(404).json({ error: 'Package not found' });
+    }
+
+    // Get updated package data for notification
+    const updatedPackage = await PackageModel.findById(id);
+    if (!updatedPackage) {
+      return res.status(404).json({ error: 'Package not found after update' });
     }
 
     // Send delivery notification
     try {
-      const customer = await CustomerModel.findById(updatedPackage.customerId);
+      const customer = await CustomerModel.findById(updatedPackage.customer_id);
       if (customer) {
         await NotificationService.notifyPackageStatusChange(id, 'delivered', customer, {
           trackingNumber: updatedPackage.trackingNumber,
@@ -310,7 +404,7 @@ router.put('/:id', authorize('staff', 'admin'), async (req, res) => {
 });
 
 // Create package (staff only)
-router.post('/', authorize('staff', 'admin'), async (req, res) => {
+router.post('/', authenticate, authorize('staff', 'admin'), async (req, res) => {
   try {
     const packageData = req.body;
     const newPackage = await PackageModel.create(packageData);
@@ -337,13 +431,13 @@ router.post('/:id/charge', authorize('staff', 'admin'), async (req, res) => {
     const { id } = req.params;
 
     // Get package details
-    const packageData = await PackageModel.get(id);
+    const packageData = await PackageModel.findById(id);
     if (!packageData) {
       return res.status(404).json({ error: 'Package not found' });
     }
 
     // Get customer details
-    const customer = await CustomerModel.get(packageData.customerId);
+    const customer = await CustomerModel.findById(packageData.customer_id);
     if (!customer) {
       return res.status(404).json({ error: 'Customer not found' });
     }
@@ -360,7 +454,7 @@ router.post('/:id/charge', authorize('staff', 'admin'), async (req, res) => {
       paypalOrderId: payment.orderId,
       paymentStatus: 'pending',
       paymentUrl: payment.approveUrl,
-      shippingCost: 15.0,
+      shipping_cost: 15.0,
     });
 
     res.json({
@@ -387,7 +481,7 @@ router.post('/:id/capture-payment', async (req, res) => {
     await PackageModel.update(id, {
       paymentStatus: 'paid',
       paypalTransactionId: result.transactionId,
-      paidAt: new Date().toISOString(),
+      paidAt: new Date(),
     });
 
     res.json({
@@ -434,7 +528,13 @@ router.delete(
     try {
       const { id: childId } = req.params;
 
-      const success = await PackageModel.removeFromParentPackage(childId);
+      // Get the current package to find its parent
+      const currentPackage = await PackageModel.findById(childId);
+      if (!currentPackage || !currentPackage.parent_package_id) {
+        return res.status(404).json({ error: 'Package not found or not consolidated' });
+      }
+      
+      const success = await PackageModel.removeFromParentPackage(childId, currentPackage.parent_package_id);
 
       if (success) {
         res.json({

@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as rds from 'aws-cdk-lib/aws-rds';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 
 export interface DatabaseStackProps extends cdk.StackProps {
@@ -7,56 +8,45 @@ export interface DatabaseStackProps extends cdk.StackProps {
 }
 
 export class DatabaseStack extends cdk.Stack {
-  public readonly mainTable: dynamodb.Table;
+  public readonly database: rds.DatabaseInstance;
+  public readonly vpc: ec2.Vpc;
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
 
-    // Main DynamoDB table with single-table design
-    this.mainTable = new dynamodb.Table(this, 'ShipnorthMainTable', {
-      tableName: `shipnorth-${props.environment}-main`,
-      partitionKey: { name: 'PK', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'SK', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      pointInTimeRecovery: true,
-      encryption: dynamodb.TableEncryption.AWS_MANAGED,
-      removalPolicy:
-        props.environment === 'prod' ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
+    // VPC for RDS (if deploying to AWS RDS in future)
+    this.vpc = new ec2.Vpc(this, 'ShipnorthVpc', {
+      maxAzs: 2,
+      natGateways: 1, // Cost optimization for dev
     });
 
-    // GSI1: Customer access patterns
-    this.mainTable.addGlobalSecondaryIndex({
-      indexName: 'GSI1',
-      partitionKey: { name: 'GSI1PK', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'GSI1SK', type: dynamodb.AttributeType.STRING },
-      projectionType: dynamodb.ProjectionType.ALL,
+    // Note: PostgreSQL currently runs in Docker containers
+    // This infrastructure is prepared for future AWS RDS migration if needed
+    
+    // RDS PostgreSQL instance (commented out - using Docker)
+    /*
+    this.database = new rds.DatabaseInstance(this, 'ShipnorthDatabase', {
+      engine: rds.DatabaseInstanceEngine.postgres({
+        version: rds.PostgresEngineVersion.VER_15_4,
+      }),
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
+      vpc: this.vpc,
+      credentials: rds.Credentials.fromGeneratedSecret('shipnorth-admin'),
+      databaseName: 'shipnorth',
+      deleteAutomatedBackups: props.environment !== 'prod',
+      removalPolicy: props.environment === 'prod' ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
+    });
+    */
+
+    // Output information for potential future AWS deployment
+    new cdk.CfnOutput(this, 'DatabaseType', {
+      value: 'PostgreSQL (Docker)',
+      description: 'Database type and deployment method',
     });
 
-    // GSI2: Date-based queries
-    this.mainTable.addGlobalSecondaryIndex({
-      indexName: 'GSI2',
-      partitionKey: { name: 'GSI2PK', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'GSI2SK', type: dynamodb.AttributeType.STRING },
-      projectionType: dynamodb.ProjectionType.ALL,
-    });
-
-    // GSI3: Status-based queries
-    this.mainTable.addGlobalSecondaryIndex({
-      indexName: 'GSI3',
-      partitionKey: { name: 'GSI3PK', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'GSI3SK', type: dynamodb.AttributeType.STRING },
-      projectionType: dynamodb.ProjectionType.ALL,
-    });
-
-    // Output the table name and ARN
-    new cdk.CfnOutput(this, 'TableName', {
-      value: this.mainTable.tableName,
-      description: 'DynamoDB table name',
-    });
-
-    new cdk.CfnOutput(this, 'TableArn', {
-      value: this.mainTable.tableArn,
-      description: 'DynamoDB table ARN',
+    new cdk.CfnOutput(this, 'DatabaseLocation', {
+      value: 'Docker Container (shipnorth-postgres)',
+      description: 'Database location and access method',
     });
   }
 }

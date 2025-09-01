@@ -4,8 +4,7 @@ import { DatabaseService } from '../services/database';
 // Mock the DatabaseService
 jest.mock('../services/database', () => ({
   DatabaseService: {
-    get: jest.fn(),
-    put: jest.fn(),
+    query: jest.fn(),
   },
 }));
 
@@ -39,16 +38,19 @@ describe('SettingsModel', () => {
 
   describe('get', () => {
     it('should return existing settings', async () => {
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockSettings });
+      (DatabaseService.query as jest.Mock).mockResolvedValue({ rows: [mockSettings] });
 
       const result = await SettingsModel.get();
 
       expect(result).toEqual(mockSettings);
-      expect(DatabaseService.get).toHaveBeenCalledWith('SETTINGS', 'system');
+      expect(DatabaseService.query).toHaveBeenCalledWith(
+        'SELECT * FROM settings WHERE id = $1 LIMIT 1',
+        ['system']
+      );
     });
 
     it('should return default settings when none exist', async () => {
-      (DatabaseService.get as jest.Mock).mockResolvedValue(null);
+      (DatabaseService.query as jest.Mock).mockResolvedValue({ rows: [] });
 
       const result = await SettingsModel.get();
 
@@ -72,8 +74,8 @@ describe('SettingsModel', () => {
       });
     });
 
-    it('should return default settings when Data is missing', async () => {
-      (DatabaseService.get as jest.Mock).mockResolvedValue({});
+    it('should return default settings when no rows exist', async () => {
+      (DatabaseService.query as jest.Mock).mockResolvedValue({ rows: [] });
 
       const result = await SettingsModel.get();
 
@@ -118,8 +120,8 @@ describe('SettingsModel', () => {
         },
       };
 
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: currentSettings });
-      (DatabaseService.put as jest.Mock).mockResolvedValue(undefined);
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: currentSettings });
+      (DatabaseService.put as jest.Mock).mockResolvedValue({ Item: { ...currentSettings, ...updates } });
 
       const result = await SettingsModel.update(updates);
 
@@ -129,15 +131,10 @@ describe('SettingsModel', () => {
         updatedAt: expect.any(String),
       });
 
-      expect(DatabaseService.put).toHaveBeenCalledWith({
-        PK: 'SETTINGS',
-        SK: 'system',
-        Type: 'Settings',
-        Data: {
-          ...currentSettings,
-          ...updates,
-          updatedAt: expect.any(String),
-        },
+      expect(DatabaseService.put).toHaveBeenCalledWith('settings', {
+        ...currentSettings,
+        ...updates,
+        updatedAt: expect.any(String),
       });
     });
 
@@ -169,8 +166,8 @@ describe('SettingsModel', () => {
         },
       };
 
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: currentSettings });
-      (DatabaseService.put as jest.Mock).mockResolvedValue(undefined);
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: currentSettings });
+      (DatabaseService.put as jest.Mock).mockResolvedValue({ Item: { ...currentSettings, ...updates } });
 
       const result = await SettingsModel.update(updates);
 
@@ -187,8 +184,8 @@ describe('SettingsModel', () => {
     it('should set updatedAt timestamp', async () => {
       const beforeUpdate = Date.now();
 
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockSettings });
-      (DatabaseService.put as jest.Mock).mockResolvedValue(undefined);
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: mockSettings });
+      (DatabaseService.put as jest.Mock).mockResolvedValue({ Item: { ...mockSettings, googleMapsApiKey: 'new-key' } });
 
       const result = await SettingsModel.update({ googleMapsApiKey: 'new-key' });
 
@@ -201,7 +198,7 @@ describe('SettingsModel', () => {
 
   describe('getDefaultOriginAddress', () => {
     it('should return the default origin address', async () => {
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockSettings });
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: mockSettings });
 
       const result = await SettingsModel.getDefaultOriginAddress();
 
@@ -209,7 +206,7 @@ describe('SettingsModel', () => {
     });
 
     it('should return default address structure when no settings exist', async () => {
-      (DatabaseService.get as jest.Mock).mockResolvedValue(null);
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: null });
 
       const result = await SettingsModel.getDefaultOriginAddress();
 
@@ -234,22 +231,17 @@ describe('SettingsModel', () => {
         country: 'CA',
       };
 
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockSettings });
-      (DatabaseService.put as jest.Mock).mockResolvedValue(undefined);
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: mockSettings });
+      (DatabaseService.put as jest.Mock).mockResolvedValue({ Item: { ...mockSettings, defaultOriginAddress: newAddress } });
 
       await SettingsModel.updateDefaultOriginAddress(newAddress);
 
-      expect(DatabaseService.put).toHaveBeenCalledWith({
-        PK: 'SETTINGS',
-        SK: 'system',
-        Type: 'Settings',
-        Data: expect.objectContaining({
-          defaultOriginAddress: newAddress,
-          // Other settings should remain unchanged
-          notificationSettings: mockSettings.notificationSettings,
-          stripeSettings: mockSettings.stripeSettings,
-        }),
-      });
+      expect(DatabaseService.put).toHaveBeenCalledWith('settings', expect.objectContaining({
+        defaultOriginAddress: newAddress,
+        // Other settings should remain unchanged
+        notificationSettings: mockSettings.notificationSettings,
+        stripeSettings: mockSettings.stripeSettings,
+      }));
     });
   });
 
@@ -263,13 +255,13 @@ describe('SettingsModel', () => {
         country: 'CA',
       };
 
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockSettings });
-      (DatabaseService.put as jest.Mock).mockResolvedValue(undefined);
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: mockSettings });
+      (DatabaseService.put as jest.Mock).mockResolvedValue({ Item: { ...mockSettings, defaultOriginAddress: partialAddress } });
 
       await SettingsModel.updateDefaultOriginAddress(partialAddress);
 
-      const putCall = (DatabaseService.put as jest.Mock).mock.calls[0][0];
-      expect(putCall.Data.defaultOriginAddress).toEqual(partialAddress);
+      const putCall = (DatabaseService.put as jest.Mock).mock.calls[0][1];
+      expect(putCall.defaultOriginAddress).toEqual(partialAddress);
     });
 
     it('should handle database errors gracefully', async () => {
@@ -279,8 +271,8 @@ describe('SettingsModel', () => {
     });
 
     it('should handle empty update object', async () => {
-      (DatabaseService.get as jest.Mock).mockResolvedValue({ Data: mockSettings });
-      (DatabaseService.put as jest.Mock).mockResolvedValue(undefined);
+      (DatabaseService.get as jest.Mock).mockResolvedValue({ Item: mockSettings });
+      (DatabaseService.put as jest.Mock).mockResolvedValue({ Item: mockSettings });
 
       const result = await SettingsModel.update({});
 

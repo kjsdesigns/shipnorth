@@ -52,6 +52,7 @@ async function seedDatabase() {
 
     // Create customers
     const customer1 = await CustomerModel.create({
+      name: 'John Doe',
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@example.com',
@@ -72,7 +73,7 @@ async function seedDatabase() {
       email: customer1.email,
       password: 'customer123',
       role: 'customer',
-      customerId: customer1.id,
+      customer_id: customer1.id,
       firstName: customer1.firstName,
       lastName: customer1.lastName,
       phone: customer1.phone,
@@ -81,6 +82,7 @@ async function seedDatabase() {
     console.log('✅ Created customer:', customer1.email);
 
     const customer2 = await CustomerModel.create({
+      name: 'Jane Smith',
       firstName: 'Jane',
       lastName: 'Smith',
       email: 'jane.smith@example.com',
@@ -98,7 +100,7 @@ async function seedDatabase() {
       email: customer2.email,
       password: 'customer123',
       role: 'customer',
-      customerId: customer2.id,
+      customer_id: customer2.id,
       firstName: customer2.firstName,
       lastName: customer2.lastName,
       phone: customer2.phone,
@@ -107,6 +109,7 @@ async function seedDatabase() {
     console.log('✅ Created customer:', customer2.email);
 
     const customer3 = await CustomerModel.create({
+      name: 'Bob Wilson',
       firstName: 'Bob',
       lastName: 'Wilson',
       email: 'bob.wilson@example.com',
@@ -122,6 +125,7 @@ async function seedDatabase() {
 
     // Create loads
     const load1 = await LoadModel.create({
+      name: 'Toronto to Ottawa - Express Delivery',
       departureDate: new Date().toISOString(),
       defaultDeliveryDate: new Date(Date.now() + 86400000).toISOString(),
       deliveryCities: [
@@ -145,6 +149,7 @@ async function seedDatabase() {
     console.log('✅ Created load:', load1.id);
 
     const load2 = await LoadModel.create({
+      name: 'Hamilton to Ottawa - Standard Route',
       departureDate: new Date(Date.now() + 172800000).toISOString(), // 2 days from now
       defaultDeliveryDate: new Date(Date.now() + 259200000).toISOString(), // 3 days from now
       deliveryCities: [
@@ -174,8 +179,10 @@ async function seedDatabase() {
 
     // Create packages with various statuses
     const package1 = await PackageModel.create({
-      customerId: customer1.id,
-      receivedDate: new Date(Date.now() - 86400000).toISOString(),
+      customer_id: customer1.id,
+      receivedDate: new Date(Date.now() - 86400000),
+      status: 'received',
+      barcode: 'PKG-001-SEED',
       length: 30,
       width: 20,
       height: 15,
@@ -212,8 +219,10 @@ async function seedDatabase() {
     console.log('✅ Created package with invoice:', package1.trackingNumber);
 
     const package2 = await PackageModel.create({
-      customerId: customer2.id,
-      receivedDate: new Date().toISOString(),
+      customer_id: customer2.id,
+      receivedDate: new Date(),
+      status: 'received',
+      barcode: 'PKG-002-SEED',
       length: 40,
       width: 30,
       height: 25,
@@ -237,9 +246,11 @@ async function seedDatabase() {
     console.log('✅ Created package:', package2.barcode);
 
     const package3 = await PackageModel.create({
-      customerId: customer1.id,
-      receivedDate: new Date(Date.now() - 172800000).toISOString(),
-      deliveryDate: new Date(Date.now() - 86400000).toISOString(),
+      customer_id: customer1.id,
+      receivedDate: new Date(Date.now() - 172800000),
+      status: 'delivered',
+      barcode: 'PKG-003-SEED',
+      deliveryDate: new Date(Date.now() - 86400000),
       length: 25,
       width: 25,
       height: 20,
@@ -277,12 +288,14 @@ async function seedDatabase() {
     console.log('✅ Created delivered package:', package3.trackingNumber);
 
     const package4 = await PackageModel.create({
-      customerId: customer3.id,
-      receivedDate: new Date().toISOString(),
+      customer_id: customer3.id,
+      receivedDate: new Date(),
       length: 50,
       width: 40,
       height: 30,
       weight: 12.5,
+      status: 'received',
+      barcode: 'PKG-004-TEST',
       labelStatus: 'unlabeled',
       paymentStatus: 'unpaid',
       shipmentStatus: 'ready',
@@ -300,8 +313,10 @@ async function seedDatabase() {
 
     // Failed payment example
     const package5 = await PackageModel.create({
-      customerId: customer2.id,
-      receivedDate: new Date(Date.now() - 43200000).toISOString(),
+      customer_id: customer2.id,
+      receivedDate: new Date(Date.now() - 43200000),
+      status: 'received',
+      barcode: 'PKG-005-SEED',
       length: 35,
       width: 25,
       height: 18,
@@ -345,27 +360,15 @@ async function seedDatabase() {
     // Add GPS tracking to active load
     await LoadModel.addLocationTracking(
       load1.id,
-      43.6532,
-      -79.3832,
-      false,
-      driver.id,
-      'Toronto, ON'
+      { lat: 43.6532, lng: -79.3832, isManual: false, addedBy: driver.id, address: 'Toronto, ON' }
     );
     await LoadModel.addLocationTracking(
       load1.id,
-      44.3894,
-      -79.6903,
-      false,
-      driver.id,
-      'Barrie, ON'
+      { lat: 44.3894, lng: -79.6903, isManual: false, addedBy: driver.id, address: 'Barrie, ON' }
     );
     await LoadModel.addLocationTracking(
       load1.id,
-      46.4917,
-      -80.993,
-      false,
-      driver.id,
-      'Sudbury, ON'
+      { lat: 46.4917, lng: -80.993, isManual: false, addedBy: driver.id, address: 'Sudbury, ON' }
     );
     console.log('✅ Added GPS tracking data');
 

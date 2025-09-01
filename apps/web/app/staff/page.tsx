@@ -99,7 +99,7 @@ export default function StaffDashboard() {
           totalPackages: packagesData.length,
           totalCustomers: customersData.length,
           activeLoads: loadsData.filter((l: any) => l.status === 'in_transit').length,
-          revenue: packagesData.reduce((sum: number, p: any) => sum + (p.price || 0), 0),
+          revenue: packagesData.reduce((sum: number, p: any) => sum + Number(p.price || p.estimated_cost || p.actual_cost || 0), 0),
         });
       } catch (error) {
         console.error('Error loading data:', error);
@@ -281,7 +281,7 @@ export default function StaffDashboard() {
                 <DollarSign className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                 <div className="ml-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue</h3>
-                  <p className="text-3xl font-bold text-purple-600">${stats.revenue.toFixed(2)}</p>
+                  <p className="text-3xl font-bold text-purple-600">${Number(stats.revenue || 0).toFixed(2)}</p>
                 </div>
               </div>
             </div>

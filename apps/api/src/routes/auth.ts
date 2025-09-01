@@ -125,6 +125,7 @@ router.post('/register', async (req, res, next) => {
 
     // Create customer record first
     const customer = await CustomerModel.create({
+      name: `${firstName} ${lastName}`,
       firstName,
       lastName,
       email,
@@ -226,7 +227,19 @@ router.post('/change-password', async (req, res, next) => {
       throw new AppError(400, 'All fields are required');
     }
 
-    const success = await UserModel.changePassword(userId, oldPassword, newPassword);
+    // First verify the old password
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+    
+    const bcrypt = require('bcryptjs');
+    const validOldPassword = await bcrypt.compare(oldPassword, user.password);
+    if (!validOldPassword) {
+      throw new AppError(400, 'Invalid current password');
+    }
+
+    const success = await UserModel.changePassword(userId, newPassword);
     if (!success) {
       throw new AppError(400, 'Invalid current password');
     }

@@ -22,11 +22,12 @@ import adminRouter from './routes/admin';
 import searchRouter from './routes/search';
 import routeOptimizationRouter from './routes/route-optimization';
 import testRouteRouter from './routes/test-route';
-import gpsTrackingRouter from './routes/gps-tracking';
-import packageScanningRouter from './routes/package-scanning';
-import driverMediaRouter from './routes/driver-media';
-import offlineSyncRouter from './routes/offline-sync';
-import aiRouteGenerationRouter from './routes/ai-route-generation';
+// Temporarily disabled advanced route files during database migration
+// import gpsTrackingRouter from './routes/gps-tracking';
+// import packageScanningRouter from './routes/package-scanning';
+// import driverMediaRouter from './routes/driver-media';
+// import offlineSyncRouter from './routes/offline-sync';
+// import aiRouteGenerationRouter from './routes/ai-route-generation';
 import driverAssignmentRouter from './routes/driver-assignment';
 import enhancedRegistrationRouter from './routes/enhanced-registration';
 // import settingsRouter from './routes/settings';
@@ -120,14 +121,14 @@ app.use('/search', authenticate, searchRouter);
 app.use('/routes', authenticate, authorize('admin', 'staff'), routeOptimizationRouter);
 app.use('/test', authenticate, testRouteRouter);
 
-// Driver-specific routes
-app.use('/gps', authenticate, authorize('driver', 'staff', 'admin'), gpsTrackingRouter);
-app.use('/scanning', authenticate, authorize('driver', 'staff', 'admin'), packageScanningRouter);
-app.use('/media', authenticate, authorize('driver', 'staff', 'admin'), driverMediaRouter);
-app.use('/sync', authenticate, authorize('driver', 'staff', 'admin'), offlineSyncRouter);
+// Driver-specific routes - temporarily disabled during database migration
+// app.use('/gps', authenticate, authorize('driver', 'staff', 'admin'), gpsTrackingRouter);
+// app.use('/scanning', authenticate, authorize('driver', 'staff', 'admin'), packageScanningRouter);
+// app.use('/media', authenticate, authorize('driver', 'staff', 'admin'), driverMediaRouter);
+// app.use('/sync', authenticate, authorize('driver', 'staff', 'admin'), offlineSyncRouter);
 
-// AI Route generation (staff and drivers)
-app.use('/ai-routes', authenticate, authorize('staff', 'driver', 'admin'), aiRouteGenerationRouter);
+// AI Route generation (staff and drivers) - temporarily disabled during database migration
+// app.use('/ai-routes', authenticate, authorize('staff', 'driver', 'admin'), aiRouteGenerationRouter);
 
 // Driver assignment (staff only)
 app.use('/driver-assignment', authenticate, authorize('staff', 'admin'), driverAssignmentRouter);

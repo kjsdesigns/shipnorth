@@ -114,19 +114,19 @@ Limit to maximum 6 questions at a time for easier responses.
 - **Auto-cache prevention**: Next.js config now includes no-cache headers for all routes
 
 ### Key Technical Decisions
-- **Database**: AWS DynamoDB (single-table design)
+- **Database**: PostgreSQL (containerized with Docker)
 - **Backend**: Express.js traditional web app
 - **Frontend**: Next.js with Tailwind CSS
 - **Auth**: JWT (24hr access, 30-day refresh)
-- **Infrastructure**: AWS CDK
+- **Infrastructure**: Docker + AWS CDK
 - **Monitoring**: Sentry + CloudWatch
-- **Secrets**: AWS Secrets Manager + Parameter Store
+- **Secrets**: Environment variables + AWS Secrets Manager
 
 ### AWS Configuration
 - **Account**: 905418363362
 - **User**: Claude
 - **Region**: us-east-1 (primary), ca-central-1 (available)
-- **DynamoDB**: Shared dev instance accessible locally
+- **Database**: PostgreSQL (Docker containerized, no AWS RDS)
 - **EC2 SSH Key**: shipnorth-dev (stored at ~/.ssh/shipnorth-dev.pem)
 
 ### Notification Configuration
