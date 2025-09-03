@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI } from '@/lib/api';
+import { DriverOnlyRoute } from '@/components/auth/ProtectedRoute';
 import ModernLayout from '@/components/ModernLayout';
 import {
   Truck,
@@ -44,7 +45,7 @@ interface DriverLoad {
   manifestUrl?: string;
 }
 
-export default function DriverDashboard() {
+function DriverDashboardContent() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loads, setLoads] = useState<DriverLoad[]>([]);
@@ -768,3 +769,11 @@ const markPackageDelivered = async (packageId: string) => {
   // Mock implementation - in real app, call API
   console.log(`Package ${packageId} marked as delivered`);
 };
+
+export default function DriverDashboard() {
+  return (
+    <DriverOnlyRoute>
+      <DriverDashboardContent />
+    </DriverOnlyRoute>
+  );
+}

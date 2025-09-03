@@ -14,14 +14,14 @@ import { test, expect } from '@playwright/test';
 test.describe('🚛 Bulk Package Assignment', () => {
   test.beforeEach(async ({ page }) => {
     // Login as staff user
-    await page.goto('http://localhost:8849/login');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}'/login/');
     await page.fill('input[type="email"]', 'staff@shipnorth.com');
     await page.fill('input[type="password"]', 'staff123');
     await page.click('button[type="submit"]');
     await page.waitForNavigation();
     
     // Navigate to packages page
-    await page.goto('http://localhost:8849/staff/packages');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}/staff/packages');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000); // Wait for data loading
   });

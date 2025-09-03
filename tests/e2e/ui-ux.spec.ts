@@ -655,7 +655,7 @@ test.describe('UI/UX Experience', () => {
         logo: '[data-testid="logo"], .logo, img[alt*="logo" i]',
       };
 
-      const pages = ['/', '/login'];
+      const pages = ['/', '/login/'];
 
       for (const pagePath of pages) {
         await page.goto(pagePath);

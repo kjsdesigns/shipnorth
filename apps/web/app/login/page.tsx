@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 import { authAPI } from '@/lib/api';
 import { Package, Truck, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login: contextLogin } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -57,25 +59,9 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { user } = await authAPI.login(email, password);
+      await contextLogin(email, password);
 
-      // Redirect to default portal based on new system
-      if (user.defaultPortal === 'customer') {
-        router.push('/portal');
-      } else if (user.defaultPortal === 'driver') {
-        router.push('/driver');
-      } else if (user.defaultPortal === 'staff') {
-        router.push('/staff');
-      } else {
-        // Fallback for legacy users
-        if (user.roles?.includes('customer')) {
-          router.push('/portal');
-        } else if (user.roles?.includes('driver')) {
-          router.push('/driver');
-        } else {
-          router.push('/staff');
-        }
-      }
+      // AuthContext handles redirect automatically
     } catch (err: any) {
       setError(getErrorMessage(err));
     } finally {
@@ -91,25 +77,9 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { user } = await authAPI.login(email, password);
+      await contextLogin(email, password);
 
-      // Redirect to default portal based on new system
-      if (user.defaultPortal === 'customer') {
-        router.push('/portal');
-      } else if (user.defaultPortal === 'driver') {
-        router.push('/driver');
-      } else if (user.defaultPortal === 'staff') {
-        router.push('/staff');
-      } else {
-        // Fallback for legacy users
-        if (user.roles?.includes('customer')) {
-          router.push('/portal');
-        } else if (user.roles?.includes('driver')) {
-          router.push('/driver');
-        } else {
-          router.push('/staff');
-        }
-      }
+      // AuthContext handles redirect automatically
     } catch (err: any) {
       setError(getErrorMessage(err));
     } finally {

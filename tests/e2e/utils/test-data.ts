@@ -72,7 +72,7 @@ export const testData = {
   // API test data
   api: {
     endpoints: {
-      auth: '/api/auth/login',
+      auth: '/api/auth/login/,
       packages: '/api/packages',
       customers: '/api/customers',
       tracking: '/api/tracking',
@@ -224,3 +224,6 @@ export const getRandomViewport = () => {
   const viewports = Object.values(testData.viewports);
   return viewports[Math.floor(Math.random() * viewports.length)];
 };
+
+// Export as TestData for backward compatibility
+export const TestData = testData;

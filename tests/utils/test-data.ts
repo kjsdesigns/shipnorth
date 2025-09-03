@@ -130,7 +130,7 @@ export const testData = {
   // API endpoints for testing
   apiEndpoints: {
     auth: {
-      login: '/api/auth/login',
+      login: '/api/auth/login/,
       logout: '/api/auth/logout',
       refresh: '/api/auth/refresh',
     },

@@ -267,12 +267,131 @@ export class DriverPortal extends BasePage {
 }
 
 export class AdminPanel extends BasePage {
-  get mainHeading(): Locator {
-    return this.page.locator('h1:has-text("Admin Dashboard")');
+  // Dashboard elements
+  get dashboardTitle(): Locator {
+    return this.page.locator('h1:has-text("Admin Dashboard"), h1:has-text("Admin"), h2:has-text("Dashboard")');
   }
 
+  get mainHeading(): Locator {
+    return this.dashboardTitle;
+  }
+
+  get navigationMenu(): Locator {
+    return this.page.locator('nav, [role="navigation"]').first();
+  }
+
+  // Metrics
+  get totalUsersMetric(): Locator {
+    return this.page.locator('[data-testid="total-users"], text=Total Users').first();
+  }
+
+  get totalPackagesMetric(): Locator {
+    return this.page.locator('[data-testid="total-packages"], text=Total Packages').first();
+  }
+
+  get activeDriversMetric(): Locator {
+    return this.page.locator('[data-testid="active-drivers"], text=Active Drivers').first();
+  }
+
+  get systemStatusMetric(): Locator {
+    return this.page.locator('[data-testid="system-status"], text=System Status').first();
+  }
+
+  // Metric values
+  get totalUsersValue(): Locator {
+    return this.page.locator('[data-testid="total-users-value"], .metric-value').first();
+  }
+
+  get totalPackagesValue(): Locator {
+    return this.page.locator('[data-testid="total-packages-value"], .metric-value').nth(1);
+  }
+
+  get activeDriversValue(): Locator {
+    return this.page.locator('[data-testid="active-drivers-value"], .metric-value').nth(2);
+  }
+
+  // Tabs and sections
+  get usersTab(): Locator {
+    return this.page.locator('button:has-text("Users"), a:has-text("Users"), text=User Management');
+  }
+
+  get settingsTab(): Locator {
+    return this.page.locator('button:has-text("Settings"), a:has-text("Settings")');
+  }
+
+  get settingsForm(): Locator {
+    return this.page.locator('form, [data-testid="settings-form"]');
+  }
+
+  get reportsPanel(): Locator {
+    return this.page.locator('[data-testid="reports"], .reports-section');
+  }
+
+  get auditTab(): Locator {
+    return this.page.locator('button:has-text("Audit"), a:has-text("Audit")');
+  }
+
+  get auditLogTable(): Locator {
+    return this.page.locator('table, [data-testid="audit-table"]');
+  }
+
+  get systemTab(): Locator {
+    return this.page.locator('button:has-text("System"), a:has-text("System")');
+  }
+
+  get systemMonitor(): Locator {
+    return this.page.locator('[data-testid="system-monitor"], .system-status');
+  }
+
+  // Status indicators
+  get systemStatusIndicator(): Locator {
+    return this.page.locator('[data-testid="system-status-indicator"], .status-indicator');
+  }
+
+  get lastUpdateTime(): Locator {
+    return this.page.locator('[data-testid="last-update"], .last-update-time');
+  }
+
+  get refreshStatusButton(): Locator {
+    return this.page.locator('button:has-text("Refresh"), [data-testid="refresh-button"]');
+  }
+
+  get apiStatusIndicator(): Locator {
+    return this.page.locator('[data-testid="api-status"], .api-status');
+  }
+
+  get databaseStatusIndicator(): Locator {
+    return this.page.locator('[data-testid="database-status"], .database-status');
+  }
+
+  get storageStatusIndicator(): Locator {
+    return this.page.locator('[data-testid="storage-status"], .storage-status');
+  }
+
+  // Mobile elements
+  get mobileMenuButton(): Locator {
+    return this.page.locator('button[aria-label="Menu"], .mobile-menu-button');
+  }
+
+  get mobileNavigationMenu(): Locator {
+    return this.page.locator('.mobile-nav, [data-testid="mobile-navigation"]');
+  }
+
+  get mobileUsersButton(): Locator {
+    return this.page.locator('.mobile-nav button:has-text("Users")');
+  }
+
+  get mobileSettingsButton(): Locator {
+    return this.page.locator('.mobile-nav button:has-text("Settings")');
+  }
+
+  get mobileSystemStatusButton(): Locator {
+    return this.page.locator('.mobile-nav button:has-text("System")');
+  }
+
+  // Legacy aliases
   get userManagementSection(): Locator {
-    return this.page.locator('[data-testid="user-management"], text=User Management');
+    return this.usersTab;
   }
 
   get addUserButton(): Locator {
@@ -284,11 +403,11 @@ export class AdminPanel extends BasePage {
   }
 
   get systemSettingsTab(): Locator {
-    return this.page.locator('button:has-text("Settings"), a:has-text("Settings")');
+    return this.settingsTab;
   }
 
   get reportsTab(): Locator {
-    return this.page.locator('button:has-text("Reports"), a:has-text("Reports")');
+    return this.reportsPanel;
   }
 
   async navigateToUserManagement(): Promise<void> {

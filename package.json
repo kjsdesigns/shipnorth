@@ -24,21 +24,9 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "npm run test:infrastructure && npm run test:scoreboard",
-    "test:infrastructure": "npx playwright test --project=infrastructure",
-    "test:config-enforcement": "npx playwright test tests/e2e/config-enforcement.spec.ts",
-    "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report",
-    "test:smoke": "playwright test --grep @smoke",
-    "test:core": "playwright test --project=desktop-core",
-    "test:mobile": "playwright test --project=mobile-core",
-    "test:api": "playwright test api-integration.spec.ts",
-    "test:scoreboard": "node tests/run-with-scoreboard.js --config=playwright-optimized.config.ts",
-    "test:critical": "echo '⚠️  WARNING: Running critical tests locally. For full isolation, use: npm run test:docker:critical' && node tests/run-with-scoreboard.js --config=playwright-optimized.config.ts --project=critical-path",
-    "test:full": "echo '⚠️  WARNING: Running full tests locally. For full isolation, use: npm run test:docker:full' && npm run dev:diagnose && node tests/run-with-scoreboard.js --config=playwright-optimized.config.ts --timeout=300000",
+    "test": "npm run test:docker",
+    "test:critical": "npm run test:docker:critical", 
+    "test:full": "npm run test:docker:full",
     "test:docker": "docker-compose --profile testing run --rm test-runner ./tests/docker-test-wrapper.sh npx playwright test -c playwright-docker-only.config.ts",
     "test:docker:critical": "docker-compose --profile testing run --rm test-runner ./tests/docker-test-wrapper.sh npx playwright test -c playwright-docker-only.config.ts --project=docker-core",
     "test:docker:full": "docker-compose --profile testing run --rm test-runner ./tests/docker-test-wrapper.sh npx playwright test -c playwright-docker-only.config.ts",
@@ -50,7 +38,7 @@
     "test:driver": "playwright test driver-mobile.spec.ts",
     "servers:start": "docker-compose up -d",
     "servers:stop": "docker-compose down",
-    "servers:restart": "docker-compose restart", 
+    "servers:restart": "docker-compose restart",
     "servers:status": "docker-compose ps",
     "servers:logs": "docker-compose logs",
     "test:admin": "playwright test admin-panel.spec.ts",
@@ -92,5 +80,9 @@
     "playwright": "^1.54.2",
     "prettier": "^3.6.2",
     "puppeteer-core": "^24.17.0"
+  },
+  "dependencies": {
+    "@casl/ability": "^6.7.3",
+    "@casl/react": "^5.0.0"
   }
 }

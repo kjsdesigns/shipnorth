@@ -7,7 +7,7 @@ test.describe('Data Consistency Verification', () => {
     page = testPage;
     
     // Login as admin to access all data
-    await page.goto('http://localhost:3000/login');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}'/login/');
     await page.fill('input[type="email"]', 'admin@shipnorth.com');
     await page.fill('input[type="password"]', 'admin123');
     await page.click('button[type="submit"]');
@@ -18,7 +18,7 @@ test.describe('Data Consistency Verification', () => {
     console.log('🧪 Testing customers page data consistency...');
     
     // Navigate to customers page
-    await page.goto('http://localhost:3000/staff/customers');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}/staff/customers');
     await page.waitForSelector('[data-testid="customers-table"], table');
     
     // Wait for data to load
@@ -58,7 +58,7 @@ test.describe('Data Consistency Verification', () => {
     console.log('🧪 Testing packages page data consistency...');
     
     // Navigate to packages page
-    await page.goto('http://localhost:3000/staff/packages');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}/staff/packages');
     await page.waitForSelector('table');
     
     // Wait for data to load
@@ -107,7 +107,7 @@ test.describe('Data Consistency Verification', () => {
     console.log('🧪 Testing customer detail page...');
     
     // Go to customers page first
-    await page.goto('http://localhost:3000/staff/customers');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}/staff/customers');
     await page.waitForSelector('table');
     await page.waitForTimeout(2000);
     
@@ -135,7 +135,7 @@ test.describe('Data Consistency Verification', () => {
     console.log('🧪 Testing package detail page...');
     
     // Go to packages page first
-    await page.goto('http://localhost:3000/staff/packages');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}/staff/packages');
     await page.waitForSelector('table');
     await page.waitForTimeout(2000);
     
@@ -167,7 +167,7 @@ test.describe('Data Consistency Verification', () => {
     console.log('🧪 Testing bulk selection functionality...');
     
     // Navigate to packages page
-    await page.goto('http://localhost:3000/staff/packages');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}/staff/packages');
     await page.waitForSelector('table');
     await page.waitForTimeout(2000);
     

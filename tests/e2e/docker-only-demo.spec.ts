@@ -36,7 +36,7 @@ test.describe('🐳 Docker-Only Test Demo', () => {
     console.log('🚀 Running Docker-specific test...');
     
     // Navigate to health endpoint to verify container network
-    await page.goto('http://localhost:8850/health');
+    await page.goto(`http://localhost:${process.env.API_PORT || 8850}/health');
     
     const response = await page.locator('pre').textContent();
     const healthData = JSON.parse(response || '{}');

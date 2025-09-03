@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { AbilityProvider } from '@/contexts/AbilityContext';
 import PayPalScript from '@/components/PayPalScript';
 import './globals.css';
 
@@ -46,7 +48,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <PayPalScript enabled={false} />
-        <ThemeProvider>{children}</ThemeProvider>
+        <AuthProvider>
+          <AbilityProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </AbilityProvider>
+        </AuthProvider>
         {/* Development Cache Buster Script */}
         <script
           dangerouslySetInnerHTML={{
@@ -155,10 +161,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                   .then((registration) => {
-                    console.log('SW registered: ', registration);
+                    console.log('✅ Service worker registered successfully');
                   })
                   .catch((registrationError) => {
-                    console.log('SW registration failed: ', registrationError);
+                    // Don't spam console with service worker errors in development
+                    if (window.location.hostname !== 'localhost') {
+                      console.warn('Service worker registration failed:', registrationError.message);
+                    }
                   });
               });
             }

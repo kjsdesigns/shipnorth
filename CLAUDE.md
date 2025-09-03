@@ -41,13 +41,33 @@ Limit to maximum 6 questions at a time for easier responses.
 
 ### Testing Pattern
 1. Test cases developed for all assertions in plan
-2. Tests must pass before deployment
+2. Tests must pass before deployment  
 3. Testing stages:
    - Unit tests (compile time)
    - Integration tests (API/DB)
    - E2E tests (Playwright in browser)
 4. Impossible to break dev server with changes
 5. **CRITICAL UI/UX Rule**: Any time making UI/UX changes, MUST use Playwright to verify functionality and visual correctness BEFORE telling user it's complete
+
+### **🐳 DOCKER-ONLY Testing Policy**
+**MANDATORY**: All testing must be performed inside Docker containers only.
+
+**Commands**:
+- `npm run test` → Runs full Docker test suite
+- `npm run test:critical` → Critical path tests in Docker
+- `npm run test:full` → Complete test suite in Docker
+
+**Enforcement**:
+- Test runner automatically blocks execution outside Docker
+- `DOCKER_ENV` environment variable required for test execution
+- Host-based testing completely disabled to prevent inconsistencies
+
+**Benefits**:
+- Complete environment isolation
+- Consistent test conditions across all machines
+- Prevents host system interference
+- Matches production environment exactly
+- Eliminates "works on my machine" issues
 
 ### Development Workflow
 1. Local changes trigger tests automatically

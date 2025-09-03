@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI, customerAPI, loadAPI, adminUserAPI } from '@/lib/api';
+import { StaffOnlyRoute } from '@/components/auth/ProtectedRoute';
+import StaffNavigation from '@/components/navigation/StaffNavigation';
 import ModernLayout from '@/components/ModernLayout';
 import InfiniteRenderCatcher from '@/components/InfiniteRenderCatcher';
 import ChipSelector, { ChipOption } from '@/components/ChipSelector';
 import EditDialog from '@/components/EditDialog';
 import { Package, Users, Truck, DollarSign, Plus, Search } from 'lucide-react';
 
-export default function StaffDashboard() {
+function StaffDashboardContent() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [packages, setPackages] = useState<any[]>([]);
@@ -734,5 +736,13 @@ export default function StaffDashboard() {
         )}
       </ModernLayout>
     </InfiniteRenderCatcher>
+  );
+}
+
+export default function StaffDashboard() {
+  return (
+    <StaffOnlyRoute>
+      <StaffDashboardContent />
+    </StaffOnlyRoute>
   );
 }

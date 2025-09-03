@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { RouteOptimizationService, RouteOptimizationOptions } from '../services/route-optimization';
 import { LoadModel } from '../models/load';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { checkCASLPermission } from '../middleware/casl-permissions';
 import { TrafficConditionsService } from '../services/traffic-conditions';
 
 const router = Router();
@@ -10,6 +11,7 @@ const router = Router();
 router.post(
   '/loads/:loadId/optimize-route',
   authenticate,
+  checkCASLPermission({ action: 'update', resource: 'Route' }),
   async (req: AuthRequest, res: Response) => {
     try {
       const { loadId } = req.params;

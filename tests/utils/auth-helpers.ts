@@ -28,7 +28,7 @@ export class AuthHelpers {
    * Navigate to login page and ensure it loads properly
    */
   async goToLogin() {
-    await this.page.goto('/login');
+    await this.page.goto('/login/');
     await expect(this.page.locator('h2:has-text("Welcome back")')).toBeVisible();
     await expect(this.page.locator('input[type="email"]')).toBeVisible();
     await expect(this.page.locator('input[type="password"]')).toBeVisible();
@@ -107,7 +107,7 @@ export class AuthHelpers {
         'text=/Invalid credentials/i, text=/Authentication failed/i, text=/Login failed/i'
       )
     ).toBeVisible({ timeout: 5000 });
-    await expect(this.page).toHaveURL('/login');
+    await expect(this.page).toHaveURL('/login/');
   }
 
   /**
@@ -164,7 +164,7 @@ export class AuthHelpers {
 
     for (const route of protectedRoutes) {
       await this.page.goto(route);
-      await this.page.waitForURL('/login', { timeout: 5000 });
+      await this.page.waitForURL('/login/', { timeout: 5000 });
     }
   }
 }

@@ -55,10 +55,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '3.0'    # Use 3 out of 4 available cores
+          cpus: '1.5'    # Use 1.5 out of 2 available cores
           memory: 4G     # Generous memory allocation
         reservations:
-          cpus: '1.0'    # Reserve 1 core minimum
+          cpus: '0.5'    # Reserve 0.5 core minimum
           memory: 1G     # Reserve 1GB minimum
     depends_on:
       postgres:
@@ -108,10 +108,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2.0'    # Dedicated cores for test execution
+          cpus: '1.0'    # Dedicated cores for test execution
           memory: 3G     # Generous memory for browser processes
         reservations:
-          cpus: '0.5'    # Reserve minimum for test runner
+          cpus: '0.25'   # Reserve minimum for test runner
           memory: 512M   # Reserve minimum memory
     # Use host network mode so test container can access localhost ports
     network_mode: host

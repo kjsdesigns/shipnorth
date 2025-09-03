@@ -9,14 +9,14 @@ test.describe('Staff Interface', () => {
     await page.click('button[type="submit"]');
     
     // Wait for dashboard
-    await page.waitForURL('**/staff', { timeout: 30000 });
+    await page.waitForURL('**/staff', { timeout: ${process.env.WEB_PORT || 8849}0 });
     await expect(page.locator('h1:has-text("Staff Dashboard")')).toBeVisible();
   });
 
   test('should access packages page and show Add Package button', async ({ page }) => {
     // Navigate to packages page
     await page.click('text=Packages');
-    await page.waitForURL('**/staff/packages', { timeout: 30000 });
+    await page.waitForURL('**/staff/packages', { timeout: ${process.env.WEB_PORT || 8849}0 });
     
     // Verify packages page loads
     await expect(page.locator('h1:has-text("Packages")')).toBeVisible();
@@ -29,7 +29,7 @@ test.describe('Staff Interface', () => {
   test('should open customer selection dialog when clicking Add Package', async ({ page }) => {
     // Navigate to packages and click Add Package
     await page.click('text=Packages');
-    await page.waitForURL('**/staff/packages', { timeout: 30000 });
+    await page.waitForURL('**/staff/packages', { timeout: ${process.env.WEB_PORT || 8849}0 });
     await page.click('[data-testid="create-package-button"]');
     
     // Verify customer selection dialog opens

@@ -1,6 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+// Helper functions for ACL integration
+function getPortalsForRoles(roles: string[]): string[] {
+  const portals = [];
+  if (roles.includes('customer')) portals.push('customer');
+  if (roles.includes('driver')) portals.push('driver');
+  if (roles.includes('staff') || roles.includes('admin')) portals.push('staff');
+  return portals;
+}
+
+function getDefaultPortalForRoles(roles: string[]): string {
+  if (roles.includes('admin') || roles.includes('staff')) return 'staff';
+  if (roles.includes('driver')) return 'driver';
+  return 'customer';
+}
+
 export interface AuthRequest extends Request {
   user?: {
     id: string;
@@ -22,13 +37,15 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'development-secret') as any;
 
+    // Create user with ACL-compatible fields
+    const userRoles = decoded.roles || [decoded.role];
     req.user = {
       id: decoded.id,
       email: decoded.email,
-      roles: decoded.roles || [decoded.role], // Handle both new and legacy formats
-      role: decoded.role || (decoded.roles && decoded.roles[0]), // Legacy compatibility
+      roles: userRoles,
+      role: decoded.role || userRoles[0],
       customerId: decoded.customerId,
-      lastUsedPortal: decoded.lastUsedPortal,
+      lastUsedPortal: decoded.lastUsedPortal
     };
 
     next();

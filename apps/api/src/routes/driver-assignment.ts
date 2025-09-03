@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { LoadModel } from '../models/load';
 import { UserModel } from '../models/user';
 import { DatabaseService } from '../services/database';
@@ -7,7 +8,11 @@ import { DatabaseService } from '../services/database';
 const router = Router();
 
 // Get available drivers for load assignment
-router.get('/available-drivers', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/available-drivers', 
+  authenticate, 
+  requireCASLPortalAccess('staff'),
+  checkCASLPermission({ action: 'read', resource: 'User' }),
+  async (req: AuthRequest, res: Response) => {
   try {
     // Only staff/admin can view available drivers
     const userRoles = req.user!.roles || [req.user!.role];
@@ -76,7 +81,11 @@ router.get('/available-drivers', authenticate, async (req: AuthRequest, res: Res
 });
 
 // Assign driver to load
-router.post('/assign-driver', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/assign-driver', 
+  authenticate,
+  requireCASLPortalAccess('staff'),
+  checkCASLPermission({ action: 'update', resource: 'Load' }),
+  async (req: AuthRequest, res: Response) => {
   try {
     const { loadId, driverId } = req.body;
 

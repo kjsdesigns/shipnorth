@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.3",
+    "@casl/react": "^5.0.0",
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^5.2.1",
     "@serverless-stack/node": "^1.18.4",

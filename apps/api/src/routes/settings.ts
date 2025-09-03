@@ -1,11 +1,16 @@
 import { Router } from 'express';
-import { authorize } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
+import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { SettingsModel } from '../models/settings';
 
 const router = Router();
 
 // Get system settings
-router.get('/', authorize('staff', 'admin'), async (req, res) => {
+router.get('/', 
+  authenticate,
+  requireCASLPortalAccess('staff'),
+  checkCASLPermission({ action: 'read', resource: 'Settings' }),
+  async (req, res) => {
   try {
     const settings = await SettingsModel.get();
     res.json({ settings });
@@ -16,7 +21,11 @@ router.get('/', authorize('staff', 'admin'), async (req, res) => {
 });
 
 // Update system settings
-router.put('/', authorize('admin'), async (req, res) => {
+router.put('/', 
+  authenticate,
+  requireCASLPortalAccess('staff'),
+  checkCASLPermission({ action: 'manage', resource: 'Settings' }),
+  async (req, res) => {
   try {
     const updates = req.body;
     const settings = await SettingsModel.update(updates);

@@ -3,6 +3,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 import { authAPI } from '@/lib/api';
 import ThemeToggle from '@/components/ThemeToggle';
 import GlobalSearch from '@/components/GlobalSearch';
@@ -43,22 +44,20 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user: authUser, logout } = useAuth();
   const [user, setUser] = useState<any>(null);
   const [notifications] = useState(3);
   const [profileDropdown, setProfileDropdown] = useState(false);
   // const [searchModalOpen, setSearchModalOpen] = useState(false); // Removed with SearchModal
 
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser) {
-      router.push('/login');
-      return;
+    if (authUser) {
+      setUser(authUser);
     }
-    setUser(currentUser);
-  }, []); // Remove router dependency - it's stable in Next.js
+  }, [authUser]); // Remove router dependency - it's stable in Next.js
 
   const handleLogout = () => {
-    authAPI.logout();
+    logout();
   };
 
   // Navigation items based on role

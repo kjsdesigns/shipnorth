@@ -19,7 +19,9 @@ export interface User {
   phone?: string;
   role: 'admin' | 'staff' | 'customer' | 'driver';
   roles?: ('admin' | 'staff' | 'customer' | 'driver')[];
-  lastUsedPortal?: 'admin' | 'staff' | 'customer' | 'driver';
+  lastUsedPortal?: 'staff' | 'customer' | 'driver';
+  defaultPortal?: 'staff' | 'customer' | 'driver';
+  availablePortals: string[];
   customerId?: string;
   customer_id?: string; // Alias for database compatibility
   status: 'active' | 'inactive';
@@ -42,11 +44,25 @@ export class User {
   static async findByEmail(email: string): Promise<User | null> {
     try {
       const result = await this.query(
-        'SELECT id, email, password_hash as password, first_name as "firstName", last_name as "lastName", role, created_at as "createdAt" FROM users WHERE email = $1',
+        `SELECT id, email, password_hash as password, first_name as "firstName", last_name as "lastName", 
+                role, roles, last_used_portal as "lastUsedPortal", customer_id, status, created_at as "createdAt" 
+         FROM users WHERE email = $1`,
         [email]
       );
       
-      return result.rows[0] || null;
+      const user = result.rows[0];
+      if (user) {
+        // Ensure roles array is populated
+        if (!user.roles && user.role) {
+          user.roles = [user.role];
+        }
+        
+        // Add computed fields
+        user.availablePortals = this.getAvailablePortals(user);
+        user.defaultPortal = user.lastUsedPortal || this.getDefaultPortal(user);
+      }
+      
+      return user || null;
     } catch (error) {
       console.error('Error finding user by email:', error);
       throw error;
@@ -188,32 +204,59 @@ export class User {
     }
   }
 
-  // Legacy methods for backward compatibility with DynamoDB code
+  // Enhanced methods for multi-role ACL system
   static getAvailablePortals(user: User): string[] {
     const portals = [];
-    if (user.role === 'admin' || user.role === 'staff') {
-      portals.push('staff');
-    }
-    if (user.role === 'driver') {
-      portals.push('driver');
-    }
-    if (user.role === 'customer') {
+    const roles = user.roles || [user.role];
+    
+    if (roles.includes('customer')) {
       portals.push('customer');
     }
+    if (roles.includes('driver')) {
+      portals.push('driver');
+    }
+    if (roles.includes('staff') || roles.includes('admin')) {
+      portals.push('staff');
+    }
+    
     return portals;
   }
 
   static getDefaultPortal(user: User): string {
-    if (user.role === 'admin') return 'staff';
-    return user.role;
+    const roles = user.roles || [user.role];
+    
+    // Admin and staff default to staff portal
+    if (roles.includes('admin') || roles.includes('staff')) {
+      return 'staff';
+    }
+    
+    // Driver defaults to driver portal
+    if (roles.includes('driver')) {
+      return 'driver';
+    }
+    
+    // Customer defaults to customer portal
+    return 'customer';
   }
 
   static hasAdminAccess(user: User): boolean {
-    return user.role === 'admin';
+    const roles = user.roles || [user.role];
+    return roles.includes('admin');
   }
 
   static hasStaffAccess(user: User): boolean {
-    return user.role === 'admin' || user.role === 'staff';
+    const roles = user.roles || [user.role];
+    return roles.includes('admin') || roles.includes('staff');
+  }
+
+  static hasDriverAccess(user: User): boolean {
+    const roles = user.roles || [user.role];
+    return roles.includes('driver');
+  }
+
+  static hasCustomerAccess(user: User): boolean {
+    const roles = user.roles || [user.role];
+    return roles.includes('customer');
   }
 
   static async delete(id: string): Promise<boolean> {

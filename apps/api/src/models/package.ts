@@ -368,4 +368,52 @@ export class PackageModel {
       return null;
     }
   }
+
+  // Add findAll method for ACL filtering
+  static async findAll(): Promise<Package[]> {
+    try {
+      const result = await this.query(
+        `SELECT id, barcode, customer_id, weight, length, width, height, 
+                declared_value, description, status, tracking_number, carrier,
+                service_type, label_url, estimated_cost, actual_cost,
+                created_at as "createdAt", updated_at as "updatedAt"
+         FROM packages 
+         ORDER BY created_at DESC`
+      );
+      
+      return result.rows;
+    } catch (error) {
+      console.error('Error finding all packages:', error);
+      throw error;
+    }
+  }
+
+  // Add method for permission-based filtering
+  static async findAllWithPermissionFilter(userId: string, userRole: string): Promise<Package[]> {
+    try {
+      let query = `
+        SELECT id, barcode, customer_id, weight, length, width, height, 
+               declared_value, description, status, tracking_number, carrier,
+               service_type, label_url, estimated_cost, actual_cost,
+               created_at as "createdAt", updated_at as "updatedAt"
+        FROM packages`;
+      
+      const params: any[] = [];
+      
+      // Apply role-based filtering
+      if (userRole === 'customer') {
+        query += ' WHERE customer_id = $1';
+        params.push(userId);
+      }
+      // Staff and admin can see all packages - no filtering needed
+      
+      query += ' ORDER BY created_at DESC';
+      
+      const result = await this.query(query, params);
+      return result.rows;
+    } catch (error) {
+      console.error('Error finding packages with permission filter:', error);
+      throw error;
+    }
+  }
 }

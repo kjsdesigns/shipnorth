@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI, invoiceAPI } from '@/lib/api';
+import { CustomerOnlyRoute } from '@/components/auth/ProtectedRoute';
 import {
   Package,
   User,
@@ -26,7 +27,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-export default function CustomerPortal() {
+function CustomerPortalContent() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [packages, setPackages] = useState<any[]>([]);
@@ -286,5 +287,13 @@ export default function CustomerPortal() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CustomerPortal() {
+  return (
+    <CustomerOnlyRoute>
+      <CustomerPortalContent />
+    </CustomerOnlyRoute>
   );
 }

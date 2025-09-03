@@ -1,0 +1,82 @@
+# Alternative Docker Compose with bridge networking for testing
+version: '3.8'
+
+networks:
+  shipnorth-bridge:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: shipnorth-postgres-bridge
+    environment:
+      POSTGRES_DB: shipnorth
+      POSTGRES_USER: shipnorth
+      POSTGRES_PASSWORD: shipnorth_dev
+      PGDATA: /var/lib/postgresql/data/pgdata
+    networks:
+      - shipnorth-bridge
+    ports:
+      - "5433:5432"  # Different port to avoid conflict
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shipnorth"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  shipnorth:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: shipnorth-app-bridge
+    environment:
+      - NODE_ENV=development
+      - WEB_PORT=8851
+      - API_PORT=8852
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=shipnorth
+      - POSTGRES_USER=shipnorth
+      - POSTGRES_PASSWORD=shipnorth_dev
+    networks:
+      - shipnorth-bridge
+    ports:
+      - "8851:8851"  # Web
+      - "8852:8852"  # API
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8852/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Test Runner with bridge networking
+  test-runner-bridge:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.tests
+    container_name: shipnorth-test-runner-bridge
+    environment:
+      - NODE_ENV=development
+      - TEST_ENV=local
+      - DOCKER_ENV=true
+      - WEB_PORT=8851
+      - API_PORT=8852
+    networks:
+      - shipnorth-bridge
+    volumes:
+      - ./tests:/app/tests
+      - ./playwright-docker-only.config.ts:/app/playwright-docker-only.config.ts
+      - ./.env:/app/.env
+      - ./test-results:/app/test-results
+      - ./test-reports:/app/test-reports
+      - ./test-artifacts-docker:/app/test-artifacts-docker
+    depends_on:
+      - shipnorth
+      - postgres
+    profiles:
+      - testing
+    working_dir: /app

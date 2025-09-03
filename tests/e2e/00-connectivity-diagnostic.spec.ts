@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { getErrorMessage, logError } from './utils/error-helpers';
 
 /**
  * 🔬 Frontend-API Connectivity Diagnostic Test
@@ -44,7 +45,7 @@ test.describe.serial('🔬 Connectivity Diagnostic (Pre-flight)', () => {
         issues.push(`API health check failed: ${apiHealth.status()}`);
       }
     } catch (error) {
-      issues.push(`API unreachable: ${error.message}`);
+      issues.push(`API unreachable: ${getErrorMessage(error)}`);
     }
 
     // Test 2: CORS Configuration Check (specific to the issue we fixed)
@@ -62,10 +63,11 @@ test.describe.serial('🔬 Connectivity Diagnostic (Pre-flight)', () => {
           return { success: true, status: response.status };
         } catch (error) {
           // Check if it's specifically a CORS error
-          if (error.message.includes('CORS') || error.message.includes('cors')) {
-            return { success: false, error: error.message, type: 'cors' };
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          if (errorMsg.includes('CORS') || errorMsg.includes('cors')) {
+            return { success: false, error: errorMsg, type: 'cors' };
           } else {
-            return { success: false, error: error.message, type: 'other' };
+            return { success: false, error: errorMsg, type: 'other' };
           }
         }
       }, API_URL);
@@ -79,7 +81,7 @@ test.describe.serial('🔬 Connectivity Diagnostic (Pre-flight)', () => {
         warnings.push(`Minor fetch issue (non-CORS): ${corsTest.error}`);
       }
     } catch (error) {
-      warnings.push(`CORS test setup failed: ${error.message}`);
+      warnings.push(`CORS test setup failed: ${getErrorMessage(error)}`);
     }
 
     // Test 3: Frontend Environment Variable Resolution

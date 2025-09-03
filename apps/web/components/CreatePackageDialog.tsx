@@ -105,6 +105,8 @@ export default function CreatePackageDialog({
 
     setIsSubmitting(true);
     try {
+      console.log('🐛 Debug: Package data being sent:', packageData);
+      console.log('🐛 Debug: Selected customer:', selectedCustomer);
       await onCreatePackage(packageData);
       onClose();
     } catch (error) {

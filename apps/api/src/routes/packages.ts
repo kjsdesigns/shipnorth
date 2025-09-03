@@ -1,6 +1,8 @@
 /// <reference path="../types/express.d.ts" />
 import { Router } from 'express';
 import { authenticate, authorize } from '../middleware/auth';
+import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
+import { checkPermission, requirePortalAccess, filterByPermissions, Action, Resource } from '../middleware/simple-permissions';
 import PayPalService from '../services/paypal';
 import { PackageModel } from '../models/package';
 import { CustomerModel } from '../models/customer';
@@ -10,20 +12,29 @@ import EasyPostService from '../services/easypost';
 const router = Router();
 
 // Rate quote endpoints
-router.get('/:id/rates', authenticate, async (req: any, res) => {
-  try {
-    const { id } = req.params;
+router.get('/:id/rates', 
+  authenticate, 
+  checkCASLPermission({
+    action: 'read',
+    resource: 'Package',
+    getSubject: (req) => ({ id: req.params.id })
+  }),
+  async (req: any, res) => {
+    try {
+      const { id } = req.params;
 
-    // Get package details
-    const pkg = await PackageModel.findById(id);
-    if (!pkg) {
-      return res.status(404).json({ error: 'Package not found' });
-    }
+      // Get package details
+      const pkg = await PackageModel.findById(id);
+      if (!pkg) {
+        return res.status(404).json({ error: 'Package not found' });
+      }
 
-    // Check authorization: customers can only quote their own packages
-    if (req.user.role === 'customer' && pkg.customer_id !== req.user.customerId) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
+      // Additional permission check at the data level using CASL
+      if (!req.ability?.can('read', 'Package', {
+        customerId: pkg.customer_id
+      })) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
 
     // Validate package has required data
     if (!pkg.shipTo || !pkg.weight || !pkg.length || !pkg.width || !pkg.height) {
@@ -598,6 +609,61 @@ router.get(
         loadId,
         packages,
         count: packages.length,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Get all packages - filtered by permissions
+router.get('/', 
+  authenticate,
+  checkCASLPermission({ action: 'read', resource: 'Package' }),
+  async (req: any, res, next) => {
+    try {
+      // Get packages filtered by user permissions
+      const userRole = req.user?.role;
+      const userId = req.user?.id;
+      const customerId = req.user?.customerId;
+      
+      let packages;
+      if (userRole === 'customer') {
+        // Customers see only their packages
+        packages = await PackageModel.findAllWithPermissionFilter(customerId, userRole);
+      } else {
+        // Staff/admin see all packages
+        packages = await PackageModel.findAll();
+      }
+      
+      const filteredPackages = packages;
+      
+      res.json({
+        success: true,
+        packages: filteredPackages,
+        count: filteredPackages.length
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Create package - staff only
+router.post('/',
+  authenticate,
+  requireCASLPortalAccess('staff'),
+  checkCASLPermission({ action: 'create', resource: 'Package' }),
+  async (req: any, res, next) => {
+    try {
+      const packageData = req.body;
+      
+      // Create the package
+      const newPackage = await PackageModel.create(packageData);
+      
+      res.status(201).json({
+        success: true,
+        package: newPackage
       });
     } catch (error) {
       next(error);

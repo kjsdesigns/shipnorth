@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, Building2, Truck, User } from 'lucide-react';
-import { authAPI } from '@/lib/api';
+import { ChevronDown, Building2, Truck, User, Check } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface PortalSwitcherProps {
   currentPortal: 'staff' | 'driver' | 'customer';
@@ -33,16 +33,40 @@ const PORTAL_CONFIG = {
   },
 };
 
-export default function PortalSwitcher({
-  currentPortal,
-  availablePortals,
-  hasAdminAccess,
-  className = '',
-}: PortalSwitcherProps) {
+export default function PortalSwitcher({ className = '' }: { className?: string }) {
   const router = useRouter();
+  const { user, token, updateUser, hasRole } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
 
+  if (!user) return null;
+
+  // Helper functions
+  const canAccessPortal = (portal: 'staff' | 'driver' | 'customer') => {
+    const roles = user.roles || [user.role];
+    switch (portal) {
+      case 'customer': return roles.includes('customer');
+      case 'driver': return roles.includes('driver');
+      case 'staff': return roles.includes('staff') || roles.includes('admin');
+      default: return false;
+    }
+  };
+
+  const getAvailablePortals = () => {
+    const portals: string[] = [];
+    if (canAccessPortal('customer')) portals.push('customer');
+    if (canAccessPortal('driver')) portals.push('driver');
+    if (canAccessPortal('staff')) portals.push('staff');
+    return portals as ('staff' | 'driver' | 'customer')[];
+  };
+
+  const getCurrentPortal = (): 'staff' | 'driver' | 'customer' => {
+    return user.lastUsedPortal || user.defaultPortal || 'customer';
+  };
+
+  const availablePortals = getAvailablePortals();
+  const currentPortal = getCurrentPortal();
+  const hasAdminAccess = hasRole('admin');
   const currentConfig = PORTAL_CONFIG[currentPortal];
   const CurrentIcon = currentConfig.icon;
 
@@ -54,8 +78,22 @@ export default function PortalSwitcher({
 
     setSwitching(true);
     try {
-      await authAPI.switchPortal(targetPortal);
-      router.push(PORTAL_CONFIG[targetPortal].path);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/switch-portal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ portal: targetPortal })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        updateUser(data.user);
+        router.push(PORTAL_CONFIG[targetPortal].path);
+      } else {
+        console.error('Failed to switch portal:', response.status);
+      }
     } catch (error) {
       console.error('Failed to switch portal:', error);
     } finally {

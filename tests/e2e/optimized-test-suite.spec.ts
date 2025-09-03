@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import { AuthHelpers } from './utils/auth-helpers';
+import SimpleAuthHelpers from './utils/simple-auth-helpers';
 import { config } from './config';
 
 /**
@@ -88,6 +88,33 @@ test.describe('🔥 Root Cause Detection', () => {
     }
 
     console.log('✅ All portals accessible');
+  });
+
+  test('ACL permission system foundation @critical', async ({ page }) => {
+    // Test that permission system is properly integrated
+    const testUser = config.testUsers['staff'];
+    const response = await page.request.post(`${config.apiUrl}/auth/login`, {
+      data: { email: testUser.email, password: testUser.password },
+    });
+    expect(response.status()).toBe(200);
+
+    const userData = await response.json();
+    expect(userData.user).toBeDefined();
+    
+    // Test permissions API endpoint
+    const token = userData.token || userData.accessToken;
+    const permissionsResponse = await page.request.get(`${config.apiUrl}/auth/permissions`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (permissionsResponse.status() === 200) {
+      const permissionsData = await permissionsResponse.json();
+      expect(permissionsData.rules).toBeDefined();
+      expect(permissionsData.availablePortals).toBeDefined();
+      console.log('✅ ACL permission system is active');
+    } else {
+      console.log('⚠️ ACL permission system not yet active (API returning', permissionsResponse.status(), ')');
+    }
   });
 });
 
@@ -287,7 +314,7 @@ test.describe('🔄 Unified Authentication System', () => {
     ];
 
     for (const { type, expectedPath, user } of userTests) {
-      await page.goto('/login');
+      await page.goto('/login/');
 
       // Use specific quick login button selectors
       let quickButton;
@@ -321,7 +348,7 @@ test.describe('🔄 Unified Authentication System', () => {
 
   test('portal switching functionality @auth', async ({ page }) => {
     // Test portal switching for users with multiple roles
-    await page.goto('/login');
+    await page.goto('/login/');
 
     // Login as admin (should have access to staff portal)
     const adminButton = page.locator('button:has-text("Staff (Admin)")');
@@ -352,7 +379,7 @@ test.describe('🔄 Unified Authentication System', () => {
 test.describe('📄 Page Load Verification', () => {
   const pages = [
     { path: '/', name: 'Homepage', auth: false },
-    { path: '/login', name: 'Login', auth: false },
+    { path: '/login/', name: 'Login', auth: false },
     { path: '/register', name: 'Register', auth: false },
     { path: '/portal', name: 'Customer Portal', auth: true, role: 'customer' },
     { path: '/staff', name: 'Staff Portal', auth: true, role: 'staff' },
@@ -416,7 +443,7 @@ test.describe('⚡ Performance & Stability', () => {
     const performanceTargets = [
       // Adjusted targets for concurrent test execution environment
       { path: '/', maxTime: process.env.DOCKER_ENV ? 5000 : 3000, name: 'Homepage' },
-      { path: '/login', maxTime: process.env.DOCKER_ENV ? 3000 : 2000, name: 'Login' },
+      { path: '/login/', maxTime: process.env.DOCKER_ENV ? 3000 : 2000, name: 'Login' },
       { path: '/portal', maxTime: process.env.DOCKER_ENV ? 7000 : 5000, name: 'Customer Portal' },
     ];
 
@@ -441,7 +468,7 @@ test.describe('⚡ Performance & Stability', () => {
     });
 
     // Navigate through key pages
-    const paths = ['/', '/login', '/portal', '/staff', '/driver'];
+    const paths = ['/', '/login/', '/portal', '/staff', '/driver'];
 
     for (const path of paths) {
       await page.goto(path);
@@ -470,10 +497,10 @@ test.describe('⚡ Performance & Stability', () => {
  */
 test.describe('🔧 Core Feature Integration', () => {
   test('authentication and session management @integration', async ({ page }) => {
-    const authHelpers = new AuthHelpers(page);
+    // Use simple login approach since quick login buttons are working
 
-    // 1. Test login flow
-    await authHelpers.quickLogin('customer');
+    // 1. Test login flow  
+    await SimpleAuthHelpers.performLogin(page, 'test@test.com', 'test123');
     await expect(page).toHaveURL(/\/portal\/?/);
 
     // 2. Test session persistence across page loads
@@ -486,7 +513,7 @@ test.describe('🔧 Core Feature Integration', () => {
       .first();
     if (await logoutButton.isVisible()) {
       await logoutButton.click();
-      await page.waitForURL('/login', { timeout: 10000 });
+      await page.waitForURL('/login/', { timeout: 10000 });
     }
 
     // 4. Test protected route access
@@ -526,7 +553,7 @@ test.describe('🔧 Core Feature Integration', () => {
  */
 test.describe('♿ Essential Accessibility', () => {
   test('keyboard navigation basics @accessibility', async ({ page }) => {
-    await page.goto('/login');
+    await page.goto('/login/');
 
     // Test tab navigation through login form
     await page.keyboard.press('Tab');

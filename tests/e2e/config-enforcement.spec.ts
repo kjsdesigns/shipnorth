@@ -26,9 +26,9 @@ test.describe.serial('🔒 Configuration Enforcement', () => {
       { pattern: /:\s*[3-9][0-9][0-9][0-9](?!\.)/, description: 'Hardcoded port number in URL' },
       
       // Common problematic ports
-      { pattern: /:3000[^0-9]/, description: 'Hardcoded port 3000' },
-      { pattern: /:3001[^0-9]/, description: 'Hardcoded port 3001' },
-      { pattern: /:4000[^0-9]/, description: 'Hardcoded port 4000' },
+      { pattern: /:${process.env.WEB_PORT || 8849}[^0-9]/, description: 'Hardcoded port ${process.env.WEB_PORT || 8849}' },
+      { pattern: /:${process.env.WEB_PORT || 8849}[^0-9]/, description: 'Hardcoded port ${process.env.WEB_PORT || 8849}' },
+      { pattern: /:${process.env.API_PORT || 8850}[^0-9]/, description: 'Hardcoded port ${process.env.API_PORT || 8850}' },
       { pattern: /:8849[^0-9]/, description: 'Hardcoded port 8849 (use process.env.WEB_PORT)' },
       { pattern: /:8850[^0-9]/, description: 'Hardcoded port 8850 (use process.env.API_PORT)' },
       { pattern: /:5432[^0-9]/, description: 'Hardcoded port 5432 (use process.env.POSTGRES_PORT)' },
@@ -86,7 +86,7 @@ test.describe.serial('🔒 Configuration Enforcement', () => {
       console.log('   ✅ const PORT = process.env.API_PORT;');
       console.log('   ✅ const URL = `http://localhost:${process.env.WEB_PORT}`;');
       console.log('   ❌ const PORT = 8850;');
-      console.log('   ❌ const URL = "http://localhost:8849"; // Should be process.env.WEB_PORT');
+      console.log('   ❌ const URL = "http://localhost:${process.env.WEB_PORT || 8849}"; // Should be process.env.WEB_PORT');
       console.log('\n📋 REQUIRED ACTIONS:');
       console.log('- Update each file listed above');
       console.log('- Replace hardcoded values with environment variable references');

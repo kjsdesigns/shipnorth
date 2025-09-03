@@ -278,7 +278,7 @@ test.describe('Authentication', () => {
       if (loggedOut) {
         // Verify logged out by trying to access protected page
         await page.goto('/staff');
-        await expect(page).toHaveURL('/login');
+        await expect(page).toHaveURL('/login/');
       }
     });
 
@@ -335,15 +335,15 @@ test.describe('Authentication', () => {
 
       // Try to access admin routes
       await page.goto('/admin');
-      await expect(page).toHaveURL('/login'); // Should redirect to login
+      await expect(page).toHaveURL('/login/'); // Should redirect to login
 
       // Try to access staff routes
       await page.goto('/staff');
-      await expect(page).toHaveURL('/login');
+      await expect(page).toHaveURL('/login/');
 
       // Try to access driver routes
       await page.goto('/driver');
-      await expect(page).toHaveURL('/login');
+      await expect(page).toHaveURL('/login/');
     });
   });
 
@@ -358,7 +358,7 @@ test.describe('Authentication', () => {
       await page.waitForTimeout(5000);
 
       const currentUrl = page.url();
-      if (currentUrl.includes('/login')) {
+      if (currentUrl.includes('/login/')) {
         // If still on login, check for error message
         const errorElements = await page
           .locator('text=/error/i, text=/failed/i, [role="alert"]')
@@ -373,7 +373,7 @@ test.describe('Authentication', () => {
       await authHelpers.goToLogin();
 
       // Intercept auth request to return malformed response
-      await page.route('**/api/auth/login', (route) => {
+      await page.route('**/api/auth/login/, (route) => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -391,7 +391,7 @@ test.describe('Authentication', () => {
       await authHelpers.goToLogin();
 
       // Simulate slow network
-      await page.route('**/api/auth/login', (route) => {
+      await page.route('**/api/auth/login/, (route) => {
         setTimeout(() => route.continue(), 3000);
       });
 
@@ -464,7 +464,7 @@ test.describe('Authentication', () => {
 
     test('page loads are optimized', async ({ page }) => {
       await assertions.expectPerformance(async () => {
-        await page.goto('/login');
+        await page.goto('/login/');
         await expect(loginPage.welcomeHeading).toBeVisible();
       }, 5000);
     });

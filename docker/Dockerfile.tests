@@ -1,7 +1,7 @@
 # Dedicated Test Runner Container  
 # Built on Ubuntu for better Playwright support
 
-FROM mcr.microsoft.com/playwright:v1.55.0-jammy
+FROM mcr.microsoft.com/playwright:v1.54.2-jammy
 
 # Set working directory
 WORKDIR /app

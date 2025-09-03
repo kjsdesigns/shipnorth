@@ -67,17 +67,35 @@ export default defineConfig({
   ],
 
   use: {
-    // Docker environment URLs
-    baseURL: testConfig.webUrl,
+    // Docker container network URLs (use localhost since we're in host network mode)
+    baseURL: 'http://localhost:8849',
     
     // Enhanced tracing for Docker debugging
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure', 
     video: 'retain-on-failure',
     
-    // Docker-optimized settings
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    // Docker-optimized settings with longer timeouts
+    actionTimeout: 20000,
+    navigationTimeout: 45000,
+    
+    // Container-specific browser settings for maximum compatibility
+    launchOptions: {
+      headless: true, // Force headless mode in container
+      args: [
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-gpu',
+        '--single-process',
+        '--no-zygote'
+      ]
+    },
     
     // Output directory for Docker
     outputDir: 'test-artifacts-docker',

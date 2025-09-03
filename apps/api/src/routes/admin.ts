@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { authorize, AuthRequest } from '../middleware/auth';
+import { AuthRequest } from '../middleware/auth';
+import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { User, UserModel } from '../models/user';
 import { CityModel, City } from '../models/city';
 import { DatabaseService } from '../services/database';
@@ -7,13 +8,15 @@ import bcrypt from 'bcryptjs';
 
 const router = Router();
 
-// All admin routes require admin role
-router.use(authorize('admin'));
+// All admin routes require CASL permissions only
+router.use(requireCASLPortalAccess('staff'));
 
 // User Management Routes
 
 // Get all users with optional filtering
-router.get('/users', async (req: AuthRequest, res) => {
+router.get('/users', 
+  checkCASLPermission({ action: 'read', resource: 'User' }),
+  async (req: AuthRequest, res) => {
   try {
     const { role, status, search, page = 1, limit = 50 } = req.query;
 

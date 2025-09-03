@@ -96,7 +96,7 @@
           "infrastructure-check.spec.ts",
           "config-enforcement.spec.ts"
         ],
-        "timeout": 60000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -137,7 +137,7 @@
           "staff-interface.spec.ts",
           "customer-portal.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -179,7 +179,7 @@
           "customer-portal.spec.ts",
           "admin-panel.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -218,7 +218,7 @@
         "testMatch": [
           "api-integration.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -257,7 +257,7 @@
         "testMatch": [
           "documentation.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -298,7 +298,7 @@
           "driver-mobile.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -339,7 +339,7 @@
           "customer-portal.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -379,7 +379,7 @@
           "customer-portal.spec.ts",
           "driver-mobile.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -420,7 +420,7 @@
           "admin-panel.spec.ts",
           "ui-ux.spec.ts"
         ],
-        "timeout": 90000
+        "timeout": 15000
       },
       {
         "outputDir": "/Users/keith/claude/shipnorth/test-artifacts",
@@ -459,7 +459,7 @@
         "testMatch": [
           "end-to-end.spec.ts"
         ],
-        "timeout": 120000
+        "timeout": 15000
       }
     ],
     "shard": null,
@@ -484,8 +484,8 @@
     }
   ],
   "stats": {
-    "startTime": "2025-08-31T23:47:31.268Z",
-    "duration": 296.83299999999997,
+    "startTime": "2025-09-03T12:51:18.924Z",
+    "duration": 305.99600000000004,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

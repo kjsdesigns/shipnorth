@@ -35,7 +35,7 @@ test.describe('Package Creation Workflow', () => {
 
   test.beforeEach(async ({ page }) => {
     // Navigate to login page and authenticate as staff
-    await page.goto('http://localhost:8849/login');
+    await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}'/login/');
     
     // Login as staff user
     await page.fill('[data-testid="email-input"]', 'staff@shipnorth.com');

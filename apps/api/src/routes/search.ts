@@ -1,6 +1,7 @@
 import express from 'express';
 import { SearchService } from '../services/search';
 import { authenticate } from '../middleware/auth';
+import { checkCASLPermission } from '../middleware/casl-permissions';
 
 const router = express.Router();
 
@@ -146,7 +147,10 @@ router.get('/packages', authenticate, async (req, res) => {
   }
 });
 
-router.get('/customers', authenticate, async (req, res) => {
+router.get('/customers', 
+  authenticate, 
+  checkCASLPermission({ action: 'read', resource: 'Customer' }),
+  async (req, res) => {
   try {
     const { q: query, limit } = req.query;
 

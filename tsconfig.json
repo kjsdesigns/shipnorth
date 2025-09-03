@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -14,32 +14,26 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./apps/web/*"]
+      "@/*": ["./apps/web/*"],
+      "@shared/*": ["./packages/shared/src/*"]
     },
     "types": ["node"]
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
+    "packages/shared/src/**/*.ts",
+    "tests/**/*.ts",
+    "tests/e2e/types/global.d.ts"
   ],
   "exclude": [
     "node_modules",
     ".next",
     "dist",
     "build",
+    "apps/**/*",
+    "infrastructure/**/*",
     "tests/e2e/backup-*/**/*",
     "tests/e2e/**/backup-*/**/*"
-  ],
-  "references": [
-    { "path": "./apps/web" },
-    { "path": "./apps/api" }
   ]
 }

@@ -1,19 +1,27 @@
 /// <reference path="../types/express.d.ts" />
 import { Router } from 'express';
 import { authorize, authenticate } from '../middleware/auth';
+import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { LoadModel } from '../models/load';
 import { PackageModel } from '../models/package';
 import { CustomerModel } from '../models/customer';
 
 const router = Router();
 
-// List loads
-router.get('/', authenticate, async (req, res) => {
+// List loads - permission-based access
+router.get('/', 
+  authenticate,
+  checkCASLPermission({ action: 'read', resource: 'Load' }),
+  async (req, res) => {
   try {
     const { driver } = req.query;
 
-    // Handle driver-specific loads
-    if (driver === 'current' && req.user?.role === 'driver') {
+    // Handle driver-specific loads with CASL filtering  
+    const userRoles = (req.user as any)?.roles || [req.user?.role];
+    const isDriver = userRoles.includes('driver');
+    const isStaff = userRoles.includes('staff') || userRoles.includes('admin');
+    
+    if (driver === 'current' && isDriver) {
       // Mock load for demo driver
       const mockLoad = {
         id: 'load-demo-001',

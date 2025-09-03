@@ -17,13 +17,17 @@ const nextConfig: NextConfig = {
   experimental: {
     // Improve concurrent request handling
     cpus: 4,
-    // Reduce memory pressure
-    isrMemoryCacheSize: 0,
   },
   typedRoutes: false,
-  // Explicit environment variable configuration
+  // Explicit environment variable configuration for both SSR and client
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.API_PORT || 8850}`,
+  },
+  serverRuntimeConfig: {
+    API_URL: process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.API_PORT || 8850}`,
+  },
+  publicRuntimeConfig: {
+    API_URL: process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.API_PORT || 8850}`,
   },
   // SUPER AGGRESSIVE cache prevention for development with CSS protection
   async headers() {

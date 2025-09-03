@@ -402,8 +402,9 @@ export default function PackagesPage() {
 
   const handleCreatePackage = async (packageData: any) => {
     try {
+      console.log('🐛 Debug: Received package data:', packageData);
       const packagePayload = {
-        customerId: packageData.customerId,
+        customer_id: packageData.customerId,
         shipTo: {
           name: packageData.recipientName,
           address1: packageData.addressLine1,
@@ -431,6 +432,7 @@ export default function PackagesPage() {
         status: 'pending',
       };
 
+      console.log('🐛 Debug: Final payload being sent to API:', packagePayload);
       await packageAPI.create(packagePayload);
       await loadData(); // Refresh the package list
     } catch (error: any) {

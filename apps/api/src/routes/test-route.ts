@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { checkCASLPermission } from '../middleware/casl-permissions';
 import { RouteOptimizationService } from '../services/route-optimization';
 import { LoadModel } from '../models/load';
 import { PackageModel, Package } from '../models/package';
@@ -8,7 +9,10 @@ import { AddressModel, Address } from '../models/address';
 const router = Router();
 
 // Simple test endpoint for route optimization
-router.get('/test-route/:loadId', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/test-route/:loadId', 
+  authenticate, 
+  checkCASLPermission({ action: 'read', resource: 'Route' }),
+  async (req: AuthRequest, res: Response) => {
   try {
     const { loadId } = req.params;
 

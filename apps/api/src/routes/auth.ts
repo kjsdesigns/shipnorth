@@ -4,6 +4,16 @@ import { AppError } from '../middleware/errorHandler';
 import { UserModel } from '../models/user';
 import { CustomerModel } from '../models/customer';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { defineAbilityFor, getAvailablePortals } from '../auth/casl-ability';
+import { permissionCache } from '../services/permission-cache';
+import { PortalPersistenceService } from '../services/portal-persistence';
+
+function getDefaultPortal(user: any): string {
+  const roles = user.roles || [user.role];
+  if (roles.includes('admin') || roles.includes('staff')) return 'staff';
+  if (roles.includes('driver')) return 'driver';
+  return 'customer';
+}
 
 const router = Router();
 
@@ -219,7 +229,99 @@ router.post('/refresh', async (req, res, next) => {
 });
 
 // Change password endpoint
-router.post('/change-password', async (req, res, next) => {
+// Get user permissions endpoint
+router.get('/permissions', authenticate, async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new AppError(401, 'Unauthorized');
+    }
+
+    // Check cache first for performance
+    const cached = permissionCache.get(user.id);
+    
+    if (cached) {
+      return res.json({
+        ...cached,
+        user: {
+          ...user,
+          availablePortals: cached.availablePortals,
+          defaultPortal: getDefaultPortal(user)
+        },
+        cached: true
+      });
+    }
+
+    // Generate fresh permissions
+    const ability = defineAbilityFor(user);
+    const availablePortals = getAvailablePortals(user);
+    const currentPortal = (user as any).lastUsedPortal || getDefaultPortal(user);
+
+    const permissionsData = {
+      rules: ability.rules,
+      availablePortals,
+      currentPortal
+    };
+
+    // Cache for 5 minutes
+    permissionCache.set(user.id, permissionsData);
+
+    res.json({
+      ...permissionsData,
+      user: {
+        ...user,
+        availablePortals,
+        defaultPortal: getDefaultPortal(user)
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Switch portal endpoint
+router.post('/switch-portal', authenticate, async (req, res, next) => {
+  try {
+    const user = req.user;
+    const { portal } = req.body;
+
+    if (!user) {
+      throw new AppError(401, 'Unauthorized');
+    }
+
+    if (!portal || !['staff', 'driver', 'customer'].includes(portal)) {
+      throw new AppError(400, 'Invalid portal specified');
+    }
+
+    const availablePortals = getAvailablePortals(user);
+    if (!availablePortals.includes(portal)) {
+      throw new AppError(403, `You do not have access to the ${portal} portal`);
+    }
+
+    // Update user's last used portal in database
+    const updateSuccess = await PortalPersistenceService.updateLastUsedPortal(user.id, portal);
+    
+    if (!updateSuccess) {
+      console.warn(`Failed to persist portal switch for user ${user.id}`);
+    }
+
+    const updatedUser = {
+      ...user,
+      lastUsedPortal: portal,
+      availablePortals,
+      defaultPortal: getDefaultPortal(user)
+    };
+
+    res.json({
+      user: updatedUser,
+      message: `Successfully switched to ${portal} portal`
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/change-password', authenticate, async (req, res, next) => {
   try {
     const { userId, oldPassword, newPassword } = req.body;
 

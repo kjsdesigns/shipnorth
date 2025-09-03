@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850';
-const WEB_BASE = 'http://localhost:8849';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.API_PORT || 8850}`;
+const WEB_BASE = `http://localhost:${process.env.WEB_PORT || 8849}`;
 
 test.describe('Route Optimization', () => {
   let authToken: string;

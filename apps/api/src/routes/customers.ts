@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticate, authorize, AuthRequest } from '../middleware/auth';
+import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { CustomerModel } from '../models/customer';
 import paypalService from '../services/paypal';
 import { AppError } from '../middleware/errorHandler';
@@ -7,7 +8,11 @@ import { AppError } from '../middleware/errorHandler';
 const router = Router();
 
 // List all customers (staff/admin only)
-router.get('/', authenticate, authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
+router.get('/', 
+  authenticate, 
+  requireCASLPortalAccess('staff'),
+  checkCASLPermission({ action: 'read', resource: 'Customer' }),
+  async (req: AuthRequest, res, next) => {
   try {
     console.log('🎯 Customers API called');
     const customers = await CustomerModel.list();
@@ -333,7 +338,7 @@ router.post('/complete-registration', async (req, res, next) => {
 });
 
 // CSV import endpoint (staff only)
-router.post('/import', authenticate, authorize('staff', 'admin'), async (req, res, next) => {
+router.post('/import', authenticate, requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'create', resource: 'Customer' }), async (req, res, next) => {
   try {
     const { customers } = req.body;
 
@@ -384,7 +389,7 @@ router.post('/import', authenticate, authorize('staff', 'admin'), async (req, re
 router.get(
   '/search',
   authenticate,
-  authorize('staff', 'admin'),
+  requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
       const { q } = req.query;
@@ -402,7 +407,7 @@ router.get(
 );
 
 // List customers (staff only)
-router.get('/', authenticate, authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
+router.get('/', authenticate, requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }), async (req: AuthRequest, res, next) => {
   try {
     const customers = await CustomerModel.list();
     res.json({ customers });
@@ -415,7 +420,7 @@ router.get('/', authenticate, authorize('staff', 'admin'), async (req: AuthReque
 router.get(
   '/:id',
   authenticate,
-  authorize('staff', 'admin'),
+  requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
       const customer = await CustomerModel.findById(req.params.id);
@@ -488,7 +493,7 @@ router.get('/:id/invoices', async (req: AuthRequest, res, next) => {
 });
 
 // Create customer (staff only)
-router.post('/', authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
+router.post('/', requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }), async (req: AuthRequest, res, next) => {
   try {
     const customer = await CustomerModel.create(req.body);
     res.status(201).json({ customer });
@@ -498,7 +503,7 @@ router.post('/', authorize('staff', 'admin'), async (req: AuthRequest, res, next
 });
 
 // Update customer
-router.put('/:id', authorize('staff', 'admin'), async (req: AuthRequest, res, next) => {
+router.put('/:id', requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -525,7 +530,7 @@ router.put('/:id', authorize('staff', 'admin'), async (req: AuthRequest, res, ne
 // Create Stripe setup session (mock for now)
 router.post(
   '/:id/setup-payment',
-  authorize('staff', 'admin'),
+  requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
       const customer = await CustomerModel.findById(req.params.id);
@@ -548,7 +553,7 @@ router.post(
 );
 
 // Delete customer (admin only)
-router.delete('/:id', authorize('admin'), async (req: AuthRequest, res, next) => {
+router.delete('/:id', requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'delete', resource: 'Customer' }), async (req: AuthRequest, res, next) => {
   try {
     const success = await CustomerModel.delete(req.params.id);
 
@@ -566,7 +571,7 @@ router.delete('/:id', authorize('admin'), async (req: AuthRequest, res, next) =>
 router.get(
   '/:id/payment-methods',
   authenticate,
-  authorize('staff', 'admin'),
+  requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -608,7 +613,7 @@ router.get(
 );
 
 // Replace customer payment method
-router.post('/:id/payment-methods/replace', authorize('staff', 'admin'), async (req, res, next) => {
+router.post('/:id/payment-methods/replace', requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }), async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -637,7 +642,7 @@ router.post('/:id/payment-methods/replace', authorize('staff', 'admin'), async (
 // Complete payment method replacement
 router.post(
   '/:id/payment-methods/complete-replacement',
-  authorize('staff', 'admin'),
+  requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -684,7 +689,7 @@ router.post(
 router.get(
   '/me/payment-methods',
   authenticate,
-  authorize('customer'),
+  checkCASLPermission({ action: 'read', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
       let customerId = req.user?.customerId;
@@ -735,7 +740,7 @@ router.get(
 // Customer replace their own payment method
 router.post(
   '/me/payment-methods/replace',
-  authorize('customer'),
+  checkCASLPermission({ action: 'read', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
       const customerId = req.user?.customerId;
@@ -769,7 +774,7 @@ router.post(
 // Customer complete payment method replacement
 router.post(
   '/me/payment-methods/complete-replacement',
-  authorize('customer'),
+  checkCASLPermission({ action: 'read', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
       const customerId = req.user?.customerId;

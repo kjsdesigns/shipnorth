@@ -25,6 +25,13 @@ CREATE TABLE customers (
     phone VARCHAR(50),
     business_name VARCHAR(255),
     business_type VARCHAR(100),
+    address_line1 VARCHAR(255),
+    address_line2 VARCHAR(255),
+    city VARCHAR(100),
+    province VARCHAR(100),
+    postal_code VARCHAR(20),
+    country VARCHAR(3) DEFAULT 'CA',
+    status VARCHAR(50) DEFAULT 'active',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

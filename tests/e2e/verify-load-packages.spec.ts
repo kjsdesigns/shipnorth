@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const WEB_BASE = 'http://localhost:8849';
+const WEB_BASE = `http://localhost:${process.env.WEB_PORT || 8849}`;
 const TEST_LOAD_ID = '4607eeb1-3336-4c34-9bfb-f3c50bc91054';
 
 test.describe('Load Package Display Verification', () => {

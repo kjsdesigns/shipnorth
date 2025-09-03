@@ -34,7 +34,7 @@ interface EnhancedRegistrationData {
   placeId?: string;
 }
 
-// Enhanced registration endpoint
+// Enhanced registration endpoint (public - no auth required, but log for audit)
 router.post('/register-enhanced', async (req: Request, res: Response) => {
   try {
     const registrationData: EnhancedRegistrationData = req.body;
