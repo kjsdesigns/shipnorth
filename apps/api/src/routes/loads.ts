@@ -1,6 +1,7 @@
 /// <reference path="../types/express.d.ts" />
 import { Router } from 'express';
-import { authorize, authenticate } from '../middleware/auth';
+import SessionAuth from '../middleware/session-auth';
+import { authorize } from '../middleware/auth';
 import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { LoadModel } from '../models/load';
 import { PackageModel } from '../models/package';
@@ -10,7 +11,7 @@ const router = Router();
 
 // List loads - permission-based access
 router.get('/', 
-  authenticate,
+  SessionAuth.requireAuth(['staff', 'admin', 'driver']),
   checkCASLPermission({ action: 'read', resource: 'Load' }),
   async (req, res) => {
   try {
@@ -299,5 +300,47 @@ router.post('/:id/gps', authorize('driver', 'staff', 'admin'), async (req, res) 
     res.status(500).json({ error: error.message });
   }
 });
+
+// Delete load (staff/admin only)
+router.delete('/:id',
+  SessionAuth.requireAuth(['staff', 'admin']),
+  checkCASLPermission({ action: 'delete', resource: 'Load' }),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      
+      // Check if load exists
+      const load = await LoadModel.findById(id);
+      if (!load) {
+        return res.status(404).json({ error: 'Load not found' });
+      }
+      
+      // Check if load is active (has packages or is in progress)
+      if (load.status === 'in_progress' || load.status === 'completed') {
+        return res.status(400).json({
+          error: 'Cannot delete active or completed load'
+        });
+      }
+      
+      // Check if load has assigned packages
+      const packageResult = await PackageModel.query('SELECT * FROM packages WHERE load_id = $1', [id]);
+      if (packageResult.rows && packageResult.rows.length > 0) {
+        return res.status(400).json({
+          error: 'Cannot delete load with assigned packages. Reassign packages first.'
+        });
+      }
+      
+      const success = await LoadModel.delete(id);
+      
+      if (success) {
+        res.json({ message: 'Load deleted successfully' });
+      } else {
+        res.status(500).json({ error: 'Failed to delete load' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

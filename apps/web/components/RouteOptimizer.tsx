@@ -217,7 +217,7 @@ export default function RouteOptimizer({
       const { authAPI } = await import('@/lib/api');
       
       // Add packages to load
-      await authAPI.packages.assignToLoad(loadId, packageIds);
+      await (await import('@/lib/api')).packageAPI.bulkAssign(packageIds, loadId);
       
       // Trigger re-optimization
       onPackagesChanged?.(packageIds, []);
@@ -234,8 +234,8 @@ export default function RouteOptimizer({
     try {
       const { authAPI } = await import('@/lib/api');
       
-      // Remove package from load
-      await authAPI.packages.removeFromLoad(loadId, packageId);
+      // Remove package from load (update package to remove loadId)
+      await (await import('@/lib/api')).packageAPI.update(packageId, { loadId: null });
       
       // Update local route state
       const updatedRoute = {

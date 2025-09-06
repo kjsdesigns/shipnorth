@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI, customerAPI, loadAPI, adminUserAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import { StaffOnlyRoute } from '@/components/auth/ProtectedRoute';
 import StaffNavigation from '@/components/navigation/StaffNavigation';
 import ModernLayout from '@/components/ModernLayout';
@@ -13,7 +14,7 @@ import { Package, Users, Truck, DollarSign, Plus, Search } from 'lucide-react';
 
 function StaffDashboardContent() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [packages, setPackages] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
   const [loads, setLoads] = useState<any[]>([]);
@@ -37,31 +38,25 @@ function StaffDashboardContent() {
     }
   }, []);
 
-  // Single effect for user auth check - NO dependencies that change
+  // Server-side authentication check
   useEffect(() => {
-    // Add timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      console.warn('⚠️ Authentication check timeout - forcing to not loading');
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ STAFF PORTAL: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('staff') && !hasRole('admin')) {
+        console.log('❌ STAFF PORTAL: User lacks staff/admin role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ STAFF PORTAL: User authenticated via server session');
       setLoading(false);
-    }, 3000);
-
-    const currentUser = authAPI.getCurrentUser();
-    if (
-      !currentUser ||
-      (!currentUser.roles?.includes('staff') &&
-        !currentUser.roles?.includes('admin') &&
-        currentUser.role !== 'staff' &&
-        currentUser.role !== 'admin')
-    ) {
-      // Set loading false before redirect to prevent stuck loading state
-      setLoading(false);
-      clearTimeout(timeout);
-      router.push('/login');
-      return;
     }
-    setUser(currentUser);
-    clearTimeout(timeout);
-  }, []); // NO router dependency
+  }, [user, authLoading, hasRole, router]);
 
   // Single effect for data loading - ONLY when user changes
   useEffect(() => {

@@ -27,11 +27,7 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
             
             {/* Portal Switcher */}
             <div className="mt-4">
-              <PortalSwitcher 
-                currentPortal="staff"
-                availablePortals={availablePortals()}
-                hasAdminAccess={hasAdminAccess()}
-              />
+              <PortalSwitcher />
             </div>
           </div>
 

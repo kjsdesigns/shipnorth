@@ -96,7 +96,7 @@ test.describe('End-to-End Business Workflows', () => {
       const customerAuthHelpers = new AuthHelpers(customerPage);
       const customerPortalPage = new CustomerPortal(customerPage);
 
-      await customerPage.goto('/portal');
+      await customerPage.goto('/portal/');
 
       // Customer should be able to track without login for public tracking
       await customerPortalPage.trackingNumberInput.fill(trackingNumber);

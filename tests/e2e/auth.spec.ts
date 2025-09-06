@@ -1,25 +1,27 @@
 import { test, expect } from '@playwright/test';
-import { AuthHelpers } from './utils/auth-helpers';
+import { authAgent } from '../../agents/auth-agent-helpers';
 import { LoginPage, HomePage } from './utils/page-objects';
 import { CustomAssertions } from './utils/assertions';
 import { testData } from './utils/test-data';
 
 /**
- * Comprehensive Authentication Tests
+ * 🛡️ Authentication Agent Compliant Tests
+ * Uses Authentication Agent as single source of truth
  * Consolidates: basic-auth, comprehensive-auth, customer-auth, login-debug, login-theme
  */
 
-test.describe('Authentication', () => {
-  let authHelpers: AuthHelpers;
+test.describe('🛡️ Authentication Agent - Legacy Test Suite', () => {
   let loginPage: LoginPage;
   let homePage: HomePage;
   let assertions: CustomAssertions;
 
   test.beforeEach(async ({ page }) => {
-    authHelpers = new AuthHelpers(page);
     loginPage = new LoginPage(page);
     homePage = new HomePage(page);
     assertions = new CustomAssertions(page);
+    
+    // Authentication Agent pre-test health check
+    await authAgent.healthCheck(page);
   });
 
   test.describe('Homepage and Navigation @smoke', () => {
@@ -266,7 +268,7 @@ test.describe('Authentication', () => {
       await page.reload();
 
       // Should still be on staff dashboard
-      await expect(page).toHaveURL('/staff');
+      await expect(page).toHaveURL('/staff/');
       await expect(page.locator('h1:has-text("Staff Dashboard")')).toBeVisible();
     });
 
@@ -277,7 +279,7 @@ test.describe('Authentication', () => {
 
       if (loggedOut) {
         // Verify logged out by trying to access protected page
-        await page.goto('/staff');
+        await page.goto('/staff/');
         await expect(page).toHaveURL('/login/');
       }
     });
@@ -305,11 +307,11 @@ test.describe('Authentication', () => {
     test('different roles redirect to appropriate dashboards', async ({ page }) => {
       const roleTests = [
         { role: 'admin' as const, expectedUrl: '/admin', expectedHeading: 'Admin Dashboard' },
-        { role: 'staff' as const, expectedUrl: '/staff', expectedHeading: 'Staff Dashboard' },
-        { role: 'driver' as const, expectedUrl: '/driver', expectedHeading: 'Driver Portal' },
+        { role: 'staff' as const, expectedUrl: '/staff/', expectedHeading: 'Staff Dashboard' },
+        { role: 'driver' as const, expectedUrl: '/driver/', expectedHeading: 'Driver Portal' },
         {
           role: 'customer' as const,
-          expectedUrl: '/portal',
+          expectedUrl: '/portal/',
           expectedHeading: 'Shipnorth|Customer Portal|Your Packages',
         },
       ];
@@ -338,11 +340,11 @@ test.describe('Authentication', () => {
       await expect(page).toHaveURL('/login/'); // Should redirect to login
 
       // Try to access staff routes
-      await page.goto('/staff');
+      await page.goto('/staff/');
       await expect(page).toHaveURL('/login/');
 
       // Try to access driver routes
-      await page.goto('/driver');
+      await page.goto('/driver/');
       await expect(page).toHaveURL('/login/');
     });
   });
@@ -373,7 +375,7 @@ test.describe('Authentication', () => {
       await authHelpers.goToLogin();
 
       // Intercept auth request to return malformed response
-      await page.route('**/api/auth/login/, (route) => {
+      await page.route('**/api/auth/login/', (route) => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -391,7 +393,7 @@ test.describe('Authentication', () => {
       await authHelpers.goToLogin();
 
       // Simulate slow network
-      await page.route('**/api/auth/login/, (route) => {
+      await page.route('**/api/auth/login/', (route) => {
         setTimeout(() => route.continue(), 3000);
       });
 

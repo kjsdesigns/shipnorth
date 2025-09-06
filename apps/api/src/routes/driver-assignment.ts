@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import SessionAuth from '../middleware/session-auth';
+import { AuthRequest } from '../middleware/auth';
 import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { LoadModel } from '../models/load';
 import { UserModel } from '../models/user';
@@ -9,7 +10,7 @@ const router = Router();
 
 // Get available drivers for load assignment
 router.get('/available-drivers', 
-  authenticate, 
+  SessionAuth.requireAuth(), 
   requireCASLPortalAccess('staff'),
   checkCASLPermission({ action: 'read', resource: 'User' }),
   async (req: AuthRequest, res: Response) => {
@@ -82,7 +83,7 @@ router.get('/available-drivers',
 
 // Assign driver to load
 router.post('/assign-driver', 
-  authenticate,
+  SessionAuth.requireAuth(),
   requireCASLPortalAccess('staff'),
   checkCASLPermission({ action: 'update', resource: 'Load' }),
   async (req: AuthRequest, res: Response) => {
@@ -164,7 +165,7 @@ router.post('/assign-driver',
 });
 
 // Unassign driver from load
-router.post('/unassign-driver', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/unassign-driver', SessionAuth.requireAuth(), async (req: AuthRequest, res: Response) => {
   try {
     const { loadId } = req.body;
 
@@ -219,7 +220,7 @@ router.post('/unassign-driver', authenticate, async (req: AuthRequest, res: Resp
 });
 
 // Get driver workload summary
-router.get('/driver-workload/:driverId', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/driver-workload/:driverId', SessionAuth.requireAuth(), async (req: AuthRequest, res: Response) => {
   try {
     const { driverId } = req.params;
 
@@ -290,7 +291,7 @@ router.get('/driver-workload/:driverId', authenticate, async (req: AuthRequest, 
 });
 
 // Get optimal driver recommendations for a load
-router.get('/recommend-drivers/:loadId', authenticate, async (req: AuthRequest, res: Response) => {
+router.get('/recommend-drivers/:loadId', SessionAuth.requireAuth(), async (req: AuthRequest, res: Response) => {
   try {
     const { loadId } = req.params;
 

@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { authAPI } from '@/lib/api';
 import { Package, Truck, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login: contextLogin } = useAuth();
+  const { login, error: authError, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,38 +18,64 @@ export default function LoginPage() {
 
   // Helper function to provide better error messages
   const getErrorMessage = (err: any): string => {
+    
+    // Get the API URL for diagnostics
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850';
+    
+    // If error message comes directly from server (via useServerSession)
+    if (typeof err === 'object' && err.message) {
+      const message = err.message;
+      
+      // Check for specific authentication errors
+      if (message.includes('Invalid credentials') || message.includes('Login failed')) {
+        return 'Invalid email or password. Please check your credentials and try again.';
+      }
+      
+      if (message.includes('Account disabled') || message.includes('forbidden')) {
+        return 'Access forbidden. Your account may be disabled.';
+      }
+      
+      // If it's a server error message, return it directly
+      return message;
+    }
+    
     // Network/connection errors
     if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED')) {
-      return 'Unable to connect to server. Please check if the API server is running.';
+      return `Unable to connect to server. Please check if the API server is running at ${apiUrl}.`;
     }
 
     if (err.code === 'NETWORK_ERROR' || err.message?.includes('Network Error')) {
-      return 'Network error. Please check your connection and try again.';
+      return `Network error. Please check your connection and try again. (API: ${apiUrl})`;
     }
 
-    // API server is down or unreachable
-    if (!err.response) {
-      return 'Cannot reach the server. The API may be down. Please try again later.';
+    // Check for fetch-related network errors (TypeError for network failures)
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      return `Cannot reach the server. The API may be down. Please try again later. (Attempted: ${apiUrl})`;
     }
 
-    // HTTP status-based errors
+    // HTTP status-based errors (for axios-style responses, if ever used)
     const status = err.response?.status;
     const serverMessage = err.response?.data?.error;
 
-    switch (status) {
-      case 401:
-        return serverMessage || 'Invalid email or password. Please check your credentials.';
-      case 403:
-        return 'Access forbidden. Your account may be disabled.';
-      case 500:
-        return 'Server error occurred. Please try again later.';
-      case 502:
-      case 503:
-      case 504:
-        return 'Server is temporarily unavailable. Please try again in a few moments.';
-      default:
-        return serverMessage || 'Login failed. Please try again.';
+    if (status) {
+      switch (status) {
+        case 401:
+          return serverMessage || 'Invalid email or password. Please check your credentials.';
+        case 403:
+          return 'Access forbidden. Your account may be disabled.';
+        case 500:
+          return 'Server error occurred. Please try again later.';
+        case 502:
+        case 503:
+        case 504:
+          return 'Server is temporarily unavailable. Please try again in a few moments.';
+        default:
+          return serverMessage || 'Login failed. Please try again.';
+      }
     }
+
+    // Fallback for unknown errors
+    return typeof err === 'string' ? err : 'Login failed. Please try again.';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,8 +84,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await contextLogin(email, password);
-
+      await login(email, password);
       // AuthContext handles redirect automatically
     } catch (err: any) {
       setError(getErrorMessage(err));
@@ -77,8 +101,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await contextLogin(email, password);
-
+      await login(email, password);
       // AuthContext handles redirect automatically
     } catch (err: any) {
       setError(getErrorMessage(err));
@@ -111,10 +134,10 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {error && (
+          {(error || authError) && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center text-red-700 dark:text-red-400">
               <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-              <span className="text-sm">{error}</span>
+              <span className="text-sm">{error || authError}</span>
             </div>
           )}
 
@@ -166,10 +189,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || authLoading}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              {loading ? (
+              {(loading || authLoading) ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Signing in...
@@ -199,7 +222,7 @@ export default function LoginPage() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => quickLogin('admin@shipnorth.com', 'admin123')}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="px-4 py-3 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/30 text-sm font-medium transition-all duration-200 border border-purple-200 dark:border-purple-800 disabled:opacity-50"
               >
                 <div className="flex items-center justify-center">
@@ -209,7 +232,7 @@ export default function LoginPage() {
               </button>
               <button
                 onClick={() => quickLogin('staff@shipnorth.com', 'staff123')}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="px-4 py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/30 text-sm font-medium transition-all duration-200 border border-green-200 dark:border-green-800 disabled:opacity-50"
               >
                 <div className="flex items-center justify-center">
@@ -219,7 +242,7 @@ export default function LoginPage() {
               </button>
               <button
                 onClick={() => quickLogin('driver@shipnorth.com', 'driver123')}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="px-4 py-3 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/30 text-sm font-medium transition-all duration-200 border border-orange-200 dark:border-orange-800 disabled:opacity-50"
               >
                 <div className="flex items-center justify-center">
@@ -229,7 +252,7 @@ export default function LoginPage() {
               </button>
               <button
                 onClick={() => quickLogin('test@test.com', 'test123')}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="px-4 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 text-sm font-medium transition-all duration-200 border border-blue-200 dark:border-blue-800 disabled:opacity-50"
               >
                 <div className="flex items-center justify-center">

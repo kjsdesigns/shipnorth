@@ -157,7 +157,7 @@ test.describe('Admin Panel', () => {
       await adminPanel.page.fill('input[type="password"]', newUser.password);
       await adminPanel.page.click('button[type="submit"]');
 
-      const expectedUrl = newUser.role === 'customer' ? '/portal' : `/${newUser.role}`;
+      const expectedUrl = newUser.role === 'customer' ? '/portal/' : `/${newUser.role}`;
       await adminPanel.page.waitForURL(expectedUrl);
     });
 

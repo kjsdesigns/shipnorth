@@ -3,10 +3,11 @@ import jwt from 'jsonwebtoken';
 import { AppError } from '../middleware/errorHandler';
 import { UserModel } from '../models/user';
 import { CustomerModel } from '../models/customer';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { AuthRequest } from '../middleware/auth';
 import { defineAbilityFor, getAvailablePortals } from '../auth/casl-ability';
 import { permissionCache } from '../services/permission-cache';
 import { PortalPersistenceService } from '../services/portal-persistence';
+import SessionAuth from '../middleware/session-auth';
 
 function getDefaultPortal(user: any): string {
   const roles = user.roles || [user.role];
@@ -88,6 +89,20 @@ router.post('/login', async (req, res, next) => {
       { expiresIn: '30d' }
     );
 
+    // Create server-side session (future-proof approach)
+    const sessionUser = {
+      id: user.id,
+      email: user.email,
+      role: user.role || user.roles?.[0],
+      roles: user.roles || [user.role],
+      firstName: user.firstName,
+      lastName: user.lastName,
+      customerId: user.customerId,
+      phone: user.phone
+    };
+    
+    SessionAuth.createSession(sessionUser, res);
+
     res.json({
       token: accessToken, // Keep for compatibility
       accessToken,
@@ -145,7 +160,7 @@ router.post('/register', async (req, res, next) => {
       city,
       province,
       postalCode,
-      country: country || 'Canada',
+      country: country || 'CAN',
       status: 'active',
     });
 
@@ -230,7 +245,7 @@ router.post('/refresh', async (req, res, next) => {
 
 // Change password endpoint
 // Get user permissions endpoint
-router.get('/permissions', authenticate, async (req, res, next) => {
+router.get('/permissions', SessionAuth.requireAuth(), async (req, res, next) => {
   try {
     const user = req.user;
     if (!user) {
@@ -280,7 +295,7 @@ router.get('/permissions', authenticate, async (req, res, next) => {
 });
 
 // Switch portal endpoint
-router.post('/switch-portal', authenticate, async (req, res, next) => {
+router.post('/switch-portal', SessionAuth.requireAuth(), async (req, res, next) => {
   try {
     const user = req.user;
     const { portal } = req.body;
@@ -321,7 +336,7 @@ router.post('/switch-portal', authenticate, async (req, res, next) => {
   }
 });
 
-router.post('/change-password', authenticate, async (req, res, next) => {
+router.post('/change-password', SessionAuth.requireAuth(), async (req, res, next) => {
   try {
     const { userId, oldPassword, newPassword } = req.body;
 
@@ -353,7 +368,7 @@ router.post('/change-password', authenticate, async (req, res, next) => {
 });
 
 // Switch portal endpoint
-router.post('/switch-portal', authenticate, async (req: AuthRequest, res, next) => {
+router.post('/switch-portal', SessionAuth.requireAuth(), async (req: AuthRequest, res, next) => {
   try {
     const { portal } = req.body;
     const userId = req.user!.id;
@@ -379,6 +394,85 @@ router.post('/switch-portal', authenticate, async (req: AuthRequest, res, next) 
       availablePortals: UserModel.getAvailablePortals(user),
       hasAdminAccess: UserModel.hasAdminAccess(user),
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Server-side session validation endpoint
+router.get('/session', async (req, res, next) => {
+  try {
+    const user = SessionAuth.validateSession(req);
+    
+    if (!user) {
+      return res.status(401).json({ 
+        error: 'No valid session',
+        authenticated: false 
+      });
+    }
+    
+    res.json({
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        roles: user.roles,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        availablePortals: user.roles?.includes('admin') ? ['staff'] : [user.role],
+        defaultPortal: user.roles?.includes('admin') ? 'staff' : user.role
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Lightweight session validation endpoint (for frontend defensive checks)
+router.get('/validate', async (req, res, next) => {
+  try {
+    const isSessionValidationRequest = req.headers['x-session-validation'] === 'true';
+    
+    if (isSessionValidationRequest) {
+      // Lightweight validation without throwing errors
+      const user = SessionAuth.validateSession(req);
+      
+      if (user) {
+        return res.json({ valid: true, authenticated: true });
+      } else {
+        return res.status(401).json({ valid: false, authenticated: false });
+      }
+    }
+    
+    // Regular validation for non-defensive checks
+    const user = SessionAuth.validateSession(req);
+    if (!user) {
+      return res.status(401).json({ authenticated: false });
+    }
+    
+    res.json({ 
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    // For defensive session validation, don't throw errors
+    if (req.headers['x-session-validation'] === 'true') {
+      return res.status(401).json({ valid: false, authenticated: false });
+    }
+    next(error);
+  }
+});
+
+// Server-side logout endpoint
+router.post('/logout', async (req, res, next) => {
+  try {
+    SessionAuth.clearSession(res);
+    res.json({ success: true, message: 'Logged out successfully' });
   } catch (error) {
     next(error);
   }

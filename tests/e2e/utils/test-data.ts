@@ -72,7 +72,7 @@ export const testData = {
   // API test data
   api: {
     endpoints: {
-      auth: '/api/auth/login/,
+      auth: '/api/auth/login/',
       packages: '/api/packages',
       customers: '/api/customers',
       tracking: '/api/tracking',

@@ -87,7 +87,7 @@ router.get(
         success: true,
         loadId,
         analysis,
-        recommendations: [], // TODO: Implement generateRecommendations function
+        recommendations: generateRecommendations(analysis),
       });
     } catch (error) {
       console.error('Route analysis error:', error);
@@ -117,7 +117,7 @@ router.get('/routing-readiness', authenticate, async (req: AuthRequest, res: Res
           : readiness.readinessPercentage >= 60
             ? 'partial'
             : 'not_ready',
-      recommendations: [], // TODO: Implement generateReadinessRecommendations function
+      recommendations: generateReadinessRecommendations(readiness),
     });
   } catch (error) {
     console.error('Routing readiness error:', error);
@@ -172,7 +172,7 @@ router.get(
             missing: analysis.missingGeocodePackages,
             percentage: Math.round((analysis.geocodedPackages / analysis.packageCount) * 100),
           },
-          estimatedOptimizationTime: 5, // TODO: Implement estimateOptimizationTime function
+          estimatedOptimizationTime: estimateOptimizationTime(analysis.packageCount),
           canOptimize: analysis.missingGeocodePackages === 0,
         },
       });
@@ -490,13 +490,14 @@ function generateReadinessRecommendations(readiness: any): string[] {
   return recommendations;
 }
 
-function estimateOptimizationTime(analysis: any): string {
-  if (analysis.estimatedComplexity === 'low') {
-    return '< 5 seconds';
-  } else if (analysis.estimatedComplexity === 'medium') {
-    return '5-15 seconds';
+function estimateOptimizationTime(packageCount: number): number {
+  // Return time in seconds based on package count
+  if (packageCount <= 5) {
+    return 3; // < 5 seconds
+  } else if (packageCount <= 15) {
+    return 8; // 5-15 seconds  
   } else {
-    return '15-30 seconds';
+    return 20; // 15-30 seconds
   }
 }
 

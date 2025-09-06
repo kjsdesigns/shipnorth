@@ -1,0 +1,29 @@
+{
+  "services": {
+    "web": {
+      "envVar": "WEB_PORT",
+      "fallbackVars": ["FRONTEND_PORT", "CLIENT_PORT"],
+      "defaultPort": 8849,
+      "healthCheck": "http",
+      "displayName": "Web"
+    },
+    "api": {
+      "envVar": "API_PORT",
+      "fallbackVars": ["BACKEND_PORT", "SERVER_PORT"],
+      "defaultPort": 8850,
+      "healthCheck": "http",
+      "displayName": "API"
+    },
+    "database": {
+      "envVar": "POSTGRES_PORT",
+      "fallbackVars": ["DATABASE_PORT", "DB_PORT"],
+      "defaultPort": 5432,
+      "healthCheck": "tcp",
+      "displayName": "DB"
+    }
+  },
+  "statusLine": {
+    "showServices": ["web", "api", "database"],
+    "serviceOrder": ["web", "api", "database"]
+  }
+}

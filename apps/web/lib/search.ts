@@ -36,7 +36,7 @@ export interface SearchOptions {
 
 export class SearchAPI {
   private static baseURL =
-    process.env.NODE_ENV === 'production' ? 'https://api.shipnorth.com' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850');
+    process.env.NODE_ENV === 'production' ? 'https://api.shipnorth.com' : '/api'; // Use Next.js API proxy for same-origin session cookie support
 
   /**
    * Perform global search across all entities

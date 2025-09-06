@@ -1,5 +1,5 @@
 // Export all hooks
-export { useAuth } from './useAuth';
+export { useAuth } from '../contexts/AuthContext';
 export { useApi, useFetch, useMutation } from './useApi';
 export { useDataTable } from './useDataTable';
 export {

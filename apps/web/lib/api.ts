@@ -1,10 +1,12 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850';
+// Use Next.js API proxy for same-origin requests (solves session cookie issue)
+const API_URL = '/api';
 
 const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true, // Enable session cookies
   headers: {
     'Content-Type': 'application/json',
     // Cache busting for development
@@ -15,13 +17,11 @@ const api = axios.create({
   params: process.env.NODE_ENV === 'development' ? { _cb: Date.now() } : {},
 });
 
-// Add auth token to requests
+// Session-based authentication - no JWT tokens needed
 api.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Session cookies are automatically included with withCredentials: true
+    // No need to manually add Authorization headers
     return config;
   },
   (error) => {
@@ -30,33 +30,21 @@ api.interceptors.request.use(
 );
 
 // Handle token refresh
+// Handle session-based authentication errors
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        const refreshToken = Cookies.get('refreshToken');
-        if (refreshToken) {
-          const response = await axios.post(`${API_URL}/auth/refresh`, {
-            refreshToken,
-          });
-
-          const { accessToken } = response.data;
-          Cookies.set('accessToken', accessToken);
-
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-          return api(originalRequest);
-        }
-      } catch (refreshError) {
-        // Refresh failed, redirect to login
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
-        window.location.href = '/login';
-      }
+    // For session-based auth, 401 means session expired
+    if (error.response?.status === 401) {
+      console.log('❌ Session expired or invalid - redirecting to login');
+      
+      // Clear any client-side tokens/data  
+      Cookies.remove('accessToken');
+      Cookies.remove('refreshToken');
+      
+      // Redirect to login page
+      window.location.href = '/login';
+      return Promise.reject(new Error('Session expired. Please log in again.'));
     }
 
     return Promise.reject(error);

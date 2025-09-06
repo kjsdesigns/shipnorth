@@ -18,29 +18,31 @@ interface AuditLogEntry {
 }
 
 export default function AuditLogViewer() {
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    fetchAuditData();
-  }, [token]);
+    if (isAuthenticated) {
+      fetchAuditData();
+    }
+  }, [isAuthenticated]);
 
   const fetchAuditData = async () => {
-    if (!token) return;
+    if (!isAuthenticated) return;
     
     try {
       setLoading(true);
       
-      // Fetch logs and stats in parallel
+      // Fetch logs and stats in parallel using Next.js proxy (Authentication Agent compliant)
       const [logsResponse, statsResponse] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/audit`, {
-          headers: { Authorization: `Bearer ${token}` }
+        fetch(`/api/audit`, {
+          credentials: 'include'
         }),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/audit/stats`, {
-          headers: { Authorization: `Bearer ${token}` }
+        fetch(`/api/audit/stats`, {
+          credentials: 'include'
         })
       ]);
 

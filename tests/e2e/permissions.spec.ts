@@ -237,7 +237,7 @@ test.describe('🔒 ACL Permission System', () => {
     // Now test as customer - these should not be visible
     await page.goto('/login/');
     await loginAs(page, 'customer');
-    await page.goto('/portal');
+    await page.goto('/portal/');
     
     // Staff-specific navigation should not be visible in customer portal
     await expect(page.locator('text=Package Management')).not.toBeVisible();

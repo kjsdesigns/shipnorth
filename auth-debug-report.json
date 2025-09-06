@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-09-05T12:00:14.017Z",
+  "tests": {
+    "cookieParser": true,
+    "credentialsInclude": false,
+    "singleAuthSystem": true,
+    "sessionEndpoints": true,
+    "loginFlow": false
+  },
+  "overallHealth": "ISSUES_DETECTED",
+  "summary": {
+    "totalTests": 5,
+    "passed": 3,
+    "failed": 2
+  },
+  "issues": [
+    "Missing credentials: \"include\" in fetch calls",
+    "Complete login flow failing"
+  ],
+  "recommendedFixes": [
+    "Add credentials: \"include\" to all auth-related fetch calls",
+    "Check backend authentication routes",
+    "Verify demo users exist in database"
+  ]
+}

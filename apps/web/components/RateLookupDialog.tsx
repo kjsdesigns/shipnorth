@@ -54,9 +54,10 @@ export default function RateLookupDialog({
     setError(null);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850'}/packages/${packageId}/rates`, {
+      const response = await fetch(`/api/packages/${packageId}/rates`, {
+        credentials: 'include', // Use session cookies instead of Authorization header
         headers: {
-          Authorization: `Bearer ${document.cookie.split('accessToken=')[1]?.split(';')[0]}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -94,11 +95,11 @@ export default function RateLookupDialog({
     setError(null);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850'}/packages/${packageId}/rates/save`, {
+      const response = await fetch(`/api/packages/${packageId}/rates/save`, {
         method: 'POST',
+        credentials: 'include', // Use session cookies instead of Authorization header
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${document.cookie.split('accessToken=')[1]?.split(';')[0]}`,
         },
         body: JSON.stringify({
           rateId: selectedRate.id,

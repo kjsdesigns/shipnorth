@@ -10,7 +10,7 @@ describe('Authentication API', () => {
     password: 'TestPass123!',
     firstName: 'Test',
     lastName: 'User',
-    role: 'customer',
+    role: 'customer' as const,
   };
 
   beforeAll(async () => {
@@ -22,6 +22,13 @@ describe('Authentication API', () => {
         await UserModel.delete(existing.id);
       }
     } catch (e) {}
+    
+    // Create test user directly for authentication tests
+    try {
+      await UserModel.create(testUser);
+    } catch (e) {
+      console.log('Test user creation failed (may already exist):', e);
+    }
   });
 
   afterAll(async () => {
@@ -37,13 +44,18 @@ describe('Authentication API', () => {
 
   describe('POST /auth/register', () => {
     it('should register a new user', async () => {
-      const response = await request(app).post('/auth/register').send(testUser);
+      // Use a unique email for registration test
+      const newUser = {
+        ...testUser,
+        email: `test-${Date.now()}@shipnorth.com`
+      };
+      const response = await request(app).post('/auth/register').send(newUser);
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('accessToken');
       expect(response.body).toHaveProperty('refreshToken');
       expect(response.body.user).toHaveProperty('id');
-      expect(response.body.user.email).toBe(testUser.email);
+      expect(response.body.user.email).toBe(newUser.email);
       expect(response.body.user).not.toHaveProperty('password');
     });
 

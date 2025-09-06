@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, loadAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import OfflineSyncStatus from '@/components/OfflineSyncStatus';
 import {
@@ -32,7 +33,7 @@ interface Load {
 
 export default function DriverLoads() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [loads, setLoads] = useState<Load[]>([]);
   const [selectedLoad, setSelectedLoad] = useState<Load | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,17 +42,33 @@ export default function DriverLoads() {
     null
   );
 
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('driver') && currentUser.role !== 'driver')) {
-      router.push('/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ DRIVER LOADS: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('driver')) {
+        console.log('❌ DRIVER LOADS: User lacks driver role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ DRIVER LOADS: User authenticated via server session');
+      setLoading(false);
     }
+  }, [user, authLoading, hasRole, router]);
 
-    setUser(currentUser);
-    loadDriverLoads();
-    startGPSTracking();
-  }, [router]);
+  // Load data when user is authenticated
+  useEffect(() => {
+    if (user && hasRole('driver') && !loading) {
+      loadDriverLoads();
+      startGPSTracking();
+    }
+  }, [user, hasRole, loading]);
 
   const loadDriverLoads = async () => {
     try {
@@ -197,7 +214,7 @@ export default function DriverLoads() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

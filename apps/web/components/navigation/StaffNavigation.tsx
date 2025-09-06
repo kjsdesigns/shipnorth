@@ -11,7 +11,9 @@ import {
   UserCogIcon,
   SettingsIcon,
   BarChart3Icon,
-  FolderOpenIcon
+  FolderOpenIcon,
+  MessageSquare,
+  Shield
 } from 'lucide-react';
 import { Can } from '@/components/auth/Can';
 import { useIsAdmin } from '@/hooks/usePermissions';
@@ -101,6 +103,27 @@ export default function StaffNavigation() {
           isActive={pathname.startsWith('/staff/invoices')}
         >
           Invoices
+        </NavItem>
+      </Can>
+
+      {/* Communication & Monitoring */}
+      <NavSeparator label="Communication" />
+      
+      <NavItem 
+        href="/staff/messages" 
+        icon={<MessageSquare className="h-5 w-5" />}
+        isActive={pathname.startsWith('/staff/messages')}
+      >
+        Messages
+      </NavItem>
+      
+      <Can I="read" a="AuditLog">
+        <NavItem 
+          href="/staff/audit" 
+          icon={<Shield className="h-5 w-5" />}
+          isActive={pathname.startsWith('/staff/audit')}
+        >
+          Audit Log
         </NavItem>
       </Can>
 

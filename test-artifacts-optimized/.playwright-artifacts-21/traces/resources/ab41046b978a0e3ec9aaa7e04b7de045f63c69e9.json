@@ -1,0 +1,1 @@
+{"authenticated":true,"user":{"id":"test-staff-id","email":"staff@shipnorth.com","role":"staff","roles":["staff"],"firstName":"Test","lastName":"Staff","availablePortals":["staff"],"defaultPortal":"staff"}}

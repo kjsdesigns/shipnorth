@@ -15,8 +15,29 @@ export function usePermissions() {
     if (isLoading) return false;
     return ability.cannot(action, subject || resource);
   };
+
+  // Convenience methods for common permissions
+  const canCreatePackage = () => can('create', 'Package');
+  const canEditPackage = () => can('update', 'Package');
+  const canDeletePackage = () => can('delete', 'Package');
+  const canViewCustomers = () => can('read', 'Customer');
+  const canManageLoads = () => can('manage', 'Load');
+  const canAccessAdmin = () => can('access', 'Admin');
+  const canViewReports = () => can('read', 'Report');
   
-  return { can, cannot, ability, isLoading };
+  return { 
+    can, 
+    cannot, 
+    ability, 
+    isLoading,
+    canCreatePackage,
+    canEditPackage,
+    canDeletePackage,
+    canViewCustomers,
+    canManageLoads,
+    canAccessAdmin,
+    canViewReports
+  };
 }
 
 // Portal access hook using CASL
@@ -72,6 +93,7 @@ export function usePortalAccess() {
     canAccessPortal, 
     availablePortals, 
     hasAdminAccess,
+    getDefaultPortal,
     currentPortal: user?.lastUsedPortal || getDefaultPortal(),
     isLoading
   };

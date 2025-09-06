@@ -19,8 +19,14 @@ test.describe('Customer Portal', () => {
     customerPortal = new CustomerPortal(page);
     assertions = new CustomAssertions(page);
 
-    // Login as customer before each test
+    // Login as customer before each test with extended timeout
     await authHelpers.quickLogin('customer');
+    
+    // Additional verification that we're on the customer portal
+    await expect(page).toHaveURL(/\/portal/);
+    
+    // Wait for portal to fully load
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test.describe('Portal Dashboard @smoke', () => {

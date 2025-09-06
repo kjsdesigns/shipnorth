@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authAPI, adminUserAPI } from '@/lib/api';
+import { adminUserAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import {
   Users,
@@ -70,7 +71,7 @@ interface ActivityLog {
 
 export default function UserManagement() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -101,7 +102,7 @@ export default function UserManagement() {
     lastName: '',
     phone: '',
     roles: [] as string[],
-    primaryRole: 'customer' as string,
+    primaryRole: 'customer' as 'customer' | 'staff' | 'admin' | 'driver',
   });
   
   // Edit user form
@@ -115,15 +116,20 @@ export default function UserManagement() {
   });
 
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('admin') && currentUser.role !== 'admin')) {
-      router.push('/staff');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('admin')) {
+        router.push('/staff/');
+        return;
+      }
+      
+      loadUsers();
     }
-
-    setUser(currentUser);
-    loadUsers();
-  }, [router]);
+  }, [user, authLoading, hasRole, router]);
 
   const loadUsers = async () => {
     try {
@@ -767,7 +773,7 @@ export default function UserManagement() {
                   </label>
                   <select
                     value={createForm.primaryRole}
-                    onChange={(e) => setCreateForm({...createForm, primaryRole: e.target.value})}
+                    onChange={(e) => setCreateForm({...createForm, primaryRole: e.target.value as 'customer' | 'staff' | 'admin' | 'driver'})}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="customer">Customer</option>

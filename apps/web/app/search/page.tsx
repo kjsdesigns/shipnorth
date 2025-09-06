@@ -14,7 +14,7 @@ import {
   getResultTypeColor,
   getResultURL,
 } from '@/lib/search';
-import { authAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 
 const CATEGORY_LABELS = {
   packages: 'Packages',
@@ -35,8 +35,7 @@ const CATEGORY_ICONS = {
 function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [user, setUser] = useState<any>(null);
-
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -51,12 +50,17 @@ function SearchContent() {
 
   // Initialize from URL params
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser) {
-      router.push('/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('staff') && !hasRole('admin')) {
+        router.push('/login/');
+        return;
+      }
     }
-    setUser(currentUser);
 
     const urlQuery = searchParams.get('q');
     const urlCategories = searchParams.get('categories');
@@ -72,7 +76,7 @@ function SearchContent() {
       }
       performSearch(urlQuery, urlCategories?.split(',') || [], parseInt(urlPage || '1') || 1);
     }
-  }, [searchParams, router]);
+  }, [user, authLoading, hasRole, router, searchParams]);
 
   // Update URL when search params change
   const updateURL = useCallback((newQuery: string, newCategories: string[], newPage: number) => {
@@ -158,7 +162,7 @@ function SearchContent() {
   }
 
   return (
-    <ModernLayout role={user.role}>
+    <ModernLayout role={user.role as 'staff' | 'driver' | 'customer'}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">

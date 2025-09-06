@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>Staff Login Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testLogin() {
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                // Step 1: Test login
+                resultsDiv.innerHTML += '<div>🔍 Testing staff login...</div>';
+                
+                const loginResponse = await fetch('http://localhost:8850/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: 'staff@shipnorth.com',
+                        password: 'staff123'
+                    })
+                });
+                
+                if (!loginResponse.ok) {
+                    throw new Error(`Login failed: ${loginResponse.status}`);
+                }
+                
+                const loginData = await loginResponse.json();
+                resultsDiv.innerHTML += '<div class="success">✅ Login successful: ' + loginData.user.email + ' (' + loginData.user.role + ')</div>';
+                
+                // Step 2: Test session validation
+                resultsDiv.innerHTML += '<div>🔍 Testing session validation...</div>';
+                
+                const sessionResponse = await fetch('http://localhost:8850/auth/session', {
+                    credentials: 'include'
+                });
+                
+                if (!sessionResponse.ok) {
+                    throw new Error(`Session validation failed: ${sessionResponse.status}`);
+                }
+                
+                const sessionData = await sessionResponse.json();
+                resultsDiv.innerHTML += '<div class="success">✅ Session valid: ' + sessionData.user.email + '</div>';
+                
+                // Step 3: Test staff portal access
+                resultsDiv.innerHTML += '<div>🔍 Testing staff portal access...</div>';
+                
+                const staffResponse = await fetch('http://localhost:8849/staff', {
+                    credentials: 'include'
+                });
+                
+                resultsDiv.innerHTML += '<div class="success">✅ Staff portal response: ' + staffResponse.status + '</div>';
+                
+                // Step 4: Redirect to staff portal
+                resultsDiv.innerHTML += '<div style="margin-top: 20px;"><a href="http://localhost:8849/staff" target="_blank" style="background: blue; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">Open Staff Portal</a></div>';
+                
+            } catch (error) {
+                resultsDiv.innerHTML += '<div class="error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+        
+        // Run test on page load
+        testLogin();
+    </script>
+</body>
+</html>

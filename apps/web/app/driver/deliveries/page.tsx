@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI, loadAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import PhotoUpload from '@/components/PhotoUpload';
 import SignatureCapture from '@/components/SignatureCapture';
@@ -41,7 +42,7 @@ interface DeliveryPackage {
 
 export default function DriverDeliveries() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [packages, setPackages] = useState<DeliveryPackage[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<DeliveryPackage | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,16 +56,32 @@ export default function DriverDeliveries() {
     null
   );
 
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('driver') && currentUser.role !== 'driver')) {
-      router.push('/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ DRIVER DELIVERIES: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('driver')) {
+        console.log('❌ DRIVER DELIVERIES: User lacks driver role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ DRIVER DELIVERIES: User authenticated via server session');
+      setLoading(false);
     }
+  }, [user, authLoading, hasRole, router]);
 
-    setUser(currentUser);
-    loadDeliveries();
-  }, [router]);
+  // Load data when user is authenticated
+  useEffect(() => {
+    if (user && hasRole('driver') && !loading) {
+      loadDeliveries();
+    }
+  }, [user, hasRole, loading]);
 
   const loadDeliveries = async () => {
     try {
@@ -310,7 +327,7 @@ export default function DriverDeliveries() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

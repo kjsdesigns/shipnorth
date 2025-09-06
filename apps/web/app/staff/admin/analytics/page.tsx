@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authAPI, packageAPI, loadAPI, adminUserAPI } from '@/lib/api';
+import { packageAPI, loadAPI, adminUserAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import {
   BarChart3,
@@ -49,21 +50,26 @@ interface AnalyticsData {
 
 export default function AdminAnalytics() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('30d');
 
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('admin') && currentUser.role !== 'admin')) {
-      router.push('/staff');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('admin')) {
+        router.push('/staff/');
+        return;
+      }
+      
+      loadAnalytics();
     }
-
-    setUser(currentUser);
-    loadAnalytics();
-  }, [router, timeRange]);
+  }, [user, authLoading, hasRole, router, timeRange]);
 
   const loadAnalytics = async () => {
     try {

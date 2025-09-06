@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, routeAPI, loadAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import {
   Navigation,
@@ -41,22 +42,38 @@ interface RouteData {
 
 export default function DriverRoutes() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [routes, setRoutes] = useState<RouteData[]>([]);
   const [activeRoute, setActiveRoute] = useState<RouteData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOptimizing, setIsOptimizing] = useState(false);
 
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('driver') && currentUser.role !== 'driver')) {
-      router.push('/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ DRIVER ROUTES: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('driver')) {
+        console.log('❌ DRIVER ROUTES: User lacks driver role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ DRIVER ROUTES: User authenticated via server session');
+      setLoading(false);
     }
+  }, [user, authLoading, hasRole, router]);
 
-    setUser(currentUser);
-    loadDriverRoutes();
-  }, [router]);
+  // Load data when user is authenticated
+  useEffect(() => {
+    if (user && hasRole('driver') && !loading) {
+      loadDriverRoutes();
+    }
+  }, [user, hasRole, loading]);
 
   const loadDriverRoutes = async () => {
     try {
@@ -147,7 +164,7 @@ export default function DriverRoutes() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

@@ -47,9 +47,9 @@ export class AuthHelpers {
     // Wait for appropriate redirect
     const expectedUrls = {
       admin: '/admin',
-      staff: '/staff',
-      driver: '/driver',
-      customer: '/portal',
+      staff: '/staff/',
+      driver: '/driver/',
+      customer: '/portal/',
     };
 
     await this.page.waitForURL(expectedUrls[role], { timeout: 10000 });
@@ -82,9 +82,9 @@ export class AuthHelpers {
     // Wait for appropriate redirect
     const expectedUrls = {
       admin: '/admin',
-      staff: '/staff',
-      driver: '/driver',
-      customer: '/portal',
+      staff: '/staff/',
+      driver: '/driver/',
+      customer: '/portal/',
     };
 
     await this.page.waitForURL(expectedUrls[role], { timeout: 10000 });
@@ -122,9 +122,9 @@ export class AuthHelpers {
     // Should still be logged in
     const expectedUrls = {
       admin: '/admin',
-      staff: '/staff',
-      driver: '/driver',
-      customer: '/portal',
+      staff: '/staff/',
+      driver: '/driver/',
+      customer: '/portal/',
     };
 
     await expect(this.page).toHaveURL(expectedUrls[role]);
@@ -160,7 +160,7 @@ export class AuthHelpers {
     await this.clearStorage();
 
     // Try accessing protected routes without authentication
-    const protectedRoutes = ['/staff', '/admin', '/driver', '/portal'];
+    const protectedRoutes = ['/staff/', '/admin', '/driver/', '/portal/'];
 
     for (const route of protectedRoutes) {
       await this.page.goto(route);

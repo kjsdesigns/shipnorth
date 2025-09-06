@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI, invoiceAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import { CustomerOnlyRoute } from '@/components/auth/ProtectedRoute';
 import {
   Package,
@@ -29,7 +30,7 @@ import {
 
 function CustomerPortalContent() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [packages, setPackages] = useState<any[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,17 +65,25 @@ function CustomerPortalContent() {
     [user?.customerId]
   );
 
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (
-      !currentUser ||
-      (!currentUser.roles?.includes('customer') && currentUser.role !== 'customer')
-    ) {
-      router.push('/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ CUSTOMER PORTAL: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('customer')) {
+        console.log('❌ CUSTOMER PORTAL: User lacks customer role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ CUSTOMER PORTAL: User authenticated via server session');
+      setLoading(false);
     }
-    setUser(currentUser);
-  }, []);
+  }, [user, authLoading, hasRole, router]);
 
   useEffect(() => {
     if (user) {
@@ -86,7 +95,7 @@ function CustomerPortalContent() {
     }
   }, [user, loadData]);
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="flex items-center justify-center min-h-screen">

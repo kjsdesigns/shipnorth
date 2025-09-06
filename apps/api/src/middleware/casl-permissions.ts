@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { defineAbilityFor, canAccessPortal } from '../auth/casl-ability';
 import { ForbiddenError } from '@casl/ability';
-import { AuditLogger } from '../services/audit-logger';
+// Audit logger removed - enhanced feature
 
 // Extend Express Request interface to include CASL ability
 declare global {
@@ -35,21 +35,7 @@ export function checkCASLPermission(options: CASLPermissionCheckOptions) {
       } catch (forbiddenError) {
         const errorMessage = forbiddenError instanceof Error ? forbiddenError.message : 'Permission denied';
         
-        // Log failed permission check
-        AuditLogger.log({
-          userId: user.id,
-          action: options.action,
-          resource: options.resource,
-          details: { 
-            endpoint: req.path,
-            method: req.method,
-            reason: 'CASL permission denied'
-          },
-          ipAddress: req.ip,
-          userAgent: req.get('User-Agent'),
-          success: false,
-          errorMessage
-        });
+        // Audit logging removed - enhanced feature
 
         return res.status(403).json({ 
           error: 'Forbidden',
@@ -61,22 +47,7 @@ export function checkCASLPermission(options: CASLPermissionCheckOptions) {
       // Attach ability to request for use in controllers
       req.ability = ability;
       
-      // Log successful permission check
-      AuditLogger.log({
-        userId: user.id,
-        action: options.action,
-        resource: options.resource,
-        resourceId: options.getSubject ? JSON.stringify(options.getSubject(req)) : undefined,
-        details: { 
-          endpoint: req.path,
-          method: req.method,
-          caslEngine: true,
-          timestamp: new Date().toISOString()
-        },
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
-        success: true
-      }).catch(err => console.error('Audit logging failed:', err));
+      // Audit logging removed - enhanced feature
       
       next();
     } catch (error) {
@@ -93,20 +64,7 @@ export function requireCASLPortalAccess(portal: 'staff' | 'driver' | 'customer')
     }
     
     if (!canAccessPortal(user, portal)) {
-      AuditLogger.log({
-        userId: user.id,
-        action: 'access',
-        resource: 'Portal',
-        details: { 
-          requestedPortal: portal,
-          userRoles: (user as any).roles || [user.role],
-          reason: 'Portal access denied'
-        },
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
-        success: false,
-        errorMessage: `Access denied to ${portal} portal`
-      });
+      // Audit logging removed - enhanced feature
 
       return res.status(403).json({
         error: 'Forbidden',

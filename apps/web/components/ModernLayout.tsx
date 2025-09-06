@@ -3,7 +3,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import useServerSession from '@/hooks/useServerSession';
 import { authAPI } from '@/lib/api';
 import ThemeToggle from '@/components/ThemeToggle';
 import GlobalSearch from '@/components/GlobalSearch';
@@ -44,17 +44,12 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user: authUser, logout } = useAuth();
-  const [user, setUser] = useState<any>(null);
+  const { user, logout } = useServerSession();
   const [notifications] = useState(3);
   const [profileDropdown, setProfileDropdown] = useState(false);
   // const [searchModalOpen, setSearchModalOpen] = useState(false); // Removed with SearchModal
 
-  useEffect(() => {
-    if (authUser) {
-      setUser(authUser);
-    }
-  }, [authUser]); // Remove router dependency - it's stable in Next.js
+  // User data comes directly from useServerSession hook - no state management needed
 
   const handleLogout = () => {
     logout();
@@ -161,14 +156,7 @@ export default function ModernLayout({ children, role }: ModernLayoutProps) {
             {/* Portal Switcher in sidebar */}
             {user && (
               <div className="mt-4">
-                <PortalSwitcher
-                  currentPortal={role}
-                  availablePortals={user.availablePortals || [role]}
-                  hasAdminAccess={
-                    user.hasAdminAccess || user.role === 'admin' || user.roles?.includes('admin')
-                  }
-                  className="w-full"
-                />
+                <PortalSwitcher className="w-full" />
               </div>
             )}
           </div>

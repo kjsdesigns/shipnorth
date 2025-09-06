@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authAPI, loadAPI } from '@/lib/api';
+import { loadAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import {
   Truck,
@@ -19,7 +20,7 @@ import {
 
 export default function DriverDashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [loads, setLoads] = useState<any[]>([]);
   const [currentLoad, setCurrentLoad] = useState<any>(null);
   const [packages, setPackages] = useState<any[]>([]);
@@ -33,19 +34,33 @@ export default function DriverDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Authentication check
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('driver') && currentUser.role !== 'driver')) {
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ DRIVER DASHBOARD: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('driver')) {
+        console.log('❌ DRIVER DASHBOARD: User lacks driver role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ DRIVER DASHBOARD: User authenticated via server session');
       setLoading(false);
-      router.push('/login');
-      return;
     }
+  }, [user, authLoading, hasRole, router]);
 
-    setUser(currentUser);
-    loadDriverData();
-    startLocationTracking();
-  }, [router]);
+  // Load data when user is authenticated
+  useEffect(() => {
+    if (user && hasRole('driver') && !loading) {
+      loadDriverData();
+      startLocationTracking();
+    }
+  }, [user, hasRole, loading]);
 
   const loadDriverData = async () => {
     try {
@@ -120,7 +135,7 @@ export default function DriverDashboard() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

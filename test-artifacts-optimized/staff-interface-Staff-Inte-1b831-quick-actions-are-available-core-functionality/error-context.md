@@ -1,0 +1,63 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "Shipnorth" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - img [ref=e8] [cursor=pointer]
+          - generic [ref=e12] [cursor=pointer]: Shipnorth
+        - generic [ref=e17]:
+          - paragraph
+          - paragraph [ref=e18]: staff
+        - navigation [ref=e19]:
+          - link "Dashboard" [ref=e20] [cursor=pointer]:
+            - /url: /staff/
+            - img [ref=e21] [cursor=pointer]
+            - text: Dashboard
+          - link "Customers" [ref=e24] [cursor=pointer]:
+            - /url: /staff/customers/
+            - img [ref=e25] [cursor=pointer]
+            - text: Customers
+          - link "Packages" [ref=e30] [cursor=pointer]:
+            - /url: /staff/packages/
+            - img [ref=e31] [cursor=pointer]
+            - text: Packages
+          - link "Loads" [ref=e35] [cursor=pointer]:
+            - /url: /staff/loads/
+            - img [ref=e36] [cursor=pointer]
+            - text: Loads
+          - link "Invoices" [ref=e41] [cursor=pointer]:
+            - /url: /staff/?tab=invoices
+            - img [ref=e42] [cursor=pointer]
+            - text: Invoices
+          - link "Reports" [ref=e45] [cursor=pointer]:
+            - /url: /staff/reports/
+            - img [ref=e46] [cursor=pointer]
+            - text: Reports
+        - button "Sign out" [ref=e49] [cursor=pointer]:
+          - img [ref=e50] [cursor=pointer]
+          - text: Sign out
+    - generic [ref=e53]:
+      - banner [ref=e54]:
+        - generic [ref=e57]:
+          - button "System" [ref=e58] [cursor=pointer]:
+            - img [ref=e59] [cursor=pointer]
+          - button "3" [ref=e61] [cursor=pointer]:
+            - img [ref=e62] [cursor=pointer]
+            - generic [ref=e65] [cursor=pointer]: "3"
+          - button [ref=e67] [cursor=pointer]:
+            - img [ref=e69] [cursor=pointer]
+      - main [ref=e71]:
+        - generic [ref=e75]:
+          - generic [ref=e77]: Loading dashboard...
+          - generic [ref=e78]:
+            - text: If this takes too long, please
+            - link "sign in" [ref=e79] [cursor=pointer]:
+              - /url: /login
+  - button "Open Next.js Dev Tools" [ref=e85] [cursor=pointer]:
+    - img [ref=e86] [cursor=pointer]
+  - alert [ref=e89]
+```

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { authAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import {
   Package,
   Users,
@@ -39,20 +39,13 @@ export default function DashboardLayout({ children, role }: DashboardLayoutProps
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const { user, logout } = useServerSession();
   const [notifications] = useState(3);
 
-  useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser) {
-      router.push('/login');
-      return;
-    }
-    setUser(currentUser);
-  }, [router]);
+  // User authentication handled by useServerSession hook
 
   const handleLogout = () => {
-    authAPI.logout();
+    logout();
   };
 
   // Navigation items based on role

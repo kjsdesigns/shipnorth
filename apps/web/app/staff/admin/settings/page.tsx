@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import {
   Settings,
@@ -48,22 +48,27 @@ interface SystemSettings {
 
 export default function SystemSettings() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [settings, setSettings] = useState<SystemSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeSection, setActiveSection] = useState('general');
 
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('admin') && currentUser.role !== 'admin')) {
-      router.push('/staff');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('admin')) {
+        router.push('/staff/');
+        return;
+      }
+      
+      loadSettings();
     }
-
-    setUser(currentUser);
-    loadSettings();
-  }, [router]);
+  }, [user, authLoading, hasRole, router]);
 
   const loadSettings = async () => {
     try {

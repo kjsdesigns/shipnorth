@@ -35,11 +35,11 @@ const PORTAL_CONFIG = {
 
 export default function PortalSwitcher({ className = '' }: { className?: string }) {
   const router = useRouter();
-  const { user, token, updateUser, hasRole } = useAuth();
+  const { user, hasRole, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
 
-  if (!user) return null;
+  if (!user || !isAuthenticated) return null;
 
   // Helper functions
   const canAccessPortal = (portal: 'staff' | 'driver' | 'customer') => {
@@ -61,7 +61,17 @@ export default function PortalSwitcher({ className = '' }: { className?: string 
   };
 
   const getCurrentPortal = (): 'staff' | 'driver' | 'customer' => {
-    return user.lastUsedPortal || user.defaultPortal || 'customer';
+    // Try to determine portal from current URL path
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    if (currentPath.startsWith('/staff')) return 'staff';
+    if (currentPath.startsWith('/driver')) return 'driver';
+    if (currentPath.startsWith('/portal')) return 'customer';
+    
+    // Fallback logic based on roles
+    const roles = user.roles || [user.role];
+    if (roles.includes('staff') || roles.includes('admin')) return 'staff';
+    if (roles.includes('driver')) return 'driver';
+    return 'customer';
   };
 
   const availablePortals = getAvailablePortals();
@@ -78,18 +88,18 @@ export default function PortalSwitcher({ className = '' }: { className?: string 
 
     setSwitching(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/switch-portal`, {
+      const response = await fetch(`/api/auth/switch-portal`, {
         method: 'POST',
+        credentials: 'include', // Authentication Agent compliant
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ portal: targetPortal })
       });
 
       if (response.ok) {
         const data = await response.json();
-        updateUser(data.user);
+        // Just navigate to the portal, let useServerSession handle the update
         router.push(PORTAL_CONFIG[targetPortal].path);
       } else {
         console.error('Failed to switch portal:', response.status);
@@ -174,3 +184,5 @@ export default function PortalSwitcher({ className = '' }: { className?: string 
     </div>
   );
 }
+
+export { PortalSwitcher };

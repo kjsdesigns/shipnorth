@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authAPI, loadAPI, packageAPI, routeAPI } from '@/lib/api';
+import { loadAPI, packageAPI, routeAPI } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 import ModernLayout from '@/components/ModernLayout';
 import {
   Truck,
@@ -66,7 +67,7 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
 export default function LoadsPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, isAuthenticated, hasRole } = useAuth();
   const [loads, setLoads] = useState<any[]>([]);
   const [filteredLoads, setFilteredLoads] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,14 +107,18 @@ export default function LoadsPage() {
   const [routePreview, setRoutePreview] = useState<any>(null);
 
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (currentUser.role !== 'staff' && currentUser.role !== 'admin')) {
+    // Wait for auth loading to complete before making decisions
+    if (authLoading) {
+      return;
+    }
+    
+    if (!isAuthenticated || (!hasRole('staff') && !hasRole('admin'))) {
       router.push('/login');
       return;
     }
-    setUser(currentUser);
+    
     loadLoads();
-  }, [router]);
+  }, [authLoading, isAuthenticated, hasRole, router]);
 
   // Real-time search
   useEffect(() => {

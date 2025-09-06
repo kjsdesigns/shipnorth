@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI, packageAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import { DriverOnlyRoute } from '@/components/auth/ProtectedRoute';
 import ModernLayout from '@/components/ModernLayout';
 import {
@@ -47,7 +48,7 @@ interface DriverLoad {
 
 function DriverDashboardContent() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [loads, setLoads] = useState<DriverLoad[]>([]);
   const [currentLoad, setCurrentLoad] = useState<DriverLoad | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<DriverPackage | null>(null);
@@ -62,26 +63,33 @@ function DriverDashboardContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [refreshing, setRefreshing] = useState(false);
 
-  // Authentication and data loading
+  // Server-side authentication check
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.warn('⚠️ Driver authentication timeout - forcing not loading');
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ DRIVER PORTAL: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('driver')) {
+        console.log('❌ DRIVER PORTAL: User lacks driver role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ DRIVER PORTAL: User authenticated via server session');
       setLoading(false);
-    }, 3000);
-
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('driver') && currentUser.role !== 'driver')) {
-      setLoading(false);
-      clearTimeout(timeout);
-      router.push('/login');
-      return;
     }
+  }, [user, authLoading, hasRole, router]);
 
-    setUser(currentUser);
-    loadDriverData();
-    startLocationTracking();
-    clearTimeout(timeout);
-  }, [router]);
+  // Load data when user is authenticated
+  useEffect(() => {
+    if (user && hasRole('driver') && !loading) {
+      loadDriverData();
+      startLocationTracking();
+    }
+  }, [user, hasRole, loading]);
 
   const loadDriverData = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -258,7 +266,7 @@ function DriverDashboardContent() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

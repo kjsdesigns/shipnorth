@@ -15,7 +15,7 @@ class ApiClient {
 
   constructor(config: ApiClientConfig = {}) {
     this.config = {
-      baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850',
+      baseURL: '/api', // Use Next.js API proxy for same-origin session cookie support
       timeout: 10000,
       retries: 2,
       retryDelay: 1000,
@@ -25,6 +25,7 @@ class ApiClient {
     this.client = axios.create({
       baseURL: this.config.baseURL,
       timeout: this.config.timeout,
+      withCredentials: true, // Enable session cookies for authentication
       headers: {
         'Content-Type': 'application/json',
       },

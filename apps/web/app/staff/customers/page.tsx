@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authAPI, customerAPI } from '@/lib/api';
+import { customerAPI } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 import ModernLayout from '@/components/ModernLayout';
 import ChipSelector, { ChipOption } from '@/components/ChipSelector';
 import {
@@ -62,7 +63,7 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
 export default function CustomersPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, isAuthenticated, hasRole } = useAuth();
   const [customers, setCustomers] = useState<any[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,14 +98,27 @@ export default function CustomersPage() {
   });
 
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (currentUser.role !== 'staff' && currentUser.role !== 'admin')) {
+    // Wait for auth loading to complete before making decisions
+    if (authLoading) {
+      console.log('⏳ AUTH: Still loading, waiting...');
+      return;
+    }
+    
+    if (!isAuthenticated) {
+      console.log('❌ AUTH: Not authenticated, redirecting to login');
       router.push('/login');
       return;
     }
-    setUser(currentUser);
+    
+    if (!hasRole('staff') && !hasRole('admin')) {
+      console.log('❌ AUTH: No staff/admin role, redirecting to login');
+      router.push('/login');
+      return;
+    }
+    
+    console.log('✅ AUTH: Authenticated and authorized, loading customers');
     loadCustomers();
-  }, [router]);
+  }, [authLoading, isAuthenticated, hasRole, router]);
 
   // Real-time search as user types
   useEffect(() => {

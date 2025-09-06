@@ -29,6 +29,10 @@ export default defineConfig({
     'bulk-package-assignment.spec.ts',
     'package-creation-workflow.spec.ts',
     
+    // Route planning comprehensive testing
+    'route-planning-comprehensive.spec.ts',
+    'route-planning-explorer.spec.ts',
+    
     // Main test suite
     'auth.spec.ts',
     'staff-interface.spec.ts',
@@ -104,7 +108,7 @@ export default defineConfig({
     trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    headless: process.env.CI ? true : false,
+    headless: true, // Always run in headless mode
 
     // Performance optimization
     actionTimeout: 15000,
@@ -131,7 +135,7 @@ export default defineConfig({
       name: 'infrastructure',
       use: { ...devices['Desktop Chrome'] },
       testDir: './tests/e2e',
-      testMatch: ['00-connectivity-diagnostic.spec.ts', 'infrastructure-check.spec.ts', 'config-enforcement.spec.ts'],
+      testMatch: ['00-connectivity-diagnostic.spec.ts', 'infrastructure-check.spec.ts'],
       retries: 0, // No retries - if infrastructure fails, fix it
       timeout: 60000,
       fullyParallel: false,

@@ -78,3 +78,44 @@ cdk.out/
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Test artifacts and reports (generated during test runs)
+test-artifacts/
+test-reports/
+test-results/
+playwright-report/
+*.png
+*.webm
+*.zip
+.last-run.json
+live-scoreboard.html
+final-test-results.html
+test-stability-report.md
+test-history.json
+all-test-results.json/
+complete-system-status.json/
+
+# Docker volumes and data
+docker-data/
+postgres-data/
+db-data/
+
+# AWS credentials and secrets
+aws-credentials
+*.pem
+.aws/
+
+# Local development files
+.env.local.backup
+.env.*.local
+*.local.env
+
+# Generated documentation
+current-state.md
+implementation-summary.md
+*.md.backup
+
+# Temporary files
+*.tmp
+*.temp
+.temporary/

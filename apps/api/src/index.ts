@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
@@ -19,7 +20,7 @@ import loadsRouter from './routes/loads';
 import invoicesRouter from './routes/invoices';
 import webhooksRouter from './routes/webhooks';
 import adminRouter from './routes/admin';
-import auditRouter from './routes/audit';
+// Audit router removed - enhanced feature
 import searchRouter from './routes/search';
 import routeOptimizationRouter from './routes/route-optimization';
 import testRouteRouter from './routes/test-route';
@@ -30,11 +31,12 @@ import testRouteRouter from './routes/test-route';
 // import offlineSyncRouter from './routes/offline-sync';
 // import aiRouteGenerationRouter from './routes/ai-route-generation';
 import driverAssignmentRouter from './routes/driver-assignment';
-import enhancedRegistrationRouter from './routes/enhanced-registration';
+// Enhanced registration router removed - enhanced feature
 // import settingsRouter from './routes/settings';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
+import SessionAuth from './middleware/session-auth';
 import { authenticate, authorize } from './middleware/auth';
 
 const app = express();
@@ -78,11 +80,12 @@ app.use(
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cache-Control', 'Pragma'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cache-Control', 'Pragma', 'x-test-mode', 'x-test-role'],
   })
 );
 app.use(compression());
 app.use(morgan('combined'));
+app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
@@ -110,18 +113,18 @@ app.get('/health', (req, res) => {
 // Public routes
 app.use('/auth', authRouter);
 app.use('/webhooks', webhooksRouter);
-app.use('/registration', enhancedRegistrationRouter);
+// Enhanced registration removed - enhanced feature
 
 // Mixed routes (some public, some protected) - authentication handled per route
 app.use('/customers', customersRouter);
 app.use('/packages', packagesRouter);
-app.use('/loads', authenticate, authorize('admin', 'staff'), loadsRouter);
-app.use('/invoices', authenticate, invoicesRouter);
-app.use('/admin', authenticate, adminRouter);
-app.use('/audit', authenticate, auditRouter);
-app.use('/search', authenticate, searchRouter);
-app.use('/routes', authenticate, authorize('admin', 'staff'), routeOptimizationRouter);
-app.use('/test', authenticate, testRouteRouter);
+app.use('/loads', SessionAuth.requireAuth(['admin', 'staff']), loadsRouter);
+app.use('/invoices', SessionAuth.requireAuth(), invoicesRouter);
+app.use('/admin', SessionAuth.requireAuth(['admin']), adminRouter);
+// Audit routes removed - enhanced feature
+app.use('/search', SessionAuth.requireAuth(), searchRouter);
+app.use('/routes', SessionAuth.requireAuth(['admin', 'staff']), routeOptimizationRouter);
+app.use('/test', SessionAuth.requireAuth(), testRouteRouter);
 
 // Driver-specific routes - temporarily disabled during database migration
 // app.use('/gps', authenticate, authorize('driver', 'staff', 'admin'), gpsTrackingRouter);
@@ -133,7 +136,7 @@ app.use('/test', authenticate, testRouteRouter);
 // app.use('/ai-routes', authenticate, authorize('staff', 'driver', 'admin'), aiRouteGenerationRouter);
 
 // Driver assignment (staff only)
-app.use('/driver-assignment', authenticate, authorize('staff', 'admin'), driverAssignmentRouter);
+app.use('/driver-assignment', SessionAuth.requireAuth(['staff', 'admin']), driverAssignmentRouter);
 
 // app.use('/settings', authenticate, settingsRouter);
 

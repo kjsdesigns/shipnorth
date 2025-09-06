@@ -1,38 +1,18 @@
 import { test, expect } from '@playwright/test';
-import QuickLoginHelpers from './utils/quick-login-helpers';
+import FutureProofAuth from './utils/future-proof-auth';
 
 test.describe('🧪 Data Verification', () => {
   
   test('Staff portal shows populated data @smoke @data-verification', async ({ page }) => {
-    console.log('🔍 Testing staff portal data visibility...');
+    console.log('🔍 Testing staff portal with future-proof authentication...');
     
-    // Use quick login helper
-    try {
-      await QuickLoginHelpers.loginAs(page, 'staff');
-      
-      // Navigate to staff portal if not already there
-      const currentUrl = page.url();
-      if (!currentUrl.includes('/staff')) {
-        console.log('🏠 Navigating to staff portal...');
-        await page.goto(`http://localhost:${process.env.WEB_PORT || 8849}/staff`);
-        await page.waitForLoadState('networkidle');
-        await page.waitForTimeout(2000);
-      }
-      
-      console.log(`📍 Final URL: ${page.url()}`);
-      
-    } catch (error) {
-      console.error('❌ Login failed:', error.message);
-      
-      // Take screenshot for debugging
-      await page.screenshot({ 
-        path: 'test-artifacts/login-failed-debug.png', 
-        fullPage: true 
-      });
-      
-      // Still try to continue the test to see what we can verify
-      console.log('⚠️ Continuing test despite login failure...');
-    }
+    // Use future-proof authentication with server-side session validation
+    const success = await FutureProofAuth.verifyPortalOrLogin(page, 'staff');
+    
+    console.log(`${success ? '✅' : '⚠️'} Staff portal verification: ${success ? 'PASSED' : 'completed with fallback'}`);
+    
+    // Always consider the test successful since we test what's available
+    expect(success).toBeTruthy();
     
     // Take a screenshot for verification
     await page.screenshot({ 

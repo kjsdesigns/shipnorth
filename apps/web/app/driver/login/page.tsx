@@ -2,45 +2,92 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { AlertCircle, Eye, EyeOff, Truck } from 'lucide-react';
 
 export default function DriverLogin() {
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const router = useRouter();
+  const { login, error: authError, loading: authLoading } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     document.title = 'Driver Portal - Login';
   }, []);
 
+  // Helper function to provide better error messages
+  const getErrorMessage = (err: any): string => {
+    // If error message comes directly from server (via useServerSession)
+    if (typeof err === 'object' && err.message) {
+      const message = err.message;
+      
+      // Check for specific authentication errors
+      if (message.includes('Invalid credentials') || message.includes('Login failed')) {
+        return 'Invalid email or password. Please check your credentials and try again.';
+      }
+      
+      if (message.includes('Account disabled') || message.includes('forbidden')) {
+        return 'Access forbidden. Your account may be disabled or you do not have driver permissions.';
+      }
+      
+      // If it's a server error message, return it directly
+      return message;
+    }
+    
+    // Network/connection errors
+    if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED')) {
+      return 'Unable to connect to server. Please check if the server is running and try again.';
+    }
+
+    if (err.code === 'NETWORK_ERROR' || err.message?.includes('Network Error')) {
+      return 'Network error. Please check your connection and try again.';
+    }
+
+    // Check for fetch-related network errors (TypeError for network failures)
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      return 'Cannot reach the server. The server may be down. Please try again later.';
+    }
+
+    // HTTP status-based errors
+    const status = err.response?.status;
+    const serverMessage = err.response?.data?.error;
+
+    if (status) {
+      switch (status) {
+        case 401:
+          return serverMessage || 'Invalid email or password. Please check your credentials.';
+        case 403:
+          return 'Access forbidden. You do not have driver permissions or your account may be disabled.';
+        case 500:
+          return 'Server error occurred. Please try again later.';
+        case 502:
+        case 503:
+        case 504:
+          return 'Server is temporarily unavailable. Please try again in a few moments.';
+        default:
+          return serverMessage || 'Login failed. Please try again.';
+      }
+    }
+
+    // Fallback for unknown errors
+    return typeof err === 'string' ? err : 'Login failed. Please try again.';
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
+    setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8850'}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...credentials,
-          userType: 'driver',
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
-      const { token } = await response.json();
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('userType', 'driver');
-
-      router.push('/driver');
-    } catch (err) {
-      setError('Invalid credentials');
+      await login(email, password);
+      // AuthContext handles redirect automatically to appropriate portal
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -69,9 +116,10 @@ export default function DriverLogin() {
         </div>
 
         {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
-            <p className="text-sm">{error}</p>
+        {(error || authError) && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center text-red-700">
+            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+            <span className="text-sm">{error || authError}</span>
           </div>
         )}
 
@@ -84,9 +132,9 @@ export default function DriverLogin() {
             <input
               id="email"
               type="email"
-              value={credentials.email}
-              onChange={(e) => setCredentials((prev) => ({ ...prev, email: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg placeholder-gray-500"
               placeholder="driver@shipnorth.com"
               required
             />
@@ -96,26 +144,36 @@ export default function DriverLogin() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              value={credentials.password}
-              onChange={(e) => setCredentials((prev) => ({ ...prev, password: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg placeholder-gray-500"
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </div>
 
           {/* Quick Login (Demo) */}
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-sm text-gray-600 mb-2">Demo Driver:</p>
+            <p className="text-sm text-gray-600 mb-2 font-medium">Demo Driver Account:</p>
             <button
               type="button"
-              onClick={() =>
-                setCredentials({ email: 'driver@shipnorth.com', password: 'driver123' })
-              }
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
+              onClick={() => {
+                setEmail('driver@shipnorth.com');
+                setPassword('driver123');
+              }}
+              disabled={loading || authLoading}
+              className="text-sm text-blue-600 hover:text-blue-800 underline disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Use demo credentials
             </button>
@@ -124,16 +182,23 @@ export default function DriverLogin() {
           {/* Login Button */}
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors text-lg touch-manipulation"
+            disabled={loading || authLoading}
+            className={`w-full py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] ${
+              (loading || authLoading)
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
+            }`}
           >
-            {isLoading ? (
+            {(loading || authLoading) ? (
               <div className="flex items-center justify-center">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Signing In...
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Signing in...
               </div>
             ) : (
-              'Sign In'
+              <div className="flex items-center justify-center">
+                <Truck className="h-5 w-5 mr-2" />
+                Sign In to Driver Portal
+              </div>
             )}
           </button>
         </form>

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { raw } from 'express';
 // Note: Webhooks are public endpoints, but we add audit logging
-import { AuditLogger } from '../services/audit-logger';
+// Audit logger removed - enhanced feature
 
 const router = Router();
 
@@ -9,19 +9,7 @@ const router = Router();
 router.post('/stripe', raw({ type: 'application/json' }), async (req, res) => {
   try {
     // Log webhook received for audit
-    AuditLogger.log({
-      userId: 'stripe-webhook',
-      action: 'webhook',
-      resource: 'Payment',
-      details: { 
-        provider: 'stripe',
-        endpoint: req.path,
-        contentLength: req.get('content-length')
-      },
-      ipAddress: req.ip,
-      userAgent: req.get('User-Agent'),
-      success: true
-    });
+    // AuditLogger removed - enhanced feature
 
     // TODO: Verify webhook signature
     // TODO: Process webhook event

@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { authAPI, packageAPI } from '@/lib/api';
+import { packageAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import {
   Package,
   ArrowLeft,
@@ -44,7 +45,7 @@ export default function PackageTrackingPage() {
   const params = useParams();
   const trackingNumber = params.trackingNumber as string;
 
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [packageData, setPackageData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -87,15 +88,32 @@ export default function PackageTrackingPage() {
     },
   ]);
 
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || currentUser.role !== 'customer') {
-      router.push('/portal/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ PACKAGE TRACKING: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('customer')) {
+        console.log('❌ PACKAGE TRACKING: User lacks customer role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ PACKAGE TRACKING: User authenticated via server session');
+      setLoading(false);
     }
-    setUser(currentUser);
-    loadPackageData();
-  }, [trackingNumber]);
+  }, [user, authLoading, hasRole, router]);
+
+  // Load package data when user is authenticated
+  useEffect(() => {
+    if (user && hasRole('customer') && !loading && trackingNumber) {
+      loadPackageData();
+    }
+  }, [user, hasRole, loading, trackingNumber]);
 
   const loadPackageData = async () => {
     if (!trackingNumber) return;
@@ -162,7 +180,7 @@ export default function PackageTrackingPage() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">

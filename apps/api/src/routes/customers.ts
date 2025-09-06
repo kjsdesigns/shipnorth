@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { authenticate, authorize, AuthRequest } from '../middleware/auth';
+import SessionAuth from '../middleware/session-auth';
+import { authorize, AuthRequest } from '../middleware/auth';
 import { checkCASLPermission, requireCASLPortalAccess } from '../middleware/casl-permissions';
 import { CustomerModel } from '../models/customer';
 import paypalService from '../services/paypal';
@@ -9,7 +10,7 @@ const router = Router();
 
 // List all customers (staff/admin only)
 router.get('/', 
-  authenticate, 
+  SessionAuth.requireAuth(['staff', 'admin']), 
   requireCASLPortalAccess('staff'),
   checkCASLPermission({ action: 'read', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
@@ -338,7 +339,7 @@ router.post('/complete-registration', async (req, res, next) => {
 });
 
 // CSV import endpoint (staff only)
-router.post('/import', authenticate, requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'create', resource: 'Customer' }), async (req, res, next) => {
+router.post('/import', SessionAuth.requireAuth(), requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'create', resource: 'Customer' }), async (req, res, next) => {
   try {
     const { customers } = req.body;
 
@@ -388,7 +389,7 @@ router.post('/import', authenticate, requireCASLPortalAccess('staff'), checkCASL
 // Search customers (staff only)
 router.get(
   '/search',
-  authenticate,
+  SessionAuth.requireAuth(),
   requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
@@ -407,7 +408,7 @@ router.get(
 );
 
 // List customers (staff only)
-router.get('/', authenticate, requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }), async (req: AuthRequest, res, next) => {
+router.get('/', SessionAuth.requireAuth(), requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }), async (req: AuthRequest, res, next) => {
   try {
     const customers = await CustomerModel.list();
     res.json({ customers });
@@ -419,7 +420,7 @@ router.get('/', authenticate, requireCASLPortalAccess('staff'), checkCASLPermiss
 // Get customer details
 router.get(
   '/:id',
-  authenticate,
+  SessionAuth.requireAuth(),
   requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {
@@ -442,7 +443,7 @@ router.get(
 );
 
 // Get individual customer by ID
-router.get('/:id', authenticate, async (req: AuthRequest, res, next) => {
+router.get('/:id', SessionAuth.requireAuth(), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     
@@ -570,7 +571,7 @@ router.delete('/:id', requireCASLPortalAccess('staff'), checkCASLPermission({ ac
 // Get customer payment methods
 router.get(
   '/:id/payment-methods',
-  authenticate,
+  SessionAuth.requireAuth(),
   requireCASLPortalAccess('staff'), checkCASLPermission({ action: 'manage', resource: 'Customer' }),
   async (req, res, next) => {
     try {
@@ -688,7 +689,7 @@ router.post(
 // Customer self-service payment method endpoints
 router.get(
   '/me/payment-methods',
-  authenticate,
+  SessionAuth.requireAuth(),
   checkCASLPermission({ action: 'read', resource: 'Customer' }),
   async (req: AuthRequest, res, next) => {
     try {

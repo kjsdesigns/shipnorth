@@ -5,30 +5,34 @@ import { useRouter } from 'next/navigation';
 import ModernLayout from '@/components/ModernLayout';
 import PaymentMethodManager from '@/components/PaymentMethodManager';
 import PayPalScript from '@/components/PayPalScript';
-import { authAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 
 export default function PaymentMethodsPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [loading, setLoading] = useState(true);
 
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser) {
-      router.push('/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ PAYMENT METHODS: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('customer')) {
+        console.log('❌ PAYMENT METHODS: User lacks customer role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ PAYMENT METHODS: User authenticated via server session');
+      setLoading(false);
     }
+  }, [user, authLoading, hasRole, router]);
 
-    if (currentUser.role !== 'customer') {
-      router.push('/');
-      return;
-    }
-
-    setUser(currentUser);
-    setLoading(false);
-  }, [router]);
-
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <ModernLayout role="customer">
         <div className="animate-pulse p-6">
@@ -44,7 +48,7 @@ export default function PaymentMethodsPage() {
   }
 
   return (
-    <ModernLayout role={user.role}>
+    <ModernLayout role={user.role as 'staff' | 'driver' | 'customer'}>
       <PayPalScript enabled={true} />
       <div className="space-y-6">
         <div>

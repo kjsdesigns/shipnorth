@@ -5,9 +5,12 @@ export interface User {
   firstName: string;
   lastName: string;
   role: 'customer' | 'staff' | 'admin' | 'driver';
+  roles?: ('staff' | 'admin' | 'driver' | 'customer')[];
   status: 'active' | 'inactive';
   phone?: string;
   stripeCustomerId?: string;
+  customerId?: string;
+  lastUsedPortal?: 'staff' | 'driver' | 'customer';
   createdAt: string;
   updatedAt: string;
 }

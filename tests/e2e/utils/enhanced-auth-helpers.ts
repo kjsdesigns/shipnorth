@@ -236,7 +236,7 @@ export class EnhancedAuthHelpers {
       }
       
       // Check if we're on staff portal or dashboard
-      if (currentUrl.includes('/staff')) {
+      if (currentUrl.includes('/staff/')) {
         console.log('✅ Successfully on staff portal');
         return true;
       }

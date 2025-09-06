@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import useServerSession from '@/hooks/useServerSession';
 import { useAbility } from '@/contexts/AbilityContext';
 
 interface ProtectedRouteProps {
@@ -29,7 +29,7 @@ export function ProtectedRoute({
   loadingComponent = <LoadingSpinner />
 }: ProtectedRouteProps) {
   const router = useRouter();
-  const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const { ability, isLoading: abilityLoading } = useAbility();
   
   const isLoading = authLoading || abilityLoading;
@@ -52,8 +52,8 @@ export function ProtectedRoute({
   };
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+    if (!isLoading && !user) {
+      router.push('/login/');
       return;
     }
     
@@ -72,13 +72,13 @@ export function ProtectedRoute({
         }
       }
     }
-  }, [user, isLoading, isAuthenticated, portal, requireAction, requireResource, ability, router, fallbackUrl]);
+  }, [user, isLoading, portal, requireAction, requireResource, ability, router, fallbackUrl]);
   
   if (isLoading) {
     return <>{loadingComponent}</>;
   }
   
-  if (!isAuthenticated) {
+  if (!user) {
     return null;
   }
 

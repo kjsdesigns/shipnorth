@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authAPI } from '@/lib/api';
+import useServerSession from '@/hooks/useServerSession';
 import ModernLayout from '@/components/ModernLayout';
 import {
   DollarSign,
@@ -37,22 +37,38 @@ interface PayoutRecord {
 
 export default function DriverEarnings() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, loading: authLoading, hasRole } = useServerSession();
   const [earningsData, setEarningsData] = useState<EarningsData[]>([]);
   const [payoutHistory, setPayoutHistory] = useState<PayoutRecord[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState('today');
   const [loading, setLoading] = useState(true);
 
+  // Server-side authentication check
   useEffect(() => {
-    const currentUser = authAPI.getCurrentUser();
-    if (!currentUser || (!currentUser.roles?.includes('driver') && currentUser.role !== 'driver')) {
-      router.push('/login');
-      return;
+    if (!authLoading) {
+      if (!user) {
+        console.log('❌ DRIVER EARNINGS: No authenticated user, redirecting');
+        router.push('/login/');
+        return;
+      }
+      
+      if (!hasRole('driver')) {
+        console.log('❌ DRIVER EARNINGS: User lacks driver role');
+        router.push('/login/');
+        return;
+      }
+      
+      console.log('✅ DRIVER EARNINGS: User authenticated via server session');
+      setLoading(false);
     }
+  }, [user, authLoading, hasRole, router]);
 
-    setUser(currentUser);
-    loadEarningsData();
-  }, [router]);
+  // Load data when user is authenticated
+  useEffect(() => {
+    if (user && hasRole('driver') && !loading) {
+      loadEarningsData();
+    }
+  }, [user, hasRole, loading]);
 
   const loadEarningsData = async () => {
     try {
@@ -149,7 +165,7 @@ export default function DriverEarnings() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
